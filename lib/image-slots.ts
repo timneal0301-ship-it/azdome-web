@@ -1,0 +1,82 @@
+export type ImageGroup =
+  | "hero"
+  | "products"
+  | "mega"
+  | "scenarios"
+  | "features"
+  | "aplus"
+  | "avatars"
+  | "reviews";
+
+export type ImageSlot = {
+  key: string;
+  label: string;
+  group: ImageGroup;
+  /** Path relative to public/ — must start with "images/" */
+  path: string;
+  width: number;
+  height: number;
+};
+
+export const GROUPS: { key: ImageGroup; label: string }[] = [
+  { key: "hero", label: "Hero & 视频海报" },
+  { key: "products", label: "产品图集" },
+  { key: "mega", label: "Mega Menu 分类卡" },
+  { key: "scenarios", label: "首页场景图" },
+  { key: "features", label: "TechFeature 功能图" },
+  { key: "aplus", label: "A+ 长图文 & 其他" },
+  { key: "avatars", label: "用户头像" },
+  { key: "reviews", label: "评价照片" },
+];
+
+export const SLOTS: ImageSlot[] = [
+  // Hero / Video poster
+  { key: "hero-poster",  label: "Hero Poster (首页背景)",       group: "hero", path: "images/hero-poster.jpg",        width: 1920, height: 1080 },
+  { key: "video-poster", label: "视频区海报",                    group: "hero", path: "images/aplus/video-poster.jpg", width: 1920, height: 1080 },
+
+  // Products
+  { key: "m550-front",   label: "M550 Pro · Front",      group: "products", path: "images/product/m550-front.jpg",    width: 1000, height: 1000 },
+  { key: "m550-side",    label: "M550 Pro · Side",       group: "products", path: "images/product/m550-side.jpg",     width: 1000, height: 1000 },
+  { key: "m550-mounted", label: "M550 Pro · Mounted",    group: "products", path: "images/product/m550-mounted.jpg",  width: 1000, height: 1000 },
+  { key: "m550-app",     label: "M550 Pro · App",        group: "products", path: "images/product/m550-app.jpg",      width: 1000, height: 1000 },
+  { key: "m550-night",   label: "M550 Pro · 夜拍样张",   group: "products", path: "images/product/m550-night.jpg",    width: 1000, height: 1000 },
+  { key: "m27",          label: "M27",                   group: "products", path: "images/products/m27.jpg",          width: 1000, height: 1000 },
+  { key: "m530",         label: "M530",                  group: "products", path: "images/products/m530.jpg",         width: 1000, height: 1000 },
+  { key: "gs63h",        label: "GS63H",                 group: "products", path: "images/products/gs63h.jpg",        width: 1000, height: 1000 },
+  { key: "m17",          label: "M17",                   group: "products", path: "images/products/m17.jpg",          width: 1000, height: 1000 },
+
+  // Mega menu
+  { key: "mega-dual",    label: "前后双录",        group: "mega", path: "images/mega/dual-channel.jpg", width: 800, height: 600 },
+  { key: "mega-stealth", label: "隐藏式安装",      group: "mega", path: "images/mega/stealth.jpg",      width: 800, height: 600 },
+  { key: "mega-screen",  label: "自带屏幕",        group: "mega", path: "images/mega/with-screen.jpg",  width: 800, height: 600 },
+
+  // Scenarios
+  { key: "scenario-family",    label: "家庭出游",   group: "scenarios", path: "images/scenarios/family.jpg",    width: 1400, height: 1200 },
+  { key: "scenario-rideshare", label: "网约车",     group: "scenarios", path: "images/scenarios/rideshare.jpg", width: 900,  height: 700 },
+  { key: "scenario-parking",   label: "24H 停车",   group: "scenarios", path: "images/scenarios/parking.jpg",   width: 900,  height: 700 },
+
+  // Tech features
+  { key: "feature-night", label: "夜视",        group: "features", path: "images/features/night-vision.jpg", width: 1200, height: 1400 },
+  { key: "feature-wifi",  label: "5GHz WiFi",   group: "features", path: "images/features/wifi.jpg",         width: 1200, height: 1400 },
+  { key: "feature-adas",  label: "AI ADAS",     group: "features", path: "images/features/adas.jpg",         width: 1200, height: 1400 },
+
+  // A+ content
+  { key: "aplus-4k",      label: "4K 细节",         group: "aplus", path: "images/aplus/4k-detail.jpg", width: 1400, height: 1100 },
+  { key: "aplus-parking", label: "停车监控",        group: "aplus", path: "images/aplus/parking.jpg",   width: 1400, height: 1100 },
+  { key: "aplus-app",     label: "App",             group: "aplus", path: "images/aplus/app.jpg",       width: 1400, height: 1100 },
+  { key: "whatsinbox",    label: "What's in Box",   group: "aplus", path: "images/whatsinbox.jpg",      width: 1400, height: 1100 },
+  { key: "about-hero",    label: "About 页 Hero",   group: "aplus", path: "images/about-hero.jpg",      width: 1400, height: 1100 },
+
+  // Avatars
+  { key: "avatar-marcus", label: "Marcus T.", group: "avatars", path: "images/avatars/marcus.jpg", width: 200, height: 200 },
+  { key: "avatar-priya",  label: "Priya K.",  group: "avatars", path: "images/avatars/priya.jpg",  width: 200, height: 200 },
+  { key: "avatar-daniel", label: "Daniel R.", group: "avatars", path: "images/avatars/daniel.jpg", width: 200, height: 200 },
+
+  // Review photos
+  { key: "review-1", label: "Sarah W. 评价照片", group: "reviews", path: "images/reviews/r1.jpg", width: 400, height: 400 },
+  { key: "review-3", label: "Lena R. 评价照片",  group: "reviews", path: "images/reviews/r3.jpg", width: 400, height: 400 },
+];
+
+export function findSlot(key: string): ImageSlot | undefined {
+  return SLOTS.find((s) => s.key === key);
+}

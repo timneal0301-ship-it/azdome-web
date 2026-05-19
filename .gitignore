@@ -1,0 +1,15 @@
+node_modules
+.next
+out
+.DS_Store
+*.log
+.env*
+!.env.example
+next-env.d.ts
+
+# Runtime data (admin edits, user accounts, etc.) — should live in a real DB
+# for production. Keep ignored so dev edits don't leak into version control.
+/data/*.json
+
+# Image-asset backups created when admin re-uploads an image
+public/images/**/*.bak.*
