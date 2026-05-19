@@ -1,87 +1,50 @@
+// AZDOME brand wordmark — inline SVG.
+//
+// Bold sans-serif "AZDOME" in brand blue with a small square accent
+// after the wordmark. Renders crisp at every size; the parent controls
+// dimensions via the `size` prop (height in px).
+
 type LogoProps = {
   className?: string;
-  // Wordmark only? Or with the lens mark?
-  variant?: "mark" | "wordmark" | "lockup";
-  // Visual size in pixels (height).
+  /** Height in pixels. Width auto-scales by viewBox ratio. */
   size?: number;
-  // Override the color via currentColor; default = inherit.
+  /** Wordmark color. Defaults to AZDOME brand blue. */
   color?: string;
+  /** Accent square color. Defaults to brand blue. */
+  accent?: string;
 };
 
-/**
- * AZDOME brand mark + wordmark. Renders as inline SVG so it inherits
- * text color (use parent text-* classes) and stays crisp at any size.
- */
+const BRAND_BLUE = "#0066CC";
+
 export default function Logo({
   className = "",
-  variant = "lockup",
-  size = 24,
-  color = "currentColor",
+  size = 22,
+  color = BRAND_BLUE,
+  accent = BRAND_BLUE,
 }: LogoProps) {
-  if (variant === "mark") {
-    return (
-      <svg
-        viewBox="0 0 32 32"
-        width={size}
-        height={size}
-        className={className}
-        aria-label="AZDOME"
-        role="img"
-      >
-        <circle cx="16" cy="16" r="15" fill={color} />
-        <circle cx="16" cy="16" r="9" fill="#ffffff" opacity="0.92" />
-        <circle cx="16" cy="16" r="5" fill={color} />
-      </svg>
-    );
-  }
-  if (variant === "wordmark") {
-    return (
-      <svg
-        viewBox="0 0 120 24"
-        height={size}
-        width={size * 5}
-        className={className}
-        aria-label="AZDOME"
-        role="img"
-      >
-        <text
-          x="0"
-          y="19"
-          fontFamily="var(--font-inter), -apple-system, sans-serif"
-          fontWeight={800}
-          fontSize={22}
-          letterSpacing={-0.5}
-          fill={color}
-        >
-          AZDOME
-        </text>
-      </svg>
-    );
-  }
-  // lockup: small mark + wordmark
+  // viewBox is sized so the wordmark renders at the intended scale.
+  // Width:height ≈ 6.4 — width scales automatically per `size` prop.
   return (
     <svg
-      viewBox="0 0 148 24"
+      viewBox="0 0 192 30"
       height={size}
-      width={size * 6.16}
+      width={size * 6.4}
       className={className}
-      aria-label="AZDOME"
       role="img"
+      aria-label="AZDOME"
     >
-      <circle cx="12" cy="12" r="11" fill={color} />
-      <circle cx="12" cy="12" r="6.5" fill="#ffffff" opacity="0.92" />
-      <circle cx="12" cy="12" r="3.5" fill={color} />
       <text
-        x="30"
-        y="18"
-        fontFamily="var(--font-inter), -apple-system, sans-serif"
-        fontWeight={800}
-        fontSize={20}
-        letterSpacing={-0.5}
+        x="0"
+        y="24"
+        fontFamily='-apple-system, "Helvetica Neue", "Inter", "Arial Black", sans-serif'
+        fontWeight={900}
+        fontSize={30}
+        letterSpacing={-1.2}
         fill={color}
       >
         AZDOME
       </text>
+      <rect x="160" y="17" width="7" height="7" fill={accent} />
     </svg>
   );
 }

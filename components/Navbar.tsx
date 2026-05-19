@@ -132,12 +132,13 @@ export default function Navbar() {
             <Link
               href="/"
               aria-label="AZDOME"
-              className={[
-                "inline-flex transition-opacity duration-300 hover:opacity-70",
-                useLightTheme ? "text-white" : "text-slate-900",
-              ].join(" ")}
+              className="inline-flex transition-opacity duration-300 hover:opacity-80"
             >
-              <Logo variant="lockup" size={22} />
+              <Logo
+                size={22}
+                color={useLightTheme ? "#ffffff" : "#0066CC"}
+                accent={useLightTheme ? "#60a5fa" : "#0066CC"}
+              />
             </Link>
           </div>
 
