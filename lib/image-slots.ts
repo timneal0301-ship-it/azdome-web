@@ -1,4 +1,5 @@
 export type ImageGroup =
+  | "brand"
   | "hero"
   | "banners"
   | "miniBanners"
@@ -22,6 +23,7 @@ export type ImageSlot = {
 };
 
 export const GROUPS: { key: ImageGroup; label: string }[] = [
+  { key: "brand", label: "品牌 Logo" },
   { key: "hero", label: "Hero & 视频海报" },
   { key: "banners", label: "首页 Hero Carousel 大 Banner" },
   { key: "miniBanners", label: "首页 Bento 小 Banner" },
@@ -36,6 +38,11 @@ export const GROUPS: { key: ImageGroup; label: string }[] = [
 ];
 
 export const SLOTS: ImageSlot[] = [
+  // Brand logos — admin uploads here override the inline-SVG wordmark.
+  // Recommended: transparent PNG, ~384×60 (or similar 6.4:1 aspect ratio).
+  { key: "logo-primary", label: "Logo · 主色(浅色背景)",   group: "brand", path: "images/brand/logo-primary.png", width: 384, height: 60 },
+  { key: "logo-inverse", label: "Logo · 反白(深色背景)",   group: "brand", path: "images/brand/logo-inverse.png", width: 384, height: 60 },
+
   // Hero / Video poster
   { key: "hero-poster",  label: "Hero Poster (首页背景)",       group: "hero", path: "images/hero-poster.jpg",        width: 1920, height: 1080 },
   { key: "video-poster", label: "视频区海报",                    group: "hero", path: "images/aplus/video-poster.jpg", width: 1920, height: 1080 },

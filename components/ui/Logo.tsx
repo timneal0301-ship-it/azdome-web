@@ -1,29 +1,62 @@
-// AZDOME brand wordmark — inline SVG.
+"use client";
+
+// AZDOME brand wordmark — admin-uploadable.
 //
-// Bold sans-serif "AZDOME" in brand blue with a small square accent
-// after the wordmark. Renders crisp at every size; the parent controls
-// dimensions via the `size` prop (height in px).
+//   • If admin has uploaded a custom logo image at /admin (under the
+//     "logo-primary" or "logo-inverse" slot), render that.
+//   • Otherwise fall back to a clean inline-SVG wordmark in brand blue.
+
+import { useAssetUrl } from "@/components/AssetUrlsProvider";
 
 type LogoProps = {
   className?: string;
-  /** Height in pixels. Width auto-scales by viewBox ratio. */
+  /** Height in pixels. Width auto-scales. */
   size?: number;
-  /** Wordmark color. Defaults to AZDOME brand blue. */
+  /** Wordmark color for the SVG fallback. */
   color?: string;
-  /** Accent square color. Defaults to brand blue. */
+  /** Accent square color for the SVG fallback. */
   accent?: string;
+  /**
+   * If true, look up the "logo-inverse" slot (white-for-dark-bg variant).
+   * Otherwise use the primary blue slot. Also flips fallback SVG colors.
+   */
+  inverse?: boolean;
 };
 
 const BRAND_BLUE = "#0066CC";
+const PRIMARY_PATH = "/images/brand/logo-primary.png";
+const INVERSE_PATH = "/images/brand/logo-inverse.png";
 
 export default function Logo({
   className = "",
   size = 22,
-  color = BRAND_BLUE,
-  accent = BRAND_BLUE,
+  color,
+  accent,
+  inverse = false,
 }: LogoProps) {
-  // viewBox is sized so the wordmark renders at the intended scale.
-  // Width:height ≈ 6.4 — width scales automatically per `size` prop.
+  const path = inverse ? INVERSE_PATH : PRIMARY_PATH;
+  const resolved = useAssetUrl(path);
+
+  // Admin has uploaded a custom logo when the resolver returns a URL that
+  // differs from the static seed path (i.e., a Vercel Blob URL or any
+  // override). Render it as an image and let it scale to height = size.
+  if (resolved !== path) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img
+        src={resolved}
+        alt="AZDOME"
+        height={size}
+        style={{ height: size, width: "auto", display: "inline-block" }}
+        className={className}
+      />
+    );
+  }
+
+  // No upload — render the SVG wordmark.
+  const fillColor = color ?? (inverse ? "#ffffff" : BRAND_BLUE);
+  const accentColor = accent ?? (inverse ? "#60a5fa" : BRAND_BLUE);
+
   return (
     <svg
       viewBox="0 0 192 30"
@@ -40,11 +73,11 @@ export default function Logo({
         fontWeight={900}
         fontSize={30}
         letterSpacing={-1.2}
-        fill={color}
+        fill={fillColor}
       >
         AZDOME
       </text>
-      <rect x="160" y="17" width="7" height="7" fill={accent} />
+      <rect x="160" y="17" width="7" height="7" fill={accentColor} />
     </svg>
   );
 }
