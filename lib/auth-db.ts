@@ -1,6 +1,6 @@
-// Node-only auth helpers: password hashing + user CRUD. Touches the JSON DB
-// and is therefore unsafe for Edge runtime / middleware. Import only from
-// Node server contexts (server actions, route handlers, server components).
+// Node-only auth helpers: password hashing + user CRUD. Touches the async DB
+// adapter (KV in production, JSON in dev). Edge runtime cannot import this
+// file because it transitively pulls in `fs`.
 
 import "server-only";
 
@@ -38,7 +38,7 @@ function userKey(email: string) {
   return `user:${email.toLowerCase().trim()}`;
 }
 
-export function findUser(email: string): UserRecord | undefined {
+export async function findUser(email: string): Promise<UserRecord | undefined> {
   return db.get<UserRecord>(userKey(email));
 }
 
@@ -48,14 +48,14 @@ export async function createUser(input: {
   password: string;
 }): Promise<UserRecord> {
   const email = input.email.toLowerCase().trim();
-  if (findUser(email)) throw new Error("email-exists");
+  if (await findUser(email)) throw new Error("email-exists");
   const record: UserRecord = {
     email,
     name: input.name.trim() || email.split("@")[0],
     pwHash: await hashPassword(input.password),
     createdAt: new Date().toISOString(),
   };
-  db.set(userKey(email), record);
+  await db.set(userKey(email), record);
   return record;
 }
 
@@ -63,7 +63,7 @@ export async function authenticate(
   email: string,
   password: string,
 ): Promise<UserRecord | null> {
-  const user = findUser(email);
+  const user = await findUser(email);
   if (!user) return null;
   const ok = await verifyPassword(password, user.pwHash);
   return ok ? user : null;

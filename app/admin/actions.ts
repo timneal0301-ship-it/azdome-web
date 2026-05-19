@@ -13,6 +13,7 @@ import {
 } from "@/lib/admin-auth";
 import { findSlot } from "@/lib/image-slots";
 import { storage } from "@/lib/storage";
+import { db } from "@/lib/db";
 
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"];
 const MAX_SIZE = 8 * 1024 * 1024; // 8 MB
@@ -66,10 +67,12 @@ export async function updateImage(formData: FormData): Promise<UpdateResult> {
 
   try {
     const buf = Buffer.from(await file.arrayBuffer());
-    const { backupPath } = await storage.write(slot.path, buf);
-    // Invalidate every page so the new asset shows up everywhere.
+    const { url, backupPath } = await storage.write(slot.path, buf);
+    // Remember the resolved URL so admin previews + public consumers that
+    // opt in (via lib/asset-urls.ts) can pick up the new file.
+    await db.set(`image:${slot.key}`, url);
     revalidatePath("/", "layout");
-    return { ok: true, path: slot.path, backupPath, ts: Date.now() };
+    return { ok: true, path: url, backupPath, ts: Date.now() };
   } catch (e) {
     return { ok: false, error: e instanceof Error ? e.message : "写入失败" };
   }

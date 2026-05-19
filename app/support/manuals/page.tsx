@@ -10,8 +10,8 @@ export const dynamic = "force-dynamic";
 
 export const metadata = { title: "User Manuals — AZDOME Support" };
 
-export default function ManualsPage() {
-  const manuals = getAllManuals();
+export default async function ManualsPage() {
+  const manuals = await getAllManuals();
   const entries = manuals
     .map((manual) => {
       const product = PRODUCTS.find((p) => p.slug === manual.productSlug);

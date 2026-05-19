@@ -59,19 +59,29 @@ After pushing this repo to GitHub:
    vars when prompted.
 3. First deploy completes in ~90 seconds.
 
-### ⚠ Production caveat — read-only filesystem
+### Storage on Vercel (auto-switching adapters)
 
-The default storage adapter writes to `public/images/` and `public/downloads/`,
-which works in local dev but **fails on Vercel/Netlify serverless** (the
-runtime filesystem is read-only). For production:
+`lib/storage.ts` and `lib/db.ts` ship with two adapters each:
 
-- **Images**: swap `lib/storage.ts`'s `localStorage` adapter for Vercel Blob,
-  Cloudflare R2, or S3.
-- **User accounts + admin metadata** (`data/db.json`): swap `lib/db.ts` for
-  Vercel KV, Upstash Redis, or a real DB (Postgres via Neon/Supabase).
+| | Local dev | Production (Vercel) |
+|---|---|---|
+| File storage | `public/` directory | **Vercel Blob** |
+| Database | `data/db.json` | **Vercel KV** |
 
-Both files have storage-adapter abstractions designed for this swap —
-typically ~10 lines of change.
+The switch is **automatic at runtime** based on env vars — no code change
+between environments. To enable on Vercel:
+
+1. Vercel dashboard → your project → **Storage** → **Create database**
+2. Pick **Blob** (for images/firmware/manuals) → press Create
+3. Pick **KV** (for users + admin metadata) → press Create
+4. Vercel injects `BLOB_READ_WRITE_TOKEN`, `KV_REST_API_URL`, `KV_REST_API_TOKEN`
+   into your project's env vars automatically
+5. **Redeploy** to pick them up
+
+After redeploying, admin uploads write to Blob, user signup persists in KV,
+and the public site picks up admin-uploaded images via the `<AssetUrlsProvider>`
+in `app/layout.tsx`. Without these env vars (e.g., on the very first deploy
+before you connect storage), the app still loads — it just can't write.
 
 ## Project structure
 

@@ -17,10 +17,16 @@ export function generateMetadata({ params }: { params: { slug: string } }) {
   };
 }
 
-export default function ProductPage({ params }: { params: { slug: string } }) {
+export default async function ProductPage({
+  params,
+}: {
+  params: { slug: string };
+}) {
   const product = getProduct(params.slug);
   if (!product) notFound();
-  const manual = getManualEntry(params.slug);
-  const firmware = getLatestFirmware(params.slug);
+  const [manual, firmware] = await Promise.all([
+    getManualEntry(params.slug),
+    getLatestFirmware(params.slug),
+  ]);
   return <ProductPDP product={product} manual={manual} firmware={firmware} />;
 }

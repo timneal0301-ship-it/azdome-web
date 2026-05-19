@@ -3,9 +3,9 @@ import { getAllFirmware, getAllManuals } from "@/lib/downloads-server";
 
 export const dynamic = "force-dynamic";
 
-export default function DownloadsAdminPage() {
-  const firmware = getAllFirmware();
-  const manuals = getAllManuals();
+export default async function DownloadsAdminPage() {
+  const firmware = await getAllFirmware();
+  const manuals = await getAllManuals();
 
   return (
     <main className="mx-auto max-w-6xl px-6 pb-24 pt-10 lg:px-10">

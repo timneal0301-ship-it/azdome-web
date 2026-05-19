@@ -1,13 +1,8 @@
-// Server-only runtime getters that overlay admin-edited data from the JSON
+// Server-only runtime getters that overlay admin-edited data from the async
 // DB on top of the static seeds exported from ./downloads.
 //
-// Convention in db.json:
-//   "firmware:<slug>"  →  FirmwareEntry  (overrides seed for that slug)
-//   "manual:<slug>"    →  Manual         (overrides seed for that slug)
-//
 // Must only be imported from server components / server actions / route
-// handlers — never from "use client" modules, because it transitively imports
-// `fs` via ./db.
+// handlers — never from "use client" modules.
 
 import "server-only";
 
@@ -20,42 +15,51 @@ import {
   type Manual,
 } from "./downloads";
 
-export function getAllFirmware(): FirmwareEntry[] {
-  return FIRMWARE.map((seed) => {
-    const override = db.get<FirmwareEntry>(`firmware:${seed.productSlug}`);
-    return override ?? seed;
-  });
+export async function getAllFirmware(): Promise<FirmwareEntry[]> {
+  return Promise.all(
+    FIRMWARE.map(async (seed) => {
+      const override = await db.get<FirmwareEntry>(`firmware:${seed.productSlug}`);
+      return override ?? seed;
+    }),
+  );
 }
 
-export function getFirmwareEntry(productSlug: string): FirmwareEntry | undefined {
-  const override = db.get<FirmwareEntry>(`firmware:${productSlug}`);
+export async function getFirmwareEntry(
+  productSlug: string,
+): Promise<FirmwareEntry | undefined> {
+  const override = await db.get<FirmwareEntry>(`firmware:${productSlug}`);
   if (override) return override;
   return FIRMWARE.find((f) => f.productSlug === productSlug);
 }
 
-export function getLatestFirmware(productSlug: string): FirmwareRelease | undefined {
-  const entry = getFirmwareEntry(productSlug);
+export async function getLatestFirmware(
+  productSlug: string,
+): Promise<FirmwareRelease | undefined> {
+  const entry = await getFirmwareEntry(productSlug);
   return entry?.releases.find((r) => r.current) ?? entry?.releases[0];
 }
 
-export function getAllManuals(): Manual[] {
-  return MANUALS.map((seed) => {
-    const override = db.get<Manual>(`manual:${seed.productSlug}`);
-    return override ?? seed;
-  });
+export async function getAllManuals(): Promise<Manual[]> {
+  return Promise.all(
+    MANUALS.map(async (seed) => {
+      const override = await db.get<Manual>(`manual:${seed.productSlug}`);
+      return override ?? seed;
+    }),
+  );
 }
 
-export function getManualEntry(productSlug: string): Manual | undefined {
-  const override = db.get<Manual>(`manual:${productSlug}`);
+export async function getManualEntry(
+  productSlug: string,
+): Promise<Manual | undefined> {
+  const override = await db.get<Manual>(`manual:${productSlug}`);
   if (override) return override;
   return MANUALS.find((m) => m.productSlug === productSlug);
 }
 
-// Admin write helpers — used by /admin/downloads server actions.
-export function saveFirmwareEntry(entry: FirmwareEntry) {
-  db.set(`firmware:${entry.productSlug}`, entry);
+export async function saveFirmwareEntry(entry: FirmwareEntry): Promise<void> {
+  await db.set(`firmware:${entry.productSlug}`, entry);
 }
 
-export function saveManualEntry(entry: Manual) {
-  db.set(`manual:${entry.productSlug}`, entry);
+export async function saveManualEntry(entry: Manual): Promise<void> {
+  await db.set(`manual:${entry.productSlug}`, entry);
 }

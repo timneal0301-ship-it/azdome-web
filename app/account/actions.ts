@@ -71,6 +71,6 @@ export async function getCurrentUser(): Promise<PublicUser | null> {
   const token = cookies().get(USER_COOKIE)?.value;
   const email = await readSessionEmail(token);
   if (!email) return null;
-  const u = findUser(email);
+  const u = await findUser(email);
   return u ? toPublic(u) : null;
 }

@@ -8,8 +8,8 @@ export const dynamic = "force-dynamic";
 
 export const metadata = { title: "Firmware Downloads — AZDOME Support" };
 
-export default function FirmwarePage() {
-  const data = getAllFirmware();
+export default async function FirmwarePage() {
+  const data = await getAllFirmware();
   return (
     <main className="bg-white">
       <section className="border-b border-slate-100 bg-slate-50">

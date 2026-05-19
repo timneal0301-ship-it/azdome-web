@@ -45,40 +45,46 @@ export async function uploadFirmware(formData: FormData): Promise<Result> {
   if (file.size > MAX_BIN_SIZE)
     return { ok: false, error: `固件超过 ${MAX_BIN_SIZE / 1024 / 1024} MB 上限` };
 
-  const entry = getFirmwareEntry(productSlug);
+  const entry = await getFirmwareEntry(productSlug);
   if (!entry) return { ok: false, error: "未知型号" };
 
   if (entry.releases.some((r) => r.version === version)) {
     return { ok: false, error: `${version} 已存在,请先删除再上传` };
   }
 
-  const filePath = `downloads/firmware/${productSlug}-${version}.bin`;
+  const relativePath = `downloads/firmware/${productSlug}-${version}.bin`;
+  let url: string;
   try {
-    await storage.write(filePath, Buffer.from(await file.arrayBuffer()));
+    const result = await storage.write(
+      relativePath,
+      Buffer.from(await file.arrayBuffer()),
+    );
+    url = result.url;
   } catch (e) {
     return { ok: false, error: e instanceof Error ? e.message : "写入失败" };
   }
 
-  // Compute display fields
   const sizeMB = (file.size / 1024 / 1024).toFixed(1);
   const newRelease: FirmwareRelease = {
     version,
     date: new Date().toISOString().slice(0, 10),
     size: `${sizeMB} MB`,
-    sha256: await sha256Hex(file).then((h) => h.slice(0, 16)),
+    sha256: (await sha256Hex(file)).slice(0, 16),
     notes: notes || "(no release notes)",
-    file: `/${filePath}`,
+    file: url,
     current: makeCurrent,
   };
 
-  const next = { ...entry };
-  next.releases = [
-    newRelease,
-    ...entry.releases.map((r) =>
-      makeCurrent ? { ...r, current: false } : r,
-    ),
-  ];
-  saveFirmwareEntry(next);
+  const next: typeof entry = {
+    ...entry,
+    releases: [
+      newRelease,
+      ...entry.releases.map((r) =>
+        makeCurrent ? { ...r, current: false } : r,
+      ),
+    ],
+  };
+  await saveFirmwareEntry(next);
 
   revalidatePath("/support/firmware", "page");
   revalidatePath("/admin/downloads", "page");
@@ -90,20 +96,24 @@ export async function deleteFirmwareVersion(
   version: string,
 ): Promise<Result> {
   await requireAuth();
-  const entry = getFirmwareEntry(productSlug);
+  const entry = await getFirmwareEntry(productSlug);
   if (!entry) return { ok: false, error: "未知型号" };
-  const next = {
+  let next = {
     ...entry,
     releases: entry.releases.filter((r) => r.version !== version),
   };
   if (next.releases.length === 0) {
     return { ok: false, error: "至少保留一个版本" };
   }
-  // If we deleted the current, promote the newest to current
   if (!next.releases.some((r) => r.current)) {
-    next.releases = next.releases.map((r, i) => (i === 0 ? { ...r, current: true } : r));
+    next = {
+      ...next,
+      releases: next.releases.map((r, i) =>
+        i === 0 ? { ...r, current: true } : r,
+      ),
+    };
   }
-  saveFirmwareEntry(next);
+  await saveFirmwareEntry(next);
   revalidatePath("/support/firmware", "page");
   revalidatePath("/admin/downloads", "page");
   return { ok: true, message: `已删除 ${version}` };
@@ -114,11 +124,14 @@ export async function setCurrentFirmware(
   version: string,
 ): Promise<Result> {
   await requireAuth();
-  const entry = getFirmwareEntry(productSlug);
+  const entry = await getFirmwareEntry(productSlug);
   if (!entry) return { ok: false, error: "未知型号" };
-  saveFirmwareEntry({
+  await saveFirmwareEntry({
     ...entry,
-    releases: entry.releases.map((r) => ({ ...r, current: r.version === version })),
+    releases: entry.releases.map((r) => ({
+      ...r,
+      current: r.version === version,
+    })),
   });
   revalidatePath("/support/firmware", "page");
   revalidatePath("/admin/downloads", "page");
@@ -146,12 +159,17 @@ export async function uploadManual(formData: FormData): Promise<Result> {
     return { ok: false, error: "仅接受 PDF 文件" };
   }
 
-  const entry = getManualEntry(productSlug);
+  const entry = await getManualEntry(productSlug);
   if (!entry) return { ok: false, error: "未知型号" };
 
-  const filePath = `downloads/manuals/${productSlug}-${lang}.pdf`;
+  const relativePath = `downloads/manuals/${productSlug}-${lang}.pdf`;
+  let url: string;
   try {
-    await storage.write(filePath, Buffer.from(await file.arrayBuffer()));
+    const result = await storage.write(
+      relativePath,
+      Buffer.from(await file.arrayBuffer()),
+    );
+    url = result.url;
   } catch (e) {
     return { ok: false, error: e instanceof Error ? e.message : "写入失败" };
   }
@@ -161,14 +179,17 @@ export async function uploadManual(formData: FormData): Promise<Result> {
     ...entry,
     files: {
       ...entry.files,
-      [lang]: { file: `/${filePath}`, size: `${sizeMB} MB` },
+      [lang]: { file: url, size: `${sizeMB} MB` },
     },
   };
-  saveManualEntry(next);
+  await saveManualEntry(next);
 
   revalidatePath("/support/manuals", "page");
   revalidatePath("/admin/downloads", "page");
-  return { ok: true, message: `${entry.modelLabel} ${lang.toUpperCase()} 手册已上传` };
+  return {
+    ok: true,
+    message: `${entry.modelLabel} ${lang.toUpperCase()} 手册已上传`,
+  };
 }
 
 export async function deleteManualLang(
@@ -176,14 +197,14 @@ export async function deleteManualLang(
   lang: Locale,
 ): Promise<Result> {
   await requireAuth();
-  const entry = getManualEntry(productSlug);
+  const entry = await getManualEntry(productSlug);
   if (!entry) return { ok: false, error: "未知型号" };
   const nextFiles = { ...entry.files };
   delete nextFiles[lang];
   if (Object.keys(nextFiles).length === 0) {
     return { ok: false, error: "至少保留一种语言" };
   }
-  saveManualEntry({ ...entry, files: nextFiles });
+  await saveManualEntry({ ...entry, files: nextFiles });
   revalidatePath("/support/manuals", "page");
   revalidatePath("/admin/downloads", "page");
   return { ok: true, message: `已删除 ${lang.toUpperCase()} 手册` };

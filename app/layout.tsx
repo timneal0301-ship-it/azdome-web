@@ -3,6 +3,8 @@ import { Inter } from "next/font/google";
 import CartProvider from "@/components/CartProvider";
 import LocaleProvider from "@/components/LocaleProvider";
 import PublicChrome from "@/components/PublicChrome";
+import { AssetUrlsProvider } from "@/components/AssetUrlsProvider";
+import { getAssetUrlMap } from "@/lib/asset-urls";
 import "./globals.css";
 
 const inter = Inter({
@@ -47,19 +49,22 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const assetUrls = await getAssetUrlMap();
   return (
     <html lang="en" className={inter.variable}>
       <body className="bg-white font-sans text-slate-900 antialiased">
-        <LocaleProvider>
-          <CartProvider>
-            <PublicChrome>{children}</PublicChrome>
-          </CartProvider>
-        </LocaleProvider>
+        <AssetUrlsProvider map={assetUrls}>
+          <LocaleProvider>
+            <CartProvider>
+              <PublicChrome>{children}</PublicChrome>
+            </CartProvider>
+          </LocaleProvider>
+        </AssetUrlsProvider>
       </body>
     </html>
   );
