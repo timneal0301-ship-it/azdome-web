@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import CartProvider from "@/components/CartProvider";
 import LocaleProvider from "@/components/LocaleProvider";
 import PublicChrome from "@/components/PublicChrome";
+import AuthSessionProvider from "@/components/AuthSessionProvider";
 import { AssetUrlsProvider } from "@/components/AssetUrlsProvider";
 import { getAssetUrlMap } from "@/lib/asset-urls";
 import "./globals.css";
@@ -58,13 +59,15 @@ export default async function RootLayout({
   return (
     <html lang="en" className={inter.variable}>
       <body className="bg-white font-sans text-slate-900 antialiased">
-        <AssetUrlsProvider map={assetUrls}>
-          <LocaleProvider>
-            <CartProvider>
-              <PublicChrome>{children}</PublicChrome>
-            </CartProvider>
-          </LocaleProvider>
-        </AssetUrlsProvider>
+        <AuthSessionProvider>
+          <AssetUrlsProvider map={assetUrls}>
+            <LocaleProvider>
+              <CartProvider>
+                <PublicChrome>{children}</PublicChrome>
+              </CartProvider>
+            </LocaleProvider>
+          </AssetUrlsProvider>
+        </AuthSessionProvider>
       </body>
     </html>
   );

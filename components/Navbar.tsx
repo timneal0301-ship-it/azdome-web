@@ -3,8 +3,9 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronDown, LifeBuoy, Menu, Search, ShoppingBag } from "lucide-react";
+import { ChevronDown, HelpCircle, Menu, Search, ShoppingBag } from "lucide-react";
 
 import { useCart } from "./CartProvider";
 import { useLocale } from "./LocaleProvider";
@@ -14,19 +15,19 @@ import MobileMenu from "./MobileMenu";
 import SearchModal from "./SearchModal";
 import Logo from "./ui/Logo";
 
-type NavLink = { key: keyof typeof NAV_KEYS; href: string; hasMega?: boolean };
-
-const NAV_KEYS = {
-  dashCams: "dashCams",
-  accessories: "accessories",
-  app: "app",
-  support: "support",
-  about: "about",
-} as const;
+type NavKey = "dashCams" | "accessories" | "app" | "support" | "about" | "whereToBuy";
+type NavLink = {
+  key: NavKey;
+  href: string;
+  hasMega?: boolean;
+  /** Override for keys that aren't in the translation dictionary. */
+  label?: string;
+};
 
 const NAV_LINKS: NavLink[] = [
   { key: "dashCams", href: "/collections/dash-cams", hasMega: true },
   { key: "accessories", href: "/collections/accessories" },
+  { key: "whereToBuy", href: "/where-to-buy", label: "Where to Buy" },
   { key: "app", href: "/app" },
   { key: "support", href: "/support" },
   { key: "about", href: "/about" },
@@ -52,6 +53,7 @@ export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const pathname = usePathname();
   const { count: cartCount, open: openCart } = useCart();
   const { t } = useLocale();
   const megaLabels: Record<MegaKey, { title: string; sub: string }> = {
@@ -76,7 +78,9 @@ export default function Navbar() {
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
     };
-  }, []);
+    // Re-run when path changes — client-side route transitions don't fire
+    // scroll/resize, so we'd otherwise stay stuck on the previous page's theme.
+  }, [pathname]);
 
   // White text on transparent nav only while we're sitting on a dark hero.
   const useLightTheme = overHero && !scrolled;
@@ -140,7 +144,8 @@ export default function Navbar() {
           {/* Center links */}
           <ul className="hidden items-center gap-1 md:flex">
             {NAV_LINKS.map((link) => {
-              const label = t.nav[link.key];
+              const label =
+                link.label ?? (t.nav as Record<string, string>)[link.key] ?? link.key;
               const isActive = activeMega === link.key;
               return (
                 <li
@@ -195,7 +200,7 @@ export default function Navbar() {
                   : "text-slate-700 hover:bg-slate-100 hover:text-slate-900",
               ].join(" ")}
             >
-              <LifeBuoy className="h-5 w-5" />
+              <HelpCircle className="h-5 w-5" />
             </Link>
             <AccountBadge light={useLightTheme} />
             <IconButton

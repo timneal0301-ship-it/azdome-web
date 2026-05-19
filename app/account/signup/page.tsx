@@ -5,6 +5,7 @@ import { useFormState, useFormStatus } from "react-dom";
 import { UserPlus } from "lucide-react";
 
 import { signupAction } from "../actions";
+import SocialAuthButtons from "@/components/SocialAuthButtons";
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -42,7 +43,9 @@ export default function SignupPage({
           Free, 30 seconds. Get $20 off your first order.
         </p>
 
-        <div className="mt-6 space-y-3">
+        <SocialAuthButtons callbackUrl={searchParams.next ?? "/account"} />
+
+        <div className="space-y-3">
           <input
             name="name"
             required

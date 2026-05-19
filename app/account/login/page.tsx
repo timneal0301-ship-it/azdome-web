@@ -5,6 +5,7 @@ import { useFormState, useFormStatus } from "react-dom";
 import { LogIn } from "lucide-react";
 
 import { loginAction } from "../actions";
+import SocialAuthButtons from "@/components/SocialAuthButtons";
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -42,7 +43,9 @@ export default function LoginPage({
           See your orders, manage warranty registration, and track firmware.
         </p>
 
-        <div className="mt-6 space-y-3">
+        <SocialAuthButtons callbackUrl={searchParams.next ?? "/account"} />
+
+        <div className="space-y-3">
           <input
             name="email"
             type="email"

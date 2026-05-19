@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
-import { LogIn, LogOut, Package, User } from "lucide-react";
+import { LogIn, LogOut, Package, User, UserPlus } from "lucide-react";
 
 type Session = { signedIn: boolean; name?: string; email?: string };
 
@@ -24,29 +24,93 @@ export default function AccountBadge({ light = false }: { light?: boolean }) {
     const onDown = (e: MouseEvent) => {
       if (!wrap.current?.contains(e.target as Node)) setOpen(false);
     };
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
     document.addEventListener("mousedown", onDown);
-    return () => document.removeEventListener("mousedown", onDown);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onDown);
+      document.removeEventListener("keydown", onKey);
+    };
   }, [open]);
 
   if (!session) return null;
 
+  // ── Signed-out: user icon + dropdown showing Sign In + Create account ─
   if (!session.signedIn) {
     return (
-      <Link
-        href="/account/login"
-        aria-label="Sign in"
-        className={[
-          "inline-flex h-10 w-10 items-center justify-center rounded-full transition-all duration-300",
-          light
-            ? "text-white hover:bg-white/15"
-            : "text-slate-700 hover:bg-slate-100 hover:text-slate-900",
-        ].join(" ")}
-      >
-        <LogIn className="h-5 w-5" />
-      </Link>
+      <div ref={wrap} className="relative">
+        <button
+          onClick={() => setOpen((o) => !o)}
+          aria-label="Account"
+          aria-haspopup="menu"
+          aria-expanded={open}
+          className={[
+            "inline-flex h-10 w-10 items-center justify-center rounded-full transition-all duration-300",
+            light
+              ? "text-white hover:bg-white/15"
+              : "text-slate-700 hover:bg-slate-100 hover:text-slate-900",
+          ].join(" ")}
+        >
+          <User className="h-5 w-5" />
+        </button>
+        <AnimatePresence>
+          {open && (
+            <motion.div
+              initial={{ opacity: 0, y: -6, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -6, scale: 0.98 }}
+              transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
+              role="menu"
+              className="absolute right-0 z-50 mt-2 w-60 overflow-hidden rounded-xl bg-white shadow-xl ring-1 ring-slate-100"
+            >
+              <div className="border-b border-slate-100 px-4 py-3">
+                <p className="text-sm font-semibold tracking-tight text-slate-900">
+                  Welcome to AZDOME
+                </p>
+                <p className="mt-0.5 text-xs text-slate-500">
+                  Save addresses · track orders · $20 off your first order.
+                </p>
+              </div>
+              <ul className="p-2">
+                <li>
+                  <Link
+                    href="/account/login"
+                    onClick={() => setOpen(false)}
+                    className="flex items-center gap-3 rounded-lg bg-blue-600 px-3 py-2.5 text-sm font-semibold tracking-tight text-white transition-colors duration-200 hover:bg-blue-700"
+                  >
+                    <LogIn className="h-4 w-4" />
+                    Sign in
+                  </Link>
+                </li>
+                <li className="mt-1.5">
+                  <Link
+                    href="/account/signup"
+                    onClick={() => setOpen(false)}
+                    className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold tracking-tight text-slate-700 transition-colors duration-200 hover:bg-slate-50 hover:text-slate-900"
+                  >
+                    <UserPlus className="h-4 w-4 text-slate-400" />
+                    Create account
+                  </Link>
+                </li>
+              </ul>
+              <div className="border-t border-slate-100 bg-slate-50/60 px-4 py-2.5 text-[11px] text-slate-500">
+                Already have orders?{" "}
+                <Link
+                  href="/account/login"
+                  onClick={() => setOpen(false)}
+                  className="font-medium text-blue-600 hover:text-blue-700"
+                >
+                  Sign in to track them
+                </Link>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
     );
   }
 
+  // ── Signed-in: initials avatar + dropdown ──────────────────────────
   const initials =
     (session.name || session.email || "?")
       .split(/[\s@.]/)
