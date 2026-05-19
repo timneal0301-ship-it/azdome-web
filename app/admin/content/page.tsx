@@ -7,7 +7,8 @@ export const dynamic = "force-dynamic";
 
 const PAGE_LABELS: Record<string, string> = {
   home: "Home · 首页 Hero 轮播 + Bento Banner",
-  pdp: "PDP · 产品详情页(规格 / 评价 / FAQ / 沉浸式)",
+  catalog: "Catalog · 产品目录(10 SKU 共用数据源)",
+  pdp: "PDP · 产品详情页(规格 / 评价 / FAQ / 沉浸式 / 应用场景)",
   legal: "Legal · 隐私 / 条款 / 保修 / 无障碍 / Cookie",
   about: "About 公司页",
   careers: "Careers 招聘页",
@@ -19,6 +20,7 @@ const PAGE_LABELS: Record<string, string> = {
 
 const PAGE_ORDER = [
   "home",
+  "catalog",
   "pdp",
   "about",
   "legal",

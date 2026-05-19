@@ -2,7 +2,8 @@ import { notFound } from "next/navigation";
 
 import Breadcrumbs from "@/components/Breadcrumbs";
 import CollectionGrid from "@/components/CollectionGrid";
-import { COLLECTIONS, getCollection, PRODUCTS } from "@/lib/products";
+import { COLLECTIONS, getCollection } from "@/lib/products";
+import { getProductsBySlug } from "@/lib/products-server";
 
 export function generateStaticParams() {
   return COLLECTIONS.map((c) => ({ slug: c.slug }));
@@ -17,7 +18,7 @@ export function generateMetadata({ params }: { params: { slug: string } }) {
   };
 }
 
-export default function CollectionPage({
+export default async function CollectionPage({
   params,
 }: {
   params: { slug: string };
@@ -25,10 +26,8 @@ export default function CollectionPage({
   const collection = getCollection(params.slug);
   if (!collection) notFound();
 
-  const products = collection.productSlugs
-    .map((s) => PRODUCTS.find((p) => p.slug === s))
-    .filter((p): p is NonNullable<typeof p> => Boolean(p))
-    .map((p) => ({ ...p, name: p.short }));
+  const productsRaw = await getProductsBySlug(collection.productSlugs);
+  const products = productsRaw.map((p) => ({ ...p, name: p.short }));
 
   return (
     <main className="bg-white">

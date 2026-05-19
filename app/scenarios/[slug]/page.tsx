@@ -4,7 +4,8 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
 import ProductCard from "@/components/ProductCard";
-import { SCENARIOS, getScenario, PRODUCTS } from "@/lib/products";
+import { SCENARIOS, getScenario } from "@/lib/products";
+import { getProductsBySlug } from "@/lib/products-server";
 
 export function generateStaticParams() {
   return SCENARIOS.map((s) => ({ slug: s.slug }));
@@ -16,14 +17,12 @@ export function generateMetadata({ params }: { params: { slug: string } }) {
   return { title: `${s.title} — AZDOME`, description: s.intro };
 }
 
-export default function ScenarioPage({ params }: { params: { slug: string } }) {
+export default async function ScenarioPage({ params }: { params: { slug: string } }) {
   const scenario = getScenario(params.slug);
   if (!scenario) notFound();
 
-  const recommended = scenario.recommendedSlugs
-    .map((slug) => PRODUCTS.find((p) => p.slug === slug))
-    .filter((p): p is NonNullable<typeof p> => Boolean(p))
-    .map((p) => ({ ...p, name: p.short }));
+  const recommendedRaw = await getProductsBySlug(scenario.recommendedSlugs);
+  const recommended = recommendedRaw.map((p) => ({ ...p, name: p.short }));
 
   return (
     <main className="bg-white">

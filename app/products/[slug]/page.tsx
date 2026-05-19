@@ -1,7 +1,8 @@
 import { notFound } from "next/navigation";
 
 import ProductPDP from "@/components/ProductPDP";
-import { PRODUCTS, getProduct } from "@/lib/products";
+import { PRODUCTS } from "@/lib/products";
+import { getProductWithOverlay } from "@/lib/products-server";
 import { getLatestFirmware, getManualEntry } from "@/lib/downloads-server";
 import { getContent } from "@/lib/content-server";
 import {
@@ -18,8 +19,8 @@ export function generateStaticParams() {
   return PRODUCTS.map((p) => ({ slug: p.slug }));
 }
 
-export function generateMetadata({ params }: { params: { slug: string } }) {
-  const product = getProduct(params.slug);
+export async function generateMetadata({ params }: { params: { slug: string } }) {
+  const product = await getProductWithOverlay(params.slug);
   if (!product) return { title: "Product not found — AZDOME" };
   return {
     title: `${product.short} — AZDOME`,
@@ -32,7 +33,7 @@ export default async function ProductPage({
 }: {
   params: { slug: string };
 }) {
-  const product = getProduct(params.slug);
+  const product = await getProductWithOverlay(params.slug);
   if (!product) notFound();
   const [
     manual,
