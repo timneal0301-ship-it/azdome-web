@@ -11,74 +11,19 @@ import {
 } from "lucide-react";
 
 import FaqAccordion from "@/components/FaqAccordion";
+import { getContent } from "@/lib/content-server";
+import { WHOLESALE_PAGE } from "@/lib/content/wholesale";
 
-const TIERS = [
-  { range: "10 – 49 units", discount: "12% off MSRP" },
-  { range: "50 – 199 units", discount: "18% off MSRP" },
-  { range: "200 – 499 units", discount: "23% off MSRP" },
-  { range: "500+ units", discount: "Custom quote" },
-];
-
-const BENEFITS = [
-  { icon: Package2, title: "Volume pricing", body: "Tiered discounts from MOQ 10 units, up to negotiated rates for orders of 500+." },
-  { icon: Truck, title: "Bulk shipping", body: "Free freight on orders over $5,000 to the contiguous US. International quotes within 24h." },
-  { icon: ShieldCheck, title: "Extended warranty", body: "3-year warranty on all wholesale units (vs. 2 years retail)." },
-  { icon: Headset, title: "Dedicated account manager", body: "A single human contact who knows your account, your fleet, and your timeline." },
-  { icon: Wrench, title: "Installation services", body: "Optional white-glove install network across major US metros via our certified-installer partners." },
-  { icon: Building2, title: "Co-branded packaging", body: "Custom packaging available for fleet partners (MOQ 500). 4–6 week lead time." },
-];
-
-const VERTICALS = [
-  {
-    icon: Briefcase,
-    title: "Rideshare & delivery fleets",
-    body:
-      "M530 3-channel cameras are standard issue for 12 of the top 25 US rideshare cooperatives. Driver-portal integrations for incident review available on request.",
-  },
-  {
-    icon: Boxes,
-    title: "Logistics & last-mile",
-    body:
-      "Stealth-mounted M300S deployed in last-mile delivery vehicles across 4 of the largest North American 3PLs. Telematics-system handoffs supported via standard JSON webhooks.",
-  },
-  {
-    icon: Building2,
-    title: "Auto dealerships",
-    body:
-      "Dealer-installed M550 Pro and GS63H as an upsell package on new- and used-vehicle sales. Includes co-branded install certificates and end-customer onboarding emails.",
-  },
-];
-
-const FAQ = [
-  {
-    q: "What's the minimum order quantity?",
-    a: "Our entry-level wholesale tier starts at 10 units across any combination of SKUs. Below that, our retail pricing on azdome.com is your best path.",
-  },
-  {
-    q: "How long is lead time?",
-    a: "In-stock SKUs ship within 3 business days. Co-branded packaging or custom firmware loads take 4–6 weeks. Large orders (500+) typically ship in 7–10 days from order confirmation.",
-  },
-  {
-    q: "Do you support international wholesale?",
-    a: "Yes. We ship wholesale to the US, Canada, UK, EU, Australia, and the UAE. Other regions are handled case by case — talk to a specialist about your destination.",
-  },
-  {
-    q: "What payment terms are available?",
-    a: "First orders are prepaid. After two paid orders, Net-30 terms are available with credit approval. Larger accounts (Fleet 500+) can request Net-45 or Net-60 with line-of-credit setup.",
-  },
-  {
-    q: "Can I integrate AZDOME with my fleet telematics system?",
-    a: "Yes. We provide a JSON webhook API for incident, GPS, and event data on M530 and M550 Pro. Reference integrations exist for Geotab, Samsara, and Verizon Connect. Our solutions team will help validate your stack.",
-  },
-  {
-    q: "Do wholesale units come with the same warranty as retail?",
-    a: "Wholesale units get a 3-year warranty (vs. 2 years retail). Out-of-warranty service is available at preferential rates for wholesale partners.",
-  },
-];
+import { TIERS, BENEFITS, VERTICALS, FAQ } from "@/lib/content/wholesale";
 
 export const metadata = { title: "Wholesale — AZDOME" };
 
-export default function WholesalePage() {
+export default async function WholesalePage() {
+  const C = await getContent(WHOLESALE_PAGE);
+  const TIERS = C.tiers;
+  const BENEFITS = C.benefits;
+  const VERTICALS = C.verticals;
+  const FAQ = C.faq;
   return (
     <main className="bg-white">
       {/* Hero */}

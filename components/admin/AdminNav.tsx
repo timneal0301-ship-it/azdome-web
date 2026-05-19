@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Download, ImageIcon } from "lucide-react";
+import { Download, FileText, ImageIcon } from "lucide-react";
 
 const ITEMS = [
   { href: "/admin", label: "图片资源", icon: ImageIcon, match: (p: string) => p === "/admin" },
@@ -11,6 +11,12 @@ const ITEMS = [
     label: "固件 & 手册",
     icon: Download,
     match: (p: string) => p.startsWith("/admin/downloads"),
+  },
+  {
+    href: "/admin/content",
+    label: "页面内容",
+    icon: FileText,
+    match: (p: string) => p.startsWith("/admin/content"),
   },
 ];
 
