@@ -9,22 +9,39 @@ import {
   CircleDot,
   Hammer,
   Layers,
+  Package,
+  Smartphone,
+  Wifi,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
-type Item = {
-  icon: LucideIcon;
+const ICONS: Record<string, LucideIcon> = {
+  Camera,
+  CircleDot,
+  Layers,
+  Cable,
+  Hammer,
+  BookOpen,
+  Package,
+  Smartphone,
+  Wifi,
+};
+export const WHATS_IN_BOX_ICONS = Object.keys(ICONS);
+
+export type BoxItem = {
+  /** Lucide icon name — see WHATS_IN_BOX_ICONS for allowed values. */
+  iconName: string;
   name: string;
   detail: string;
 };
 
-const ITEMS: Item[] = [
-  { icon: Camera, name: "M550 Pro Front Camera", detail: "4K Starvis 2 sensor" },
-  { icon: CircleDot, name: "1080p Rear Camera", detail: "Full HD + 6m cable" },
-  { icon: Layers, name: "3M Adhesive Mounts ×2", detail: "Pre-applied, residue-free" },
-  { icon: Cable, name: "Type-C Power Cable", detail: "3.5m, fits most cabin trims" },
-  { icon: Hammer, name: "Trim Removal Tool", detail: "For cable routing" },
-  { icon: BookOpen, name: "Quick-Start Guide", detail: "Setup in under 20 min" },
+export const DEFAULT_BOX_ITEMS: BoxItem[] = [
+  { iconName: "Camera", name: "M550 Pro Front Camera", detail: "4K Starvis 2 sensor" },
+  { iconName: "CircleDot", name: "1080p Rear Camera", detail: "Full HD + 6m cable" },
+  { iconName: "Layers", name: "3M Adhesive Mounts ×2", detail: "Pre-applied, residue-free" },
+  { iconName: "Cable", name: "Type-C Power Cable", detail: "3.5m, fits most cabin trims" },
+  { iconName: "Hammer", name: "Trim Removal Tool", detail: "For cable routing" },
+  { iconName: "BookOpen", name: "Quick-Start Guide", detail: "Setup in under 20 min" },
 ];
 
 const fadeUp = {
@@ -38,8 +55,10 @@ const fadeUp = {
 
 export default function WhatsInBox({
   image = "/images/whatsinbox.jpg",
+  items = DEFAULT_BOX_ITEMS,
 }: {
   image?: string;
+  items?: BoxItem[];
 }) {
   return (
     <section className="bg-slate-50 py-24 md:py-32">
@@ -55,7 +74,7 @@ export default function WhatsInBox({
             variants={fadeUp}
             className="mb-4 text-xs font-medium uppercase tracking-[0.18em] text-blue-600"
           >
-            What's in the box
+            What&apos;s in the box
           </motion.p>
           <motion.h2
             variants={fadeUp}
@@ -92,23 +111,26 @@ export default function WhatsInBox({
             }}
             className="grid grid-cols-1 gap-3 sm:grid-cols-2"
           >
-            {ITEMS.map((it) => (
-              <motion.li
-                key={it.name}
-                variants={fadeUp}
-                className="flex items-start gap-4 rounded-xl bg-white p-5 shadow-sm transition-shadow duration-300 hover:shadow-md"
-              >
-                <span className="inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-blue-50 text-blue-600">
-                  <it.icon className="h-5 w-5" />
-                </span>
-                <div>
-                  <p className="text-sm font-semibold tracking-tight text-slate-900">
-                    {it.name}
-                  </p>
-                  <p className="mt-0.5 text-xs text-slate-500">{it.detail}</p>
-                </div>
-              </motion.li>
-            ))}
+            {items.map((it) => {
+              const Icon = ICONS[it.iconName] ?? Package;
+              return (
+                <motion.li
+                  key={it.name}
+                  variants={fadeUp}
+                  className="flex items-start gap-4 rounded-xl bg-white p-5 shadow-sm transition-shadow duration-300 hover:shadow-md"
+                >
+                  <span className="inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-blue-50 text-blue-600">
+                    <Icon className="h-5 w-5" />
+                  </span>
+                  <div>
+                    <p className="text-sm font-semibold tracking-tight text-slate-900">
+                      {it.name}
+                    </p>
+                    <p className="mt-0.5 text-xs text-slate-500">{it.detail}</p>
+                  </div>
+                </motion.li>
+              );
+            })}
           </motion.ul>
         </div>
       </div>

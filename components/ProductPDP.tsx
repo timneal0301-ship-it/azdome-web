@@ -22,6 +22,9 @@ import type { SpecGroup } from "@/components/SpecsTable";
 import type { Review } from "@/components/Reviews";
 import type { FAQ } from "@/components/FaqAccordion";
 import type { ImmersiveContent } from "@/components/ImmersiveFeature";
+import type { FeatureBlock } from "@/components/FeatureSplit";
+import type { BoxItem } from "@/components/WhatsInBox";
+import type { UseCaseTab } from "@/components/UseCaseTabs";
 
 export default function ProductPDP({
   product,
@@ -31,6 +34,9 @@ export default function ProductPDP({
   reviews,
   faqs,
   immersive,
+  features,
+  boxItems,
+  useCases,
 }: {
   product: ProductDetail;
   manual?: Manual;
@@ -39,6 +45,9 @@ export default function ProductPDP({
   reviews?: Review[];
   faqs?: FAQ[];
   immersive?: ImmersiveContent;
+  features?: FeatureBlock[];
+  boxItems?: BoxItem[];
+  useCases?: UseCaseTab[];
 }) {
   const buyBoxRef = useRef<HTMLDivElement>(null);
   const collectionHref =
@@ -60,11 +69,11 @@ export default function ProductPDP({
         </div>
         <ProductBuyBox product={product} manual={manual} firmware={firmware} />
       </div>
-      <FeatureSplit />
+      <FeatureSplit features={features} />
       <ImmersiveFeature content={immersive} />
-      <UseCaseTabs />
+      <UseCaseTabs tabs={useCases} />
       <VideoModal />
-      <WhatsInBox />
+      <WhatsInBox items={boxItems} />
       <SpecsTable specs={specs} />
       {product.category === "dash-cam" && <ProductCompare currentSlug={product.slug} />}
       <Reviews reviews={reviews} />

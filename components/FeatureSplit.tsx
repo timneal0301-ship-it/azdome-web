@@ -2,20 +2,44 @@
 
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { Eye, ShieldCheck, Smartphone } from "lucide-react";
+import {
+  Eye,
+  ShieldCheck,
+  Smartphone,
+  Wifi,
+  Zap,
+  Moon,
+  Camera,
+  Cloud,
+} from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
-type FeatureBlock = {
-  icon: LucideIcon;
+// Admin-editable: stored as string names so JSON serializes cleanly.
+// Add new entries to ICONS to expand the allowed set.
+const ICONS: Record<string, LucideIcon> = {
+  Eye,
+  ShieldCheck,
+  Smartphone,
+  Wifi,
+  Zap,
+  Moon,
+  Camera,
+  Cloud,
+};
+export const FEATURE_SPLIT_ICONS = Object.keys(ICONS);
+
+export type FeatureBlock = {
+  /** Lucide icon name — see FEATURE_SPLIT_ICONS for allowed values. */
+  iconName: string;
   eyebrow: string;
   title: string;
   description: string;
   image: string;
 };
 
-const DEFAULT_FEATURES: FeatureBlock[] = [
+export const DEFAULT_FEATURES: FeatureBlock[] = [
   {
-    icon: Eye,
+    iconName: "Eye",
     eyebrow: "4K Resolution",
     title: "Read license plates four lanes away.",
     description:
@@ -23,7 +47,7 @@ const DEFAULT_FEATURES: FeatureBlock[] = [
     image: "/images/aplus/4k-detail.jpg",
   },
   {
-    icon: ShieldCheck,
+    iconName: "ShieldCheck",
     eyebrow: "24H Parking Mode",
     title: "Your car never sleeps. Neither does the camera.",
     description:
@@ -31,7 +55,7 @@ const DEFAULT_FEATURES: FeatureBlock[] = [
     image: "/images/aplus/parking.jpg",
   },
   {
-    icon: Smartphone,
+    iconName: "Smartphone",
     eyebrow: "AZDOME App",
     title: "Footage in your pocket, instantly.",
     description:
@@ -67,6 +91,7 @@ function FeatureRow({
   feature: FeatureBlock;
   reverse: boolean;
 }) {
+  const Icon = ICONS[feature.iconName] ?? Eye;
   return (
     <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-2 lg:gap-16">
       {/* Copy */}
@@ -78,7 +103,7 @@ function FeatureRow({
         className={["max-w-xl", reverse ? "lg:order-2" : ""].join(" ")}
       >
         <span className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-blue-50 text-blue-600">
-          <feature.icon className="h-5 w-5" />
+          <Icon className="h-5 w-5" />
         </span>
         <p className="mt-5 text-xs font-medium uppercase tracking-[0.18em] text-blue-600">
           {feature.eyebrow}

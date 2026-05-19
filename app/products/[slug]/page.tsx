@@ -4,7 +4,15 @@ import ProductPDP from "@/components/ProductPDP";
 import { PRODUCTS, getProduct } from "@/lib/products";
 import { getLatestFirmware, getManualEntry } from "@/lib/downloads-server";
 import { getContent } from "@/lib/content-server";
-import { PDP_SPECS, PDP_REVIEWS, PDP_FAQ, PDP_IMMERSIVE } from "@/lib/content/pdp";
+import {
+  PDP_SPECS,
+  PDP_REVIEWS,
+  PDP_FAQ,
+  PDP_IMMERSIVE,
+  PDP_FEATURE_SPLIT,
+  PDP_WHATS_IN_BOX,
+  PDP_USE_CASES,
+} from "@/lib/content/pdp";
 
 export function generateStaticParams() {
   return PRODUCTS.map((p) => ({ slug: p.slug }));
@@ -26,13 +34,26 @@ export default async function ProductPage({
 }) {
   const product = getProduct(params.slug);
   if (!product) notFound();
-  const [manual, firmware, specs, reviews, faqs, immersive] = await Promise.all([
+  const [
+    manual,
+    firmware,
+    specs,
+    reviews,
+    faqs,
+    immersive,
+    features,
+    boxItems,
+    useCases,
+  ] = await Promise.all([
     getManualEntry(params.slug),
     getLatestFirmware(params.slug),
     getContent(PDP_SPECS),
     getContent(PDP_REVIEWS),
     getContent(PDP_FAQ),
     getContent(PDP_IMMERSIVE),
+    getContent(PDP_FEATURE_SPLIT),
+    getContent(PDP_WHATS_IN_BOX),
+    getContent(PDP_USE_CASES),
   ]);
   return (
     <ProductPDP
@@ -43,6 +64,9 @@ export default async function ProductPage({
       reviews={reviews}
       faqs={faqs}
       immersive={immersive}
+      features={features}
+      boxItems={boxItems}
+      useCases={useCases}
     />
   );
 }

@@ -3,6 +3,18 @@ import { DEFAULT_SPECS } from "@/components/SpecsTable";
 import { DEFAULT_REVIEWS } from "@/components/Reviews";
 import { DEFAULT_FAQS } from "@/components/FaqAccordion";
 import { DEFAULT_IMMERSIVE } from "@/components/ImmersiveFeature";
+import {
+  DEFAULT_FEATURES,
+  FEATURE_SPLIT_ICONS,
+} from "@/components/FeatureSplit";
+import {
+  DEFAULT_BOX_ITEMS,
+  WHATS_IN_BOX_ICONS,
+} from "@/components/WhatsInBox";
+import {
+  DEFAULT_USE_CASE_TABS,
+  USE_CASE_ICONS,
+} from "@/components/UseCaseTabs";
 
 export const PDP_SPECS: ContentSection<typeof DEFAULT_SPECS> = {
   key: "pdp.specs",
@@ -41,4 +53,31 @@ export const PDP_IMMERSIVE: ContentSection<typeof DEFAULT_IMMERSIVE> = {
   page: "pdp",
   previewHref: "/products/m550-pro",
   defaults: DEFAULT_IMMERSIVE,
+};
+
+export const PDP_FEATURE_SPLIT: ContentSection<typeof DEFAULT_FEATURES> = {
+  key: "pdp.feature-split",
+  label: "PDP · 图文交替 Section(3 项核心特性)",
+  description: `三段 image + 文案。 iconName 可选值: ${FEATURE_SPLIT_ICONS.join(", ")}`,
+  page: "pdp",
+  previewHref: "/products/m550-pro",
+  defaults: DEFAULT_FEATURES,
+};
+
+export const PDP_WHATS_IN_BOX: ContentSection<typeof DEFAULT_BOX_ITEMS> = {
+  key: "pdp.whats-in-box",
+  label: "PDP · 开箱清单(6 项)",
+  description: `What's-in-the-Box 6 条目。 iconName 可选值: ${WHATS_IN_BOX_ICONS.join(", ")}`,
+  page: "pdp",
+  previewHref: "/products/m550-pro",
+  defaults: DEFAULT_BOX_ITEMS,
+};
+
+export const PDP_USE_CASES: ContentSection<typeof DEFAULT_USE_CASE_TABS> = {
+  key: "pdp.use-cases",
+  label: "PDP · 应用场景 Tabs(3 项)",
+  description: `Family / Rideshare / Parking tab。 iconName 可选值: ${USE_CASE_ICONS.join(", ")}`,
+  page: "pdp",
+  previewHref: "/products/m550-pro",
+  defaults: DEFAULT_USE_CASE_TABS,
 };

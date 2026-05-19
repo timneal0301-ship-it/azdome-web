@@ -3,14 +3,32 @@
 import { useState } from "react";
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
-import { Car, ShieldCheck, Users } from "lucide-react";
+import {
+  Car,
+  Globe2,
+  Heart,
+  ShieldCheck,
+  Truck,
+  Users,
+} from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
 import { useAssetUrl } from "./AssetUrlsProvider";
 
-type Tab = {
+const ICONS: Record<string, LucideIcon> = {
+  Users,
+  Car,
+  ShieldCheck,
+  Truck,
+  Heart,
+  Globe2,
+};
+export const USE_CASE_ICONS = Object.keys(ICONS);
+
+export type UseCaseTab = {
   id: string;
-  icon: LucideIcon;
+  /** Lucide icon name — see USE_CASE_ICONS for allowed values. */
+  iconName: string;
   label: string;
   title: string;
   body: string;
@@ -18,10 +36,10 @@ type Tab = {
   image: string;
 };
 
-const TABS: Tab[] = [
+export const DEFAULT_USE_CASE_TABS: UseCaseTab[] = [
   {
     id: "family",
-    icon: Users,
+    iconName: "Users",
     label: "Family",
     title: "Memories worth keeping. Evidence when it matters.",
     body:
@@ -35,7 +53,7 @@ const TABS: Tab[] = [
   },
   {
     id: "rideshare",
-    icon: Car,
+    iconName: "Car",
     label: "Rideshare",
     title: "Protect every passenger. Protect yourself.",
     body:
@@ -49,7 +67,7 @@ const TABS: Tab[] = [
   },
   {
     id: "parking",
-    icon: ShieldCheck,
+    iconName: "ShieldCheck",
     label: "Parking",
     title: "Eyes on your car. Even when you're not.",
     body:
@@ -63,10 +81,17 @@ const TABS: Tab[] = [
   },
 ];
 
-export default function UseCaseTabs() {
-  const [activeId, setActiveId] = useState(TABS[0].id);
+export default function UseCaseTabs({
+  tabs = DEFAULT_USE_CASE_TABS,
+}: {
+  tabs?: UseCaseTab[];
+}) {
+  const TABS = tabs;
+  const [activeId, setActiveId] = useState(TABS[0]?.id ?? "");
   const active = TABS.find((t) => t.id === activeId) ?? TABS[0];
-  const imageSrc = useAssetUrl(active.image);
+  const imageSrc = useAssetUrl(active?.image ?? "");
+  if (!active) return null;
+  const ActiveIcon = ICONS[active.iconName] ?? Users;
 
   return (
     <section className="bg-slate-50 py-24 md:py-32">
@@ -84,6 +109,7 @@ export default function UseCaseTabs() {
         <div className="mb-8 flex flex-wrap gap-2 border-b border-slate-200">
           {TABS.map((tab) => {
             const isActive = tab.id === activeId;
+            const Icon = ICONS[tab.iconName] ?? Users;
             return (
               <button
                 key={tab.id}
@@ -95,7 +121,7 @@ export default function UseCaseTabs() {
                     : "text-slate-500 hover:text-slate-900",
                 ].join(" ")}
               >
-                <tab.icon className="h-4 w-4" />
+                <Icon className="h-4 w-4" />
                 {tab.label}
                 {isActive && (
                   <motion.span
@@ -147,6 +173,9 @@ export default function UseCaseTabs() {
                 transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
               >
                 <h3 className="text-balance text-2xl font-bold tracking-tight text-slate-900 md:text-4xl">
+                  <span className="mr-2 inline-flex items-center text-blue-600">
+                    <ActiveIcon className="h-6 w-6" />
+                  </span>
                   {active.title}
                 </h3>
                 <p className="mt-5 text-base leading-relaxed text-slate-600 md:text-lg">
