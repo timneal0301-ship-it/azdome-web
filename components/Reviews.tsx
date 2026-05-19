@@ -7,7 +7,7 @@ import { CheckCircle2, Star, ThumbsUp } from "lucide-react";
 
 import WriteReviewModal from "./WriteReviewModal";
 
-type Review = {
+export type Review = {
   id: string;
   title: string;
   body: string;
@@ -19,7 +19,7 @@ type Review = {
   photo?: string;
 };
 
-const REVIEWS: Review[] = [
+export const DEFAULT_REVIEWS: Review[] = [
   {
     id: "r1",
     title: "Saved me $4,200 in a fault dispute",
@@ -74,7 +74,12 @@ const DISTRIBUTION = [
 
 const FILTERS = ["All", "5★", "4★", "With Photos", "Verified"];
 
-export default function Reviews() {
+export default function Reviews({
+  reviews = DEFAULT_REVIEWS,
+}: {
+  reviews?: Review[];
+}) {
+  const REVIEWS = reviews;
   const [filter, setFilter] = useState("All");
   const [visible, setVisible] = useState(3);
   const [modalOpen, setModalOpen] = useState(false);

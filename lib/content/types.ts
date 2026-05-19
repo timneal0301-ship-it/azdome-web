@@ -13,7 +13,16 @@ export type ContentSection<T = unknown> = {
   /** Public route this section drives (for the "Preview" link). */
   previewHref?: string;
   /** Logical page grouping for the admin nav. */
-  page: "legal" | "about" | "careers" | "press" | "affiliate" | "wholesale" | "app";
+  page:
+    | "home"
+    | "pdp"
+    | "legal"
+    | "about"
+    | "careers"
+    | "press"
+    | "affiliate"
+    | "wholesale"
+    | "app";
   /** Seed value: what's served when no override exists. */
   defaults: T;
 };

@@ -66,6 +66,8 @@ export async function resetContent(key: string): Promise<void> {
 
 // ─── Section registry ───────────────────────────────────────────────
 
+import * as HOME from "./content/home";
+import * as PDP from "./content/pdp";
 import * as LEGAL from "./content/legal";
 import * as ABOUT from "./content/about";
 import * as CAREERS from "./content/careers";
@@ -77,6 +79,8 @@ import * as APP from "./content/app-page";
 // Each module exports both data arrays (STATS, DOCS, ...) and one
 // ContentSection per page. We filter the union down to just the sections.
 const ALL_RAW: unknown[] = [
+  ...Object.values(HOME),
+  ...Object.values(PDP),
   ...Object.values(LEGAL),
   ...Object.values(ABOUT),
   ...Object.values(CAREERS),

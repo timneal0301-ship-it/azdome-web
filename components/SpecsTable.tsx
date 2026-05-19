@@ -2,12 +2,12 @@
 
 import { motion } from "framer-motion";
 
-type SpecGroup = {
+export type SpecGroup = {
   title: string;
   rows: [string, string][];
 };
 
-const SPECS: SpecGroup[] = [
+export const DEFAULT_SPECS: SpecGroup[] = [
   {
     title: "Imaging",
     rows: [
@@ -57,7 +57,12 @@ const SPECS: SpecGroup[] = [
   },
 ];
 
-export default function SpecsTable() {
+export default function SpecsTable({
+  specs = DEFAULT_SPECS,
+}: {
+  specs?: SpecGroup[];
+}) {
+  const SPECS = specs;
   return (
     <section className="bg-white py-24 md:py-32">
       <div className="mx-auto max-w-5xl px-6 lg:px-10">

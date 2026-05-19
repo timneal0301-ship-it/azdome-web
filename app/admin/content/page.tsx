@@ -6,6 +6,8 @@ import { ALL_SECTIONS, getContentDetailed } from "@/lib/content-server";
 export const dynamic = "force-dynamic";
 
 const PAGE_LABELS: Record<string, string> = {
+  home: "Home · 首页 Hero 轮播 + Bento Banner",
+  pdp: "PDP · 产品详情页(规格 / 评价 / FAQ / 沉浸式)",
   legal: "Legal · 隐私 / 条款 / 保修 / 无障碍 / Cookie",
   about: "About 公司页",
   careers: "Careers 招聘页",
@@ -14,6 +16,18 @@ const PAGE_LABELS: Record<string, string> = {
   wholesale: "Wholesale 批发",
   app: "App 推广页",
 };
+
+const PAGE_ORDER = [
+  "home",
+  "pdp",
+  "about",
+  "legal",
+  "careers",
+  "press",
+  "affiliate",
+  "wholesale",
+  "app",
+];
 
 export default async function ContentAdminPage() {
   // Fetch status for each section to show "Overridden" badge.
@@ -50,7 +64,9 @@ export default async function ContentAdminPage() {
       </header>
 
       <div className="space-y-12">
-        {Object.entries(groups).map(([page, items]) => (
+        {Object.entries(groups)
+          .sort(([a], [b]) => PAGE_ORDER.indexOf(a) - PAGE_ORDER.indexOf(b))
+          .map(([page, items]) => (
           <section key={page}>
             <h2 className="mb-4 text-lg font-bold tracking-tight text-slate-900 md:text-xl">
               {PAGE_LABELS[page] ?? page}

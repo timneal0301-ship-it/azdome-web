@@ -5,35 +5,38 @@ import { motion } from "framer-motion";
 
 import { useAssetUrl } from "./AssetUrlsProvider";
 
-type Stat = { value: string; label: string };
+export type ImmersiveStat = { value: string; label: string };
 
-type Props = {
-  eyebrow?: string;
-  title?: React.ReactNode;
-  subtitle?: string;
-  image?: string;
-  stats?: Stat[];
+export type ImmersiveContent = {
+  eyebrow: string;
+  titleA: string;
+  titleB: string;
+  subtitle: string;
+  image: string;
+  stats: ImmersiveStat[];
 };
 
-export default function ImmersiveFeature({
-  eyebrow = "Engineered for night",
-  title = (
-    <>
-      See clearer at 2 a.m. than{" "}
-      <span className="bg-gradient-to-r from-white via-blue-200 to-blue-400 bg-clip-text text-transparent">
-        the human eye.
-      </span>
-    </>
-  ),
-  subtitle = "Sony STARVIS-grade sensor + f/1.55 aperture + 6-layer IR. Captures license plates, road signs, and pedestrians in conditions where your eyes see only blur.",
-  image = "/images/pdp/immersive-night.jpg",
-  stats = [
+export const DEFAULT_IMMERSIVE: ImmersiveContent = {
+  eyebrow: "Engineered for night",
+  titleA: "See clearer at 2 a.m. than",
+  titleB: "the human eye.",
+  subtitle:
+    "Sony STARVIS-grade sensor + f/1.55 aperture + 6-layer IR. Captures license plates, road signs, and pedestrians in conditions where your eyes see only blur.",
+  image: "/images/pdp/immersive-night.jpg",
+  stats: [
     { value: "0.001 lux", label: "Min illumination" },
     { value: "f/1.55", label: "Aperture" },
     { value: "150°", label: "Field of view" },
     { value: "−4°F → 158°F", label: "Operating range" },
   ],
-}: Props) {
+};
+
+export default function ImmersiveFeature({
+  content = DEFAULT_IMMERSIVE,
+}: {
+  content?: ImmersiveContent;
+}) {
+  const { eyebrow, titleA, titleB, subtitle, image, stats } = content;
   const src = useAssetUrl(image);
   return (
     <section
@@ -74,7 +77,10 @@ export default function ImmersiveFeature({
           transition={{ duration: 0.7, delay: 0.05, ease: [0.22, 1, 0.36, 1] }}
           className="mx-auto max-w-4xl text-balance text-4xl font-bold leading-[1.05] tracking-tight md:text-6xl"
         >
-          {title}
+          {titleA}{" "}
+          <span className="bg-gradient-to-r from-white via-blue-200 to-blue-400 bg-clip-text text-transparent">
+            {titleB}
+          </span>
         </motion.h2>
         <motion.p
           initial={{ opacity: 0, y: 16 }}

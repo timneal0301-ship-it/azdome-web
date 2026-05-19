@@ -4,9 +4,9 @@ import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Plus } from "lucide-react";
 
-type FAQ = { q: string; a: string };
+export type FAQ = { q: string; a: string };
 
-const DEFAULT_FAQS: FAQ[] = [
+export const DEFAULT_FAQS: FAQ[] = [
   {
     q: "How do I install the M550 Pro?",
     a: "Most drivers finish install in under 20 minutes. Peel the 3M mount, position the camera behind your rearview mirror, route the Type-C cable along the trim using the included tool, and plug into your 12V port. For 24-hour parking mode, add the optional hardwire kit.",

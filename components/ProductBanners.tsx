@@ -22,7 +22,7 @@ export type ProductBanner = {
   accent?: string;
 };
 
-const DEFAULT_BANNERS: ProductBanner[] = [
+export const DEFAULT_BANNERS: ProductBanner[] = [
   {
     id: "m550-pro",
     eyebrow: "Best Seller",
