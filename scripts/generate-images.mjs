@@ -914,6 +914,25 @@ async function main() {
     [nightDrive({ w: 1920, h: 1080, withHud: false }), `${root}/hero-poster.jpg`],
     [nightDrive({ w: 1920, h: 1080, withHud: true }),  `${root}/aplus/video-poster.jpg`],
 
+    // Hero Carousel banners
+    [nightDrive({ w: 1920, h: 1080, withHud: false }),                          `${root}/banners/hero-1.jpg`],
+    [aboutHero({ w: 1920, h: 1080 }),                                           `${root}/banners/hero-2.jpg`],
+    [rideshareScene({ w: 1920, h: 1080 }),                                      `${root}/banners/hero-3.jpg`],
+    [featureCard({ w: 1920, h: 1080, theme: "wifi" }),                          `${root}/banners/hero-4.jpg`],
+
+    // Mini bento banners
+    [productFront({ subLabel: "M550 PRO · 4K" }),                               `${root}/banners/mini-m550-pro.jpg`],
+    [productFront({ subLabel: "M550 MAX · 3-CH", lenses: 3 }),                  `${root}/banners/mini-m550-max.jpg`],
+    [productFront({ subLabel: "PG17 PRO · MIRROR", withScreen: true }),         `${root}/banners/mini-pg17.jpg`],
+    [whatsInBox({ w: 900, h: 600 }),                                            `${root}/banners/mini-accessories.jpg`],
+    [familyTrip({ w: 1800, h: 600 }),                                           `${root}/banners/mini-scenarios.jpg`],
+
+    // PDP immersive + use-case tabs
+    [nightDrive({ w: 1920, h: 1080, withHud: true }),                           `${root}/pdp/immersive-night.jpg`],
+    [familyTrip({ w: 1400, h: 1100 }),                                          `${root}/pdp/use-family.jpg`],
+    [rideshareScene({ w: 1400, h: 1100 }),                                      `${root}/pdp/use-rideshare.jpg`],
+    [parkingScene({ w: 1400, h: 1100 }),                                        `${root}/pdp/use-parking.jpg`],
+
     // Scenarios
     [familyTrip({}),    `${root}/scenarios/family.jpg`],
     [rideshareScene({}),`${root}/scenarios/rideshare.jpg`],

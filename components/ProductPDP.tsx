@@ -13,6 +13,9 @@ import FaqAccordion from "@/components/FaqAccordion";
 import RelatedProducts from "@/components/RelatedProducts";
 import StickyBottomCTA from "@/components/StickyBottomCTA";
 import ScrollProgress from "@/components/ScrollProgress";
+import ImmersiveFeature from "@/components/ImmersiveFeature";
+import UseCaseTabs from "@/components/UseCaseTabs";
+import ProductCompare from "@/components/ProductCompare";
 import type { ProductDetail } from "@/lib/products";
 import type { FirmwareRelease, Manual } from "@/lib/downloads";
 
@@ -46,9 +49,12 @@ export default function ProductPDP({
         <ProductBuyBox product={product} manual={manual} firmware={firmware} />
       </div>
       <FeatureSplit />
+      <ImmersiveFeature />
+      <UseCaseTabs />
       <VideoModal />
       <WhatsInBox />
       <SpecsTable />
+      {product.category === "dash-cam" && <ProductCompare currentSlug={product.slug} />}
       <Reviews />
       <FaqAccordion />
       <RelatedProducts currentSlug={product.slug} />

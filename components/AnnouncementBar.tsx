@@ -22,7 +22,7 @@ export default function AnnouncementBar() {
   }, [messages.length]);
 
   return (
-    <div className="fixed inset-x-0 top-0 z-[60] flex h-9 items-center justify-center overflow-hidden bg-slate-950 text-white">
+    <div className="fixed inset-x-0 top-0 z-30 flex h-9 items-center justify-center overflow-hidden bg-slate-950 text-white">
       <AnimatePresence mode="wait" initial={false}>
         <motion.p
           key={`${index}-${messages[index]}`}

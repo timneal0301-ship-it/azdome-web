@@ -1,9 +1,12 @@
 export type ImageGroup =
   | "hero"
+  | "banners"
+  | "miniBanners"
   | "products"
   | "mega"
   | "scenarios"
   | "features"
+  | "pdp"
   | "aplus"
   | "avatars"
   | "reviews";
@@ -20,10 +23,13 @@ export type ImageSlot = {
 
 export const GROUPS: { key: ImageGroup; label: string }[] = [
   { key: "hero", label: "Hero & 视频海报" },
+  { key: "banners", label: "首页 Hero Carousel 大 Banner" },
+  { key: "miniBanners", label: "首页 Bento 小 Banner" },
   { key: "products", label: "产品图集" },
   { key: "mega", label: "Mega Menu 分类卡" },
   { key: "scenarios", label: "首页场景图" },
   { key: "features", label: "TechFeature 功能图" },
+  { key: "pdp", label: "PDP 沉浸 / 用例 Tabs 图" },
   { key: "aplus", label: "A+ 长图文 & 其他" },
   { key: "avatars", label: "用户头像" },
   { key: "reviews", label: "评价照片" },
@@ -33,6 +39,25 @@ export const SLOTS: ImageSlot[] = [
   // Hero / Video poster
   { key: "hero-poster",  label: "Hero Poster (首页背景)",       group: "hero", path: "images/hero-poster.jpg",        width: 1920, height: 1080 },
   { key: "video-poster", label: "视频区海报",                    group: "hero", path: "images/aplus/video-poster.jpg", width: 1920, height: 1080 },
+
+  // Hero Carousel — multi-slide banners
+  { key: "banner-1", label: "Hero Slide 1 (M550 Pro)",   group: "banners", path: "images/banners/hero-1.jpg", width: 1920, height: 1080 },
+  { key: "banner-2", label: "Hero Slide 2 (PG17 Pro)",   group: "banners", path: "images/banners/hero-2.jpg", width: 1920, height: 1080 },
+  { key: "banner-3", label: "Hero Slide 3 (M550 Max)",   group: "banners", path: "images/banners/hero-3.jpg", width: 1920, height: 1080 },
+  { key: "banner-4", label: "Hero Slide 4 (Promo)",      group: "banners", path: "images/banners/hero-4.jpg", width: 1920, height: 1080 },
+
+  // Mini bento banners
+  { key: "mini-m550-pro",     label: "Mini · M550 Pro",       group: "miniBanners", path: "images/banners/mini-m550-pro.jpg",     width: 1200, height: 900 },
+  { key: "mini-m550-max",     label: "Mini · M550 Max",       group: "miniBanners", path: "images/banners/mini-m550-max.jpg",     width: 900,  height: 600 },
+  { key: "mini-pg17",         label: "Mini · PG17 Pro",       group: "miniBanners", path: "images/banners/mini-pg17.jpg",         width: 900,  height: 600 },
+  { key: "mini-accessories",  label: "Mini · Accessories",    group: "miniBanners", path: "images/banners/mini-accessories.jpg",  width: 900,  height: 600 },
+  { key: "mini-scenarios",    label: "Mini · Scenarios 宽幅",  group: "miniBanners", path: "images/banners/mini-scenarios.jpg",    width: 1800, height: 600 },
+
+  // PDP new modules
+  { key: "pdp-immersive-night", label: "PDP 沉浸式 · 夜视背景", group: "pdp", path: "images/pdp/immersive-night.jpg", width: 1920, height: 1080 },
+  { key: "pdp-use-family",      label: "PDP Tab · 家庭",        group: "pdp", path: "images/pdp/use-family.jpg",      width: 1400, height: 1100 },
+  { key: "pdp-use-rideshare",   label: "PDP Tab · 网约车",      group: "pdp", path: "images/pdp/use-rideshare.jpg",   width: 1400, height: 1100 },
+  { key: "pdp-use-parking",     label: "PDP Tab · 停车",        group: "pdp", path: "images/pdp/use-parking.jpg",     width: 1400, height: 1100 },
 
   // Products
   { key: "m550-front",   label: "M550 Pro · Front",      group: "products", path: "images/product/m550-front.jpg",    width: 1000, height: 1000 },
