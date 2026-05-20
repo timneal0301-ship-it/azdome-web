@@ -486,6 +486,17 @@ const PDP_SPECS_SCHEMA: ItemSchema = {
   },
 };
 
+const APP_COMPATIBILITY_SCHEMA: ItemSchema = {
+  titleKey: "product",
+  subtitleKey: "firmware",
+  fields: {
+    product: { kind: "text", label: "型号" },
+    firmware: { kind: "text", label: "最低固件版本" },
+    ios: { kind: "text", label: "iOS 要求" },
+    android: { kind: "text", label: "Android 要求" },
+  },
+};
+
 const HOME_PROMISE_SCHEMA: ItemSchema = {
   titleKey: "title",
   subtitleKey: "iconName",
@@ -577,6 +588,7 @@ export const ARRAY_SCHEMAS: Record<string, ItemSchema> = {
   "pdp.specs": PDP_SPECS_SCHEMA,
   "catalog.products": CATALOG_PRODUCTS_SCHEMA,
   "legal.docs": LEGAL_DOCS_SCHEMA,
+  "app.compatibility": APP_COMPATIBILITY_SCHEMA,
 };
 
 export function getArraySchema(sectionKey: string): ItemSchema | undefined {
@@ -954,10 +966,58 @@ const HOME_FLASH_SALE_SCHEMA: ItemSchema = {
   },
 };
 
+const APP_DOWNLOAD_SCHEMA: ItemSchema = {
+  fields: {
+    eyebrow: { kind: "text", label: "Eyebrow(顶部小字)" },
+    title: { kind: "text", label: "主标题" },
+    subtitle: { kind: "textarea", label: "副标题", rows: 2 },
+    qrImage: {
+      kind: "image",
+      label: "二维码图片",
+      placeholder: "/images/app/qr.png",
+      hint: "建议上传 app-qr 槽位的方形 PNG。二维码内容由你在外部工具生成,内容可指向一个智能跳转 URL(扫码自动识别 iOS/Android)。",
+    },
+    qrCaption: { kind: "text", label: "二维码下方说明" },
+    appStoreUrl: {
+      kind: "url",
+      label: "App Store URL",
+      placeholder: "https://apps.apple.com/app/...",
+    },
+    googlePlayUrl: {
+      kind: "url",
+      label: "Google Play URL",
+      placeholder: "https://play.google.com/store/apps/details?id=...",
+    },
+    appIcon: {
+      kind: "image",
+      label: "App 图标(方形)",
+      placeholder: "/images/app/icon.png",
+      optional: true,
+    },
+    phoneScreenshot: {
+      kind: "image",
+      label: "右侧手机截图",
+      placeholder: "/images/product/m550-app.jpg",
+    },
+    rating: {
+      kind: "text",
+      label: "评分文字",
+      placeholder: "★ 4.7 · 18,000+ App Store 评价",
+      optional: true,
+    },
+    bullets: {
+      kind: "stringList",
+      label: "关键卖点(每条一行)",
+      itemLabel: "卖点",
+    },
+  },
+};
+
 export const SINGLE_OBJECT_SCHEMAS: Record<string, ItemSchema> = {
   "pdp.immersive": PDP_IMMERSIVE_SCHEMA,
   "home.priceCompare": HOME_PRICE_COMPARE_SCHEMA,
   "home.flashSale": HOME_FLASH_SALE_SCHEMA,
+  "app.download": APP_DOWNLOAD_SCHEMA,
 };
 
 export function getSingleObjectSchema(

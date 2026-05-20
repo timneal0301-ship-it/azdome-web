@@ -1,96 +1,176 @@
 import Image from "next/image";
 import Link from "next/link";
 import {
-  Cloud,
+  Apple,
   Download,
+  Folder,
+  Languages,
   MapPin,
+  Mic,
+  PlayCircle,
+  Play,
+  Settings,
   ShieldCheck,
   Smartphone,
-  Sparkles,
   Star,
   Wifi,
-  Zap,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
 import FaqAccordion from "@/components/FaqAccordion";
 import { getContent } from "@/lib/content-server";
-import { APP_PAGE } from "@/lib/content/app-page";
+import {
+  APP_COMPATIBILITY,
+  APP_DOWNLOAD,
+  APP_PAGE,
+} from "@/lib/content/app-page";
+import { getAssetUrlMap } from "@/lib/asset-urls";
 
 const ICONS: Record<string, LucideIcon> = {
   Wifi,
+  PlayCircle,
   Download,
-  Cloud,
   MapPin,
-  Sparkles,
-  Zap,
+  Settings,
+  Mic,
   ShieldCheck,
+  Languages,
+  Folder,
   Smartphone,
 };
 
-const COMPATIBILITY: { product: string; firmware: string; ios: string; android: string }[] = [
-  { product: "M550 Pro", firmware: "v2.4+", ios: "iOS 14+", android: "Android 8+" },
-  { product: "M530",      firmware: "v1.8+", ios: "iOS 14+", android: "Android 8+" },
-  { product: "GS63H",     firmware: "v3.0+", ios: "iOS 14+", android: "Android 8+" },
-  { product: "M27",       firmware: "v1.4+", ios: "iOS 14+", android: "Android 8+" },
-  { product: "M300S",     firmware: "v2.0+", ios: "iOS 14+", android: "Android 9+" },
-  { product: "M17",       firmware: "v1.2+", ios: "iOS 14+", android: "Android 8+" },
-];
-
 export const metadata = {
   title: "AZDOME App — AZDOME",
-  description: "Download the free AZDOME app for iOS and Android. Pair, preview, and download 4K footage in seconds.",
+  description:
+    "Download the free AZDOME app for iOS and Android. Pair your dash cam, browse footage, and update firmware over Wi-Fi.",
 };
 
 export default async function AppPage() {
-  const C = await getContent(APP_PAGE);
-  const FEATURES = C.features;
-  const FAQ = C.faq;
+  const [content, download, compatibility, assetMap] = await Promise.all([
+    getContent(APP_PAGE),
+    getContent(APP_DOWNLOAD),
+    getContent(APP_COMPATIBILITY),
+    getAssetUrlMap(),
+  ]);
+  const FEATURES = content.features.filter((f) => !f.hidden);
+  const FAQ = content.faq.filter((f) => !f.hidden);
+  // Server-side asset URL resolution: server components can't call the
+  // useAssetUrl client hook, so we resolve paths from the map directly.
+  const resolveAsset = (path: string) => assetMap[path] ?? path;
+  const qrUrl = resolveAsset(download.qrImage);
+  const iconUrl = resolveAsset(download.appIcon);
+  const phoneUrl = resolveAsset(download.phoneScreenshot);
+
   return (
     <main className="bg-white">
-      {/* Hero */}
+      {/* QR-driven download hero */}
       <section className="bg-slate-50">
         <div className="mx-auto grid max-w-7xl grid-cols-1 items-center gap-12 px-6 pb-20 pt-32 md:pb-28 md:pt-40 lg:grid-cols-2 lg:px-10">
+          {/* Left: copy + QR + store badges */}
           <div>
             <p className="mb-4 text-xs font-medium uppercase tracking-[0.18em] text-blue-600">
-              AZDOME App
+              {download.eyebrow}
             </p>
             <h1 className="text-balance text-4xl font-bold tracking-tight text-slate-900 md:text-6xl">
-              Your dash cam, in your pocket.
+              {download.title}
             </h1>
             <p className="mt-6 max-w-xl text-base leading-relaxed text-slate-500 md:text-lg">
-              Pair over 5 GHz Wi-Fi, preview live, download 4K clips, and share
-              in seconds — without ever touching the SD card.
+              {download.subtitle}
             </p>
-            <div className="mt-3 flex items-center gap-2 text-sm text-slate-500">
-              <div className="flex items-center gap-0.5">
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <Star key={i} className="h-4 w-4 fill-amber-400 text-amber-400" />
-                ))}
+
+            {download.rating && (
+              <div className="mt-3 flex items-center gap-2 text-sm text-slate-500">
+                <div className="flex items-center gap-0.5">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <Star
+                      key={i}
+                      className="h-4 w-4 fill-amber-400 text-amber-400"
+                    />
+                  ))}
+                </div>
+                <span>{download.rating}</span>
               </div>
-              <span>4.7 · 18,402 reviews on the App Store</span>
+            )}
+
+            {/* QR + store badges card */}
+            <div className="mt-8 inline-flex flex-wrap items-center gap-6 rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-100 md:p-6">
+              <div className="flex flex-shrink-0 flex-col items-center">
+                <div className="relative h-32 w-32 overflow-hidden rounded-xl bg-slate-50 ring-1 ring-slate-100">
+                  <Image
+                    src={qrUrl}
+                    alt="Scan to download AZDOME app"
+                    fill
+                    sizes="128px"
+                    className="object-contain p-2"
+                  />
+                </div>
+                <p className="mt-2 text-[11px] font-medium text-slate-500">
+                  {download.qrCaption}
+                </p>
+              </div>
+
+              <div className="flex-1 space-y-3">
+                {download.appIcon && (
+                  <div className="flex items-center gap-3">
+                    <div className="relative h-10 w-10 overflow-hidden rounded-xl bg-slate-50 ring-1 ring-slate-100">
+                      <Image
+                        src={iconUrl}
+                        alt="AZDOME app icon"
+                        fill
+                        sizes="40px"
+                        className="object-contain p-1"
+                      />
+                    </div>
+                    <p className="text-sm font-semibold tracking-tight text-slate-900">
+                      AZDOME
+                    </p>
+                  </div>
+                )}
+                <div className="flex flex-col gap-2 sm:flex-row">
+                  <Link
+                    href={download.appStoreUrl || "#"}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    className="inline-flex items-center gap-2 rounded-xl bg-slate-900 px-4 py-2.5 text-xs font-semibold text-white transition-colors hover:bg-slate-800"
+                  >
+                    <Apple className="h-4 w-4" />
+                    <span className="flex flex-col leading-tight">
+                      <span className="text-[9px] opacity-70">Download on the</span>
+                      <span className="text-[13px]">App Store</span>
+                    </span>
+                  </Link>
+                  <Link
+                    href={download.googlePlayUrl || "#"}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    className="inline-flex items-center gap-2 rounded-xl bg-slate-900 px-4 py-2.5 text-xs font-semibold text-white transition-colors hover:bg-slate-800"
+                  >
+                    <Play className="h-4 w-4 fill-white" />
+                    <span className="flex flex-col leading-tight">
+                      <span className="text-[9px] opacity-70">Get it on</span>
+                      <span className="text-[13px]">Google Play</span>
+                    </span>
+                  </Link>
+                </div>
+              </div>
             </div>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <a
-                href="#"
-                className="inline-flex items-center gap-2 rounded-full bg-slate-900 px-6 py-3 text-sm font-semibold text-white transition-all duration-300 hover:bg-slate-800"
-              >
-                Download on the App Store
-              </a>
-              <a
-                href="#"
-                className="inline-flex items-center gap-2 rounded-full bg-slate-900 px-6 py-3 text-sm font-semibold text-white transition-all duration-300 hover:bg-slate-800"
-              >
-                Get it on Google Play
-              </a>
-            </div>
-            <p className="mt-3 text-xs text-slate-400">
-              Free · iOS 14 + / Android 8 + · 78 MB
-            </p>
+
+            {download.bullets.length > 0 && (
+              <ul className="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-xs text-slate-500">
+                {download.bullets.map((b) => (
+                  <li key={b} className="inline-flex items-center gap-1.5">
+                    <span className="h-1 w-1 rounded-full bg-blue-400" />
+                    {b}
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
+
+          {/* Right: phone screenshot */}
           <div className="relative mx-auto aspect-square w-full max-w-md overflow-hidden rounded-2xl bg-white shadow-sm">
             <Image
-              src="/images/product/m550-app.jpg"
+              src={phoneUrl}
               alt="AZDOME app preview"
               fill
               priority
@@ -109,27 +189,27 @@ export default async function AppPage() {
               What you can do
             </p>
             <h2 className="text-balance text-4xl font-bold tracking-tight text-slate-900 md:text-5xl">
-              Eight reasons to keep the app installed.
+              The features you'll actually use.
             </h2>
           </div>
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {FEATURES.map((f) => {
               const Icon = ICONS[f.iconName] ?? Wifi;
               return (
-              <div
-                key={f.title}
-                className="rounded-2xl bg-slate-50 p-7 shadow-sm transition-shadow duration-300 hover:shadow-md"
-              >
-                <span className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-white text-blue-600 shadow-sm">
-                  <Icon className="h-5 w-5" />
-                </span>
-                <h3 className="mt-5 text-base font-semibold tracking-tight text-slate-900">
-                  {f.title}
-                </h3>
-                <p className="mt-2 text-sm leading-relaxed text-slate-500">
-                  {f.body}
-                </p>
-              </div>
+                <div
+                  key={f.title}
+                  className="rounded-2xl bg-slate-50 p-7 shadow-sm transition-shadow duration-300 hover:shadow-md"
+                >
+                  <span className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-white text-blue-600 shadow-sm">
+                    <Icon className="h-5 w-5" />
+                  </span>
+                  <h3 className="mt-5 text-base font-semibold tracking-tight text-slate-900">
+                    {f.title}
+                  </h3>
+                  <p className="mt-2 text-sm leading-relaxed text-slate-500">
+                    {f.body}
+                  </p>
+                </div>
               );
             })}
           </div>
@@ -158,7 +238,7 @@ export default async function AppPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 text-sm">
-                {COMPATIBILITY.map((r) => (
+                {compatibility.map((r) => (
                   <tr key={r.product} className="text-slate-700">
                     <td className="px-6 py-4 font-semibold tracking-tight text-slate-900">
                       {r.product}
@@ -172,13 +252,13 @@ export default async function AppPage() {
             </table>
           </div>
           <p className="mt-4 text-xs text-slate-400">
-            Older firmware versions are supported by the legacy AZDOME app available on our support page.
+            旧固件型号请通过 support 页下载相应版本的 legacy app。
           </p>
         </div>
       </section>
 
       {/* FAQ */}
-      <FaqAccordion faqs={FAQ} title="App questions, answered." eyebrow="FAQ" />
+      <FaqAccordion faqs={FAQ} title="App 常见问题" eyebrow="FAQ" />
 
       {/* CTA */}
       <section className="bg-slate-50 py-20 md:py-28">

@@ -99,6 +99,10 @@ export const SLOTS: ImageSlot[] = [
   { key: "feature-wifi",  label: "5GHz WiFi",   group: "features", path: "images/features/wifi.jpg",         width: 1200, height: 1400 },
   { key: "feature-adas",  label: "AI ADAS",     group: "features", path: "images/features/adas.jpg",         width: 1200, height: 1400 },
 
+  // App 页二维码下载区
+  { key: "app-qr",          label: "App 下载二维码",  group: "aplus", path: "images/app/qr.png",   width: 600,  height: 600 },
+  { key: "app-icon",        label: "App 图标(方形)", group: "aplus", path: "images/app/icon.png", width: 512,  height: 512 },
+
   // A+ content
   { key: "aplus-4k",      label: "4K 细节",         group: "aplus", path: "images/aplus/4k-detail.jpg", width: 1400, height: 1100 },
   { key: "aplus-parking", label: "停车监控",        group: "aplus", path: "images/aplus/parking.jpg",   width: 1400, height: 1100 },
