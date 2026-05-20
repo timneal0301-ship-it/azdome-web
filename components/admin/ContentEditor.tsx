@@ -15,7 +15,12 @@ import {
 
 import ArrayEditor from "@/components/admin/ArrayEditor";
 import ObjectEditor from "@/components/admin/ObjectEditor";
-import { getArraySchema, getObjectSchema } from "@/lib/content/array-schemas";
+import SingleObjectEditor from "@/components/admin/SingleObjectEditor";
+import {
+  getArraySchema,
+  getObjectSchema,
+  getSingleObjectSchema,
+} from "@/lib/content/array-schemas";
 import {
   resetContentAction,
   restoreVersionAction,
@@ -92,6 +97,14 @@ export default function ContentEditor({
     !Array.isArray(currentValue) &&
     typeof currentValue === "object" &&
     currentValue !== null;
+  const singleObjectSchema = getSingleObjectSchema(sectionKey);
+  const singleObjectMode =
+    !!singleObjectSchema &&
+    !arrayMode &&
+    !objectMode &&
+    !Array.isArray(currentValue) &&
+    typeof currentValue === "object" &&
+    currentValue !== null;
 
   const currentJson = useMemo(
     () => JSON.stringify(currentValue, null, 2),
@@ -110,7 +123,8 @@ export default function ContentEditor({
   const [forceJson, setForceJson] = useState(false);
   const showArrayEditor = arrayMode && !forceJson;
   const showObjectEditor = objectMode && !forceJson;
-  const formCapable = arrayMode || objectMode;
+  const showSingleObjectEditor = singleObjectMode && !forceJson;
+  const formCapable = arrayMode || objectMode || singleObjectMode;
 
   // Validate on every keystroke (cheap; JSON.parse on ~10KB strings is fine).
   useEffect(() => {
@@ -159,7 +173,7 @@ export default function ContentEditor({
   // Same for object-section: parse text into an object, mutate via the
   // ObjectEditor, push back to text.
   const objectValue: Record<string, unknown> = useMemo(() => {
-    if (!objectMode || parseError) return {};
+    if ((!objectMode && !singleObjectMode) || parseError) return {};
     try {
       const parsed = JSON.parse(text);
       return parsed && typeof parsed === "object" && !Array.isArray(parsed)
@@ -168,7 +182,7 @@ export default function ContentEditor({
     } catch {
       return {};
     }
-  }, [text, objectMode, parseError]);
+  }, [text, objectMode, singleObjectMode, parseError]);
   const setObjectValue = (next: Record<string, unknown>) => {
     setText(JSON.stringify(next, null, 2));
   };
@@ -180,6 +194,21 @@ export default function ContentEditor({
     setResult(await saveContentAction(sectionKey, text));
     setPending(null);
   };
+
+  // Cmd+S / Ctrl+S shortcut. Skips when text is unchanged or invalid.
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "s") {
+        e.preventDefault();
+        if (parseError || pending !== null) return;
+        if (text === currentJson) return;
+        onSave();
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [text, currentJson, parseError, pending]);
 
   const onReset = async () => {
     if (!confirm("恢复为代码里的默认值,并清掉所有 admin 改动 + 历史?")) return;
@@ -323,6 +352,12 @@ export default function ContentEditor({
           schema={objectSchema!}
           onChange={setObjectValue}
         />
+      ) : showSingleObjectEditor ? (
+        <SingleObjectEditor
+          value={objectValue}
+          schema={singleObjectSchema!}
+          onChange={setObjectValue}
+        />
       ) : (
         <div>
           <div className="mb-2 flex items-center justify-between text-xs text-slate-500">
@@ -355,15 +390,16 @@ export default function ContentEditor({
         </div>
       )}
 
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-slate-50 p-4">
+      <div className="sticky bottom-4 z-20 flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-slate-50/95 p-4 shadow-md backdrop-blur-md ring-1 ring-slate-200">
         <div className="flex flex-wrap gap-2">
           <button
             onClick={onSave}
             disabled={!isDirty || !!parseError || pending !== null}
+            title="保存(Cmd/Ctrl + S)"
             className="inline-flex items-center gap-1.5 rounded-full bg-blue-600 px-5 py-2 text-xs font-semibold tracking-tight text-white transition-colors duration-300 hover:bg-blue-700 disabled:bg-slate-300"
           >
             <Save className="h-3.5 w-3.5" />
-            {pending === "save" ? "保存中…" : isDirty ? "保存改动" : "无改动"}
+            {pending === "save" ? "保存中…" : isDirty ? "保存 ⌘S" : "无改动"}
           </button>
           {isOverridden && (
             <button

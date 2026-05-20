@@ -53,9 +53,39 @@ export default function SlotCard({
   const onPick = (e: React.ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0];
     if (!f) return;
+    acceptFile(f);
+  };
+
+  /** Common pathway for both <input type=file> + drag-drop. */
+  const acceptFile = (f: File) => {
+    if (!/^image\/(jpeg|png|webp)$/.test(f.type)) {
+      setFeedback({ kind: "error", msg: `不支持的文件类型: ${f.type || "unknown"}` });
+      return;
+    }
     if (preview) URL.revokeObjectURL(preview);
+    // Stash the file on the hidden input so existing onUpload picks it up.
+    if (inputRef.current) {
+      const dt = new DataTransfer();
+      dt.items.add(f);
+      inputRef.current.files = dt.files;
+    }
     setPreview(URL.createObjectURL(f));
     setFeedback(null);
+  };
+
+  const [isDragging, setIsDragging] = useState(false);
+  const onDragOver = (e: React.DragEvent) => {
+    if (selectMode) return;
+    e.preventDefault();
+    if (!isDragging) setIsDragging(true);
+  };
+  const onDragLeave = () => setIsDragging(false);
+  const onDrop = (e: React.DragEvent) => {
+    if (selectMode) return;
+    e.preventDefault();
+    setIsDragging(false);
+    const f = e.dataTransfer.files?.[0];
+    if (f) acceptFile(f);
   };
 
   const onUpload = async () => {
@@ -110,10 +140,15 @@ export default function SlotCard({
         "relative flex flex-col rounded-2xl bg-white p-4 shadow-sm ring-1 transition-all",
         selected
           ? "ring-2 ring-blue-500"
+          : isDragging
+          ? "ring-2 ring-blue-400 bg-blue-50/40"
           : "ring-slate-100",
         selectMode ? "cursor-pointer" : "",
       ].join(" ")}
       onClick={selectMode ? onToggleSelect : undefined}
+      onDragOver={onDragOver}
+      onDragLeave={onDragLeave}
+      onDrop={onDrop}
     >
       {selectMode && (
         <span

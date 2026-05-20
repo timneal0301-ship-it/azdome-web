@@ -7,6 +7,7 @@ import {
   ExternalLink,
   Eye,
   EyeOff,
+  FolderOpen,
   ImageOff,
   Plus,
   Trash2,
@@ -210,7 +211,7 @@ function ItemCard({
   );
 }
 
-function FieldGrid({
+export function FieldGrid({
   item,
   schema,
   onChange,
@@ -349,7 +350,26 @@ function FieldInput({
     const src = typeof value === "string" ? value : "";
     return (
       <div>
-        <FieldLabel spec={spec} value={value} onClear={() => onChange("")} />
+        <div className="mb-1 flex items-center justify-between gap-2">
+          <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">
+            {spec.label}
+            {spec.optional && (
+              <span className="ml-2 rounded-full bg-slate-100 px-1.5 py-0.5 text-[9px] font-bold normal-case tracking-normal text-slate-500">
+                可选
+              </span>
+            )}
+          </span>
+          <a
+            href="/admin/images"
+            target="_blank"
+            rel="noreferrer"
+            title="新标签页打开图片库,上传新图后复制路径回来"
+            className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700"
+          >
+            <FolderOpen className="h-3 w-3" />
+            图片库
+          </a>
+        </div>
         <div className="flex items-start gap-2">
           <ImageThumb src={src} />
           <div className="min-w-0 flex-1">
@@ -360,6 +380,16 @@ function FieldInput({
               onChange={(e) => onChange(e.target.value)}
               className={inputClass + " font-mono text-[12px]"}
             />
+            {spec.optional && src && (
+              <button
+                type="button"
+                onClick={() => onChange("")}
+                className="mt-1 inline-flex items-center gap-0.5 rounded-full px-2 py-0.5 text-[10px] font-semibold text-slate-400 transition-colors hover:bg-red-50 hover:text-red-600"
+              >
+                <X className="h-3 w-3" />
+                清除
+              </button>
+            )}
             {spec.hint && (
               <p className="mt-1 text-[11px] text-slate-400">{spec.hint}</p>
             )}

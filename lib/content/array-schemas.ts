@@ -507,6 +507,63 @@ const HOME_PRESS_STRIP_SCHEMA: ItemSchema = {
   },
 };
 
+const LEGAL_DOCS_SCHEMA: ItemSchema = {
+  titleKey: "title",
+  subtitleKey: "slug",
+  order: ["slug", "title", "updated", "effective", "intro", "sections"],
+  fields: {
+    slug: {
+      kind: "text",
+      label: "Slug(URL 路径,改了链接会断)",
+      hint: "如 privacy / terms / warranty",
+    },
+    title: { kind: "text", label: "文档标题" },
+    updated: {
+      kind: "text",
+      label: "Last updated 文案",
+      placeholder: "Last updated April 4, 2026",
+    },
+    effective: {
+      kind: "text",
+      label: "Effective 文案",
+      placeholder: "Effective April 18, 2026",
+    },
+    intro: { kind: "textarea", label: "前言", rows: 4 },
+    sections: {
+      kind: "objectList",
+      label: "章节",
+      itemLabel: "章节",
+      item: {
+        titleKey: "heading",
+        subtitleKey: "id",
+        order: ["id", "heading", "paragraphs", "list"],
+        fields: {
+          id: { kind: "text", label: "锚点 ID" },
+          heading: { kind: "text", label: "章节标题" },
+          paragraphs: {
+            kind: "stringList",
+            label: "段落(每段一条)",
+            itemLabel: "段落",
+            hint: "支持空白分段",
+          },
+          list: {
+            kind: "objectList",
+            label: "术语表(term / def 对)",
+            itemLabel: "术语",
+            item: {
+              titleKey: "term",
+              fields: {
+                term: { kind: "text", label: "术语" },
+                def: { kind: "textarea", label: "定义", rows: 2 },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+};
+
 export const ARRAY_SCHEMAS: Record<string, ItemSchema> = {
   "home.hero": HOME_HERO_SCHEMA,
   "home.banners": HOME_BANNERS_SCHEMA,
@@ -519,6 +576,7 @@ export const ARRAY_SCHEMAS: Record<string, ItemSchema> = {
   "pdp.use-cases": USE_CASE_TABS_SCHEMA,
   "pdp.specs": PDP_SPECS_SCHEMA,
   "catalog.products": CATALOG_PRODUCTS_SCHEMA,
+  "legal.docs": LEGAL_DOCS_SCHEMA,
 };
 
 export function getArraySchema(sectionKey: string): ItemSchema | undefined {
@@ -792,6 +850,120 @@ export function getObjectSchema(
   sectionKey: string,
 ): Record<string, ObjectPropEntry> | undefined {
   return OBJECT_SECTION_SCHEMAS[sectionKey];
+}
+
+// ── Single-object schemas (mixed scalar + nested arrays) ────────────
+
+const PDP_IMMERSIVE_SCHEMA: ItemSchema = {
+  fields: {
+    eyebrow: { kind: "text", label: "Eyebrow(小字)" },
+    titleA: { kind: "text", label: "标题前半" },
+    titleB: {
+      kind: "text",
+      label: "标题后半(蓝色渐变)",
+      optional: true,
+    },
+    subtitle: { kind: "textarea", label: "副标题", rows: 3 },
+    image: {
+      kind: "image",
+      label: "背景图",
+      placeholder: "/images/pdp/immersive-night.jpg",
+    },
+    stats: {
+      kind: "objectList",
+      label: "底部 stat 卡(4 项)",
+      itemLabel: "Stat",
+      item: {
+        titleKey: "label",
+        subtitleKey: "value",
+        fields: {
+          value: { kind: "text", label: "数值", placeholder: "0.001 lux" },
+          label: { kind: "text", label: "标签", placeholder: "Min illumination" },
+        },
+      },
+    },
+  },
+};
+
+const HOME_PRICE_COMPARE_SCHEMA: ItemSchema = {
+  fields: {
+    eyebrow: { kind: "text", label: "Eyebrow", optional: true },
+    title: { kind: "text", label: "区块标题", optional: true },
+    body: { kind: "textarea", label: "引导文案", rows: 3, optional: true },
+    brands: {
+      kind: "objectList",
+      label: "对比品牌(列)",
+      itemLabel: "品牌列",
+      item: {
+        titleKey: "name",
+        subtitleKey: "price",
+        fields: {
+          name: { kind: "text", label: "品牌 / 型号" },
+          price: { kind: "text", label: "价格", placeholder: "$129.99", optional: true },
+          highlight: {
+            kind: "boolean",
+            label: "高亮列(蓝色 + Best Value 徽章)",
+          },
+        },
+      },
+    },
+    rows: {
+      kind: "objectList",
+      label: "对比维度(行)",
+      itemLabel: "行",
+      item: {
+        titleKey: "feature",
+        fields: {
+          feature: { kind: "text", label: "维度名" },
+          values: {
+            kind: "stringList",
+            label: "各列的值(顺序与品牌列对齐)",
+            itemLabel: "值",
+            hint: '✓ ✗ — 显示为图标徽章;其他文字原样显示',
+          },
+        },
+      },
+    },
+  },
+};
+
+const HOME_FLASH_SALE_SCHEMA: ItemSchema = {
+  fields: {
+    active: {
+      kind: "boolean",
+      label: "启用 Flash Sale 倒计时条",
+    },
+    text: {
+      kind: "text",
+      label: "标语",
+      placeholder: "🎉 SPRING SALE — 20% OFF DASH CAMS",
+    },
+    cta: { kind: "text", label: "按钮文字", placeholder: "Shop Sale", optional: true },
+    href: { kind: "url", label: "按钮链接", placeholder: "/collections/dash-cams", optional: true },
+    endsAt: {
+      kind: "text",
+      label: "结束时间 (ISO)",
+      placeholder: "2026-06-30T23:59:00Z",
+      hint: "过期后自动隐藏",
+      optional: true,
+    },
+    dismissible: {
+      kind: "boolean",
+      label: "允许用户关闭(关闭状态存 localStorage)",
+    },
+  },
+};
+
+export const SINGLE_OBJECT_SCHEMAS: Record<string, ItemSchema> = {
+  "pdp.immersive": PDP_IMMERSIVE_SCHEMA,
+  "home.priceCompare": HOME_PRICE_COMPARE_SCHEMA,
+  "home.flashSale": HOME_FLASH_SALE_SCHEMA,
+};
+
+export function getSingleObjectSchema(
+  sectionKey: string,
+): ItemSchema | undefined {
+  return SINGLE_OBJECT_SCHEMAS[sectionKey];
 }
 
 /** Build a blank item from a schema (used when user clicks "新增"). */
