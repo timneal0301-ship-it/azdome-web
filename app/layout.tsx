@@ -8,6 +8,12 @@ import { AssetUrlsProvider } from "@/components/AssetUrlsProvider";
 import { getAssetUrlMap } from "@/lib/asset-urls";
 import "./globals.css";
 
+// Layout reads admin-uploaded image overrides from KV on every request.
+// Without this, the layout — and every page nested under it — gets
+// statically prerendered with whatever was in KV at build time (empty),
+// so later admin uploads don't appear on the public frontend.
+export const dynamic = "force-dynamic";
+
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
