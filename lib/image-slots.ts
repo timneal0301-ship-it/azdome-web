@@ -44,14 +44,14 @@ export const SLOTS: ImageSlot[] = [
   { key: "logo-inverse", label: "Logo · 反白(深色背景)",   group: "brand", path: "images/brand/logo-inverse.png", width: 384, height: 60 },
 
   // Hero / Video poster
-  { key: "hero-poster",  label: "Hero Poster (首页背景)",       group: "hero", path: "images/hero-poster.jpg",        width: 1920, height: 1080 },
-  { key: "video-poster", label: "视频区海报",                    group: "hero", path: "images/aplus/video-poster.jpg", width: 1920, height: 1080 },
+  { key: "hero-poster",  label: "Hero Poster · 404 页 / 备用(首页不使用)", group: "hero", path: "images/hero-poster.jpg",        width: 1920, height: 1080 },
+  { key: "video-poster", label: "视频区海报",                                  group: "hero", path: "images/aplus/video-poster.jpg", width: 1920, height: 1080 },
 
-  // Hero Carousel — multi-slide banners
-  { key: "banner-1", label: "Hero Slide 1 (M550 Pro)",   group: "banners", path: "images/banners/hero-1.jpg", width: 1920, height: 1080 },
-  { key: "banner-2", label: "Hero Slide 2 (PG17 Pro)",   group: "banners", path: "images/banners/hero-2.jpg", width: 1920, height: 1080 },
-  { key: "banner-3", label: "Hero Slide 3 (M550 Max)",   group: "banners", path: "images/banners/hero-3.jpg", width: 1920, height: 1080 },
-  { key: "banner-4", label: "Hero Slide 4 (Promo)",      group: "banners", path: "images/banners/hero-4.jpg", width: 1920, height: 1080 },
+  // Hero Carousel — multi-slide banners (★ 首页大图轮播 ★ 改这里 ★)
+  { key: "banner-1", label: "★ 首页 Hero Slide 1 (M550 Pro)",   group: "banners", path: "images/banners/hero-1.jpg", width: 1920, height: 1080 },
+  { key: "banner-2", label: "★ 首页 Hero Slide 2 (PG17 Pro)",   group: "banners", path: "images/banners/hero-2.jpg", width: 1920, height: 1080 },
+  { key: "banner-3", label: "★ 首页 Hero Slide 3 (M550 Max)",   group: "banners", path: "images/banners/hero-3.jpg", width: 1920, height: 1080 },
+  { key: "banner-4", label: "★ 首页 Hero Slide 4 (Promo)",      group: "banners", path: "images/banners/hero-4.jpg", width: 1920, height: 1080 },
 
   // Mini bento banners
   { key: "mini-m550-pro",     label: "Mini · M550 Pro",       group: "miniBanners", path: "images/banners/mini-m550-pro.jpg",     width: 1200, height: 900 },
