@@ -11,13 +11,17 @@ export type LayoutConfig = Record<string, boolean>;
 
 /** Module visibility for the homepage. Add new modules as the home grows. */
 export const HOME_LAYOUT_DEFAULTS: LayoutConfig = {
+  flashSale: false,     // FlashSaleBar (default OFF — turn on for promos)
   hero: true,           // HeroCarousel
+  promise: true,        // PromiseThreeCol (trust signals)
   banners: true,        // ProductBanners (bento grid)
   press: true,          // PressLogos
   featured: true,       // FeaturedProducts
+  priceCompare: true,   // PriceCompare matrix
   video: true,          // VideoModal (the watch-video CTA target)
   scenarios: true,      // ScenarioGrid
   tech: true,           // TechFeature
+  pressStrip: true,     // PressQuotesStrip (rotating quote)
   testimonials: true,   // Testimonials
   newsletter: true,     // Newsletter
 };

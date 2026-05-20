@@ -27,6 +27,7 @@ import {
   WHOLESALE_VERTICAL_ICONS,
 } from "./wholesale";
 import { APP_FEATURE_ICONS } from "./app-page";
+import { PROMISE_ICONS } from "@/components/PromiseThreeCol";
 
 export type PrimitiveKind =
   | "text"
@@ -98,24 +99,124 @@ export type ItemSchema = {
 
 // ── Schemas ─────────────────────────────────────────────────────────
 
+/** Convenience: build a select FieldSpec from a readonly list of icon names. */
+const iconSelect = (names: readonly string[]) => ({
+  kind: "select" as const,
+  label: "图标",
+  options: names.map((v) => ({ value: v, label: v })),
+});
+
 const HOME_HERO_SCHEMA: ItemSchema = {
   titleKey: "titleA",
   subtitleKey: "eyebrow",
-  order: ["eyebrow", "titleA", "titleB", "subtitle", "image", "tone", "primary", "secondary", "hidden", "id"],
+  order: [
+    "layout",
+    "eyebrow",
+    "titleA",
+    "titleB",
+    "subtitle",
+    "image",
+    "videoSrc",
+    "tone",
+    "accentColor",
+    "gradientStrength",
+    "gradientDirection",
+    "badges",
+    "pricing",
+    "primary",
+    "secondary",
+    "hidden",
+    "id",
+  ],
   fields: {
     id: { kind: "text", label: "ID", hint: "唯一标识,不可重复" },
+    layout: {
+      kind: "select",
+      label: "布局",
+      options: [
+        { value: "centered", label: "Centered · 文字居中(默认)" },
+        { value: "split-left", label: "Split Left · 左图右文" },
+        { value: "split-right", label: "Split Right · 右图左文" },
+        { value: "video", label: "Video · 全屏视频背景" },
+      ],
+      hint: "video 模式需要填 videoSrc",
+    },
     eyebrow: { kind: "text", label: "Eyebrow(标题上方小字)", optional: true },
     titleA: { kind: "text", label: "标题(主)" },
-    titleB: { kind: "text", label: "标题(蓝色渐变后半)", optional: true },
+    titleB: {
+      kind: "text",
+      label: "标题(渐变后半)",
+      optional: true,
+      hint: "会以 accentColor 渐变色显示",
+    },
     subtitle: { kind: "textarea", label: "副标题", rows: 3, optional: true },
-    image: { kind: "image", label: "背景图路径", placeholder: "/images/banners/hero-1.jpg" },
+    image: {
+      kind: "image",
+      label: "背景图路径",
+      placeholder: "/images/banners/hero-1.jpg",
+    },
+    videoSrc: {
+      kind: "text",
+      label: "背景视频路径(仅 video 布局)",
+      placeholder: "/videos/hero.mp4",
+      optional: true,
+    },
     tone: {
       kind: "select",
       label: "色调",
       options: [
-        { value: "dark", label: "深色 dark" },
-        { value: "light", label: "浅色 light" },
+        { value: "dark", label: "深色 dark(白字 + 深色蒙版)" },
+        { value: "light", label: "浅色 light(深字,不加蒙版)" },
       ],
+    },
+    accentColor: {
+      kind: "text",
+      label: "强调色(CSS 颜色)",
+      placeholder: "#60a5fa",
+      hint: "影响 eyebrow 圆点 + titleB 渐变",
+      optional: true,
+    },
+    gradientStrength: {
+      kind: "number",
+      label: "深色蒙版强度 0–100",
+      hint: "数字越大文字越突出,默认 70",
+      optional: true,
+    },
+    gradientDirection: {
+      kind: "select",
+      label: "蒙版方向",
+      options: [
+        { value: "bottom", label: "底部加深(默认)" },
+        { value: "left", label: "左侧加深(适合右图左文)" },
+        { value: "radial", label: "径向 vignette" },
+      ],
+      optional: true,
+    },
+    badges: {
+      kind: "stringList",
+      label: "信任徽章(标题下方小芯片)",
+      itemLabel: "徽章文字",
+      hint: '例如 "★ 12K+ reviews"',
+    },
+    pricing: {
+      kind: "object",
+      label: "价格标签(主 CTA 旁)",
+      optional: true,
+      fields: {
+        price: { kind: "text", label: "售价", placeholder: "$129.99" },
+        strike: {
+          kind: "text",
+          label: "划线价",
+          placeholder: "$169.99",
+          optional: true,
+        },
+        note: {
+          kind: "text",
+          label: "标签文字",
+          placeholder: "Today only",
+          optional: true,
+        },
+      },
     },
     primary: {
       kind: "object",
@@ -376,9 +477,32 @@ const PDP_SPECS_SCHEMA: ItemSchema = {
   },
 };
 
+const HOME_PROMISE_SCHEMA: ItemSchema = {
+  titleKey: "title",
+  subtitleKey: "iconName",
+  fields: {
+    iconName: iconSelect(PROMISE_ICONS),
+    title: { kind: "text", label: "标题" },
+    body: { kind: "textarea", label: "正文", rows: 3 },
+    hidden: { kind: "boolean", label: "隐藏" },
+  },
+};
+
+const HOME_PRESS_STRIP_SCHEMA: ItemSchema = {
+  titleKey: "outlet",
+  subtitleKey: "quote",
+  fields: {
+    quote: { kind: "textarea", label: "引语", rows: 3 },
+    outlet: { kind: "text", label: "媒体出处" },
+    hidden: { kind: "boolean", label: "隐藏" },
+  },
+};
+
 export const ARRAY_SCHEMAS: Record<string, ItemSchema> = {
   "home.hero": HOME_HERO_SCHEMA,
   "home.banners": HOME_BANNERS_SCHEMA,
+  "home.promise": HOME_PROMISE_SCHEMA,
+  "home.pressStrip": HOME_PRESS_STRIP_SCHEMA,
   "pdp.reviews": PDP_REVIEWS_SCHEMA,
   "pdp.faq": PDP_FAQ_SCHEMA,
   "pdp.feature-split": FEATURE_SPLIT_SCHEMA,
@@ -393,12 +517,9 @@ export function getArraySchema(sectionKey: string): ItemSchema | undefined {
 }
 
 // ── Sub-array schemas (used inside object-section editors) ─────────
-
-const iconSelect = (names: readonly string[]) => ({
-  kind: "select" as const,
-  label: "图标",
-  options: names.map((v) => ({ value: v, label: v })),
-});
+//
+// (iconSelect helper is declared earlier so the top-level ARRAY_SCHEMAS
+// can reuse it too.)
 
 const FAQ_SCHEMA: ItemSchema = {
   titleKey: "q",

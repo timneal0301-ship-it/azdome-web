@@ -1,6 +1,22 @@
 import type { ContentSection } from "./types";
 import type { Slide } from "@/components/HeroCarousel";
 import type { ProductBanner } from "@/components/ProductBanners";
+import {
+  DEFAULT_PROMISES,
+  type Promise as PromiseItem,
+} from "@/components/PromiseThreeCol";
+import {
+  DEFAULT_COMPARE,
+  type CompareContent,
+} from "@/components/PriceCompare";
+import {
+  DEFAULT_PRESS_QUOTES,
+  type PressQuoteItem,
+} from "@/components/PressQuotesStrip";
+import {
+  DEFAULT_FLASH_SALE,
+  type FlashSaleContent,
+} from "@/components/FlashSaleBar";
 
 // ─── Hero carousel slides ──────────────────────────────────────────
 
@@ -127,4 +143,44 @@ export const HOME_BANNERS: ContentSection<ProductBanner[]> = {
   page: "home",
   previewHref: "/",
   defaults: PRODUCT_BANNERS,
+};
+
+// ─── New modules (promise / price-compare / press / flash sale) ─────
+
+export const HOME_PROMISE: ContentSection<PromiseItem[]> = {
+  key: "home.promise",
+  label: "首页 · 售后承诺三栏(退货 / 保修 / 运费)",
+  description: "信任信号:3 个标准承诺。iconName 从 PROMISE_ICONS 选。",
+  page: "home",
+  previewHref: "/",
+  defaults: DEFAULT_PROMISES,
+};
+
+export const HOME_PRICE_COMPARE: ContentSection<CompareContent> = {
+  key: "home.priceCompare",
+  label: "首页 · 价格对比矩阵(vs 竞品)",
+  description:
+    "对比表。brands[] 是列(highlight: true 列显示蓝色高亮和 Best value 徽章),rows[].values 长度要与 brands[] 一致。✓ / ✗ / — 会渲染为图标,其他字符串原样显示。",
+  page: "home",
+  previewHref: "/",
+  defaults: DEFAULT_COMPARE,
+};
+
+export const HOME_PRESS_STRIP: ContentSection<PressQuoteItem[]> = {
+  key: "home.pressStrip",
+  label: "首页 · 媒体引语轮播(深色横幅)",
+  description: "每 6 秒自动轮换。在 admin 编辑器里给 quote 加 hidden:true 可临时下线某条。",
+  page: "home",
+  previewHref: "/",
+  defaults: DEFAULT_PRESS_QUOTES,
+};
+
+export const HOME_FLASH_SALE: ContentSection<FlashSaleContent> = {
+  key: "home.flashSale",
+  label: "首页 · 顶部 Flash Sale 倒计时条",
+  description:
+    "active=true 才会显示。endsAt 是 ISO 时间(如 2026-06-30T23:59:00Z),到期后自动隐藏。dismissible=true 时用户可关闭(用 endsAt 作为 key 存 localStorage,新活动会自动重新出现)。",
+  page: "home",
+  previewHref: "/",
+  defaults: DEFAULT_FLASH_SALE,
 };
