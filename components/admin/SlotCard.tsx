@@ -3,13 +3,23 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { CheckCircle2, RotateCcw, UploadCloud, X } from "lucide-react";
+import { Check, CheckCircle2, RotateCcw, UploadCloud, X } from "lucide-react";
 
 import { clearImage, updateImage } from "@/app/admin/actions";
 import { useAssetUrl } from "@/components/AssetUrlsProvider";
 import type { ImageSlot } from "@/lib/image-slots";
 
-export default function SlotCard({ slot }: { slot: ImageSlot }) {
+export default function SlotCard({
+  slot,
+  selectMode = false,
+  selected = false,
+  onToggleSelect,
+}: {
+  slot: ImageSlot;
+  selectMode?: boolean;
+  selected?: boolean;
+  onToggleSelect?: () => void;
+}) {
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState<string | null>(null);
@@ -95,7 +105,26 @@ export default function SlotCard({ slot }: { slot: ImageSlot }) {
     currentSrc !== `/${slot.path}` && !currentSrc.endsWith(slot.path);
 
   return (
-    <div className="flex flex-col rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-100">
+    <div
+      className={[
+        "relative flex flex-col rounded-2xl bg-white p-4 shadow-sm ring-1 transition-all",
+        selected
+          ? "ring-2 ring-blue-500"
+          : "ring-slate-100",
+        selectMode ? "cursor-pointer" : "",
+      ].join(" ")}
+      onClick={selectMode ? onToggleSelect : undefined}
+    >
+      {selectMode && (
+        <span
+          className={[
+            "absolute right-3 top-3 z-10 inline-flex h-6 w-6 items-center justify-center rounded-full ring-2 ring-white transition-colors",
+            selected ? "bg-blue-600 text-white" : "bg-white text-slate-300 ring-slate-300",
+          ].join(" ")}
+        >
+          {selected && <Check className="h-3.5 w-3.5" strokeWidth={3} />}
+        </span>
+      )}
       <div
         className={[
           "relative overflow-hidden rounded-xl bg-slate-100",
@@ -132,31 +161,33 @@ export default function SlotCard({ slot }: { slot: ImageSlot }) {
         </p>
       </div>
 
-      <div className="mt-3 flex gap-2">
-        <label className="flex-1">
-          <input
-            ref={inputRef}
-            type="file"
-            accept="image/jpeg,image/png,image/webp"
-            onChange={onPick}
-            className="hidden"
-          />
-          <span className="block cursor-pointer rounded-full bg-slate-100 px-4 py-2 text-center text-xs font-semibold tracking-tight text-slate-700 transition-colors hover:bg-slate-200">
-            选择文件
-          </span>
-        </label>
-        <button
-          type="button"
-          disabled={!preview || pending}
-          onClick={onUpload}
-          className="inline-flex items-center justify-center gap-1 rounded-full bg-blue-600 px-4 py-2 text-xs font-semibold tracking-tight text-white transition-colors hover:bg-blue-700 disabled:bg-slate-300"
-        >
-          <UploadCloud className="h-3.5 w-3.5" />
-          {pending ? "上传中…" : "上传"}
-        </button>
-      </div>
+      {!selectMode && (
+        <div className="mt-3 flex gap-2">
+          <label className="flex-1">
+            <input
+              ref={inputRef}
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              onChange={onPick}
+              className="hidden"
+            />
+            <span className="block cursor-pointer rounded-full bg-slate-100 px-4 py-2 text-center text-xs font-semibold tracking-tight text-slate-700 transition-colors hover:bg-slate-200">
+              选择文件
+            </span>
+          </label>
+          <button
+            type="button"
+            disabled={!preview || pending}
+            onClick={onUpload}
+            className="inline-flex items-center justify-center gap-1 rounded-full bg-blue-600 px-4 py-2 text-xs font-semibold tracking-tight text-white transition-colors hover:bg-blue-700 disabled:bg-slate-300"
+          >
+            <UploadCloud className="h-3.5 w-3.5" />
+            {pending ? "上传中…" : "上传"}
+          </button>
+        </div>
+      )}
 
-      {hasOverride && !preview && (
+      {!selectMode && hasOverride && !preview && (
         <button
           type="button"
           onClick={onClear}

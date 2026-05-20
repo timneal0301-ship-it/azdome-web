@@ -15,6 +15,15 @@ function prevKey(key: string) {
   return `content:${key}:prev`;
 }
 
+function historyKey(key: string) {
+  return `content:${key}:history`;
+}
+
+/** Max snapshots kept per section. Older entries fall off the buffer. */
+const HISTORY_LIMIT = 10;
+
+export type HistoryEntry<T = unknown> = { ts: number; value: T };
+
 export async function getContent<T>(section: ContentSection<T>): Promise<T> {
   const override = await db.get<T>(dbKey(section.key));
   return (override ?? section.defaults) as T;
@@ -45,6 +54,14 @@ export async function saveContent<T>(
   const current = await db.get(dbKey(section.key));
   if (current !== undefined) {
     await db.set(prevKey(section.key), current);
+    // Also push it onto a ring-buffer history, newest first.
+    const prevHistory =
+      (await db.get<HistoryEntry[]>(historyKey(section.key))) ?? [];
+    const next: HistoryEntry[] = [
+      { ts: Date.now(), value: current },
+      ...prevHistory,
+    ].slice(0, HISTORY_LIMIT);
+    await db.set(historyKey(section.key), next);
   }
   await db.set(dbKey(section.key), value);
 }
@@ -58,10 +75,40 @@ export async function revertContent(key: string): Promise<boolean> {
   return true;
 }
 
+/** Read up-to-HISTORY_LIMIT snapshots, newest first. */
+export async function getHistory<T = unknown>(
+  key: string,
+): Promise<HistoryEntry<T>[]> {
+  return (await db.get<HistoryEntry<T>[]>(historyKey(key))) ?? [];
+}
+
+/** Restore a specific snapshot. The current value gets pushed onto
+ * history before overwrite, so this restore is itself reversible. */
+export async function restoreFromHistory(
+  key: string,
+  index: number,
+): Promise<boolean> {
+  const history = await db.get<HistoryEntry[]>(historyKey(key));
+  if (!history || index < 0 || index >= history.length) return false;
+  const target = history[index];
+  // Push the current value onto history so this is reversible.
+  const current = await db.get(dbKey(key));
+  if (current !== undefined) {
+    const next: HistoryEntry[] = [
+      { ts: Date.now(), value: current },
+      ...history,
+    ].slice(0, HISTORY_LIMIT);
+    await db.set(historyKey(key), next);
+  }
+  await db.set(dbKey(key), target.value);
+  return true;
+}
+
 /** Discard the override entirely; the in-code seed wins again. */
 export async function resetContent(key: string): Promise<void> {
   await db.delete(dbKey(key));
   await db.delete(prevKey(key));
+  await db.delete(historyKey(key));
 }
 
 // ─── Section registry ───────────────────────────────────────────────

@@ -7,6 +7,7 @@ import { COOKIE, verifyToken } from "@/lib/admin-auth";
 import {
   getSection,
   resetContent,
+  restoreFromHistory,
   revertContent,
   saveContent,
 } from "@/lib/content-server";
@@ -65,4 +66,19 @@ export async function revertContentAction(key: string): Promise<Result> {
   return ok
     ? { ok: true, message: "已回滚到上一版本" }
     : { ok: false, error: "没有可回滚的历史版本" };
+}
+
+export async function restoreVersionAction(
+  key: string,
+  index: number,
+): Promise<Result> {
+  await requireAuth();
+  const section = getSection(key);
+  if (!section) return { ok: false, error: "未知 section" };
+  const ok = await restoreFromHistory(key, index);
+  if (section.previewHref) revalidatePath(section.previewHref);
+  revalidatePath("/admin/content", "layout");
+  return ok
+    ? { ok: true, message: "已恢复至历史版本" }
+    : { ok: false, error: "没有这个历史版本" };
 }

@@ -1,8 +1,10 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Search, X } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { CheckSquare, Search, Trash2, X } from "lucide-react";
 
+import { clearImages } from "@/app/admin/actions";
 import SlotCard from "@/components/admin/SlotCard";
 import { useAssetUrls } from "@/components/AssetUrlsProvider";
 import type { ImageGroup, ImageSlot } from "@/lib/image-slots";
@@ -16,10 +18,45 @@ export default function ImageLibrary({
   groups: { key: ImageGroup; label: string }[];
   slots: ImageSlot[];
 }) {
+  const router = useRouter();
   const [q, setQ] = useState("");
   const [filter, setFilter] = useState<Filter>("all");
+  const [selectMode, setSelectMode] = useState(false);
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [bulkPending, setBulkPending] = useState(false);
 
   const lowered = q.trim().toLowerCase();
+
+  const exitSelectMode = () => {
+    setSelectMode(false);
+    setSelected(new Set());
+  };
+  const toggleSelect = (key: string) =>
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
+      return next;
+    });
+  const onBulkClear = async () => {
+    const count = selected.size;
+    if (count === 0) return;
+    if (
+      !window.confirm(
+        `确定要清除选中的 ${count} 个槽位的上传记录吗?前台会回退到种子图。`,
+      )
+    )
+      return;
+    setBulkPending(true);
+    const res = await clearImages(Array.from(selected));
+    setBulkPending(false);
+    if (res.ok) {
+      exitSelectMode();
+      router.refresh();
+    } else {
+      window.alert(`清除失败: ${res.error}`);
+    }
+  };
 
   // Decorate every slot with whether it currently has an admin override —
   // we read the live URL from the AssetUrlsProvider context (already
@@ -140,7 +177,43 @@ export default function ImageLibrary({
               未上传
             </FilterChip>
           </div>
+          <button
+            type="button"
+            onClick={() => (selectMode ? exitSelectMode() : setSelectMode(true))}
+            className={[
+              "inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold tracking-tight transition-colors",
+              selectMode
+                ? "bg-slate-900 text-white"
+                : "bg-slate-100 text-slate-700 hover:bg-slate-200",
+            ].join(" ")}
+          >
+            <CheckSquare className="h-3.5 w-3.5" />
+            {selectMode ? "退出选择" : "多选"}
+          </button>
         </div>
+
+        {/* Bulk-action bar (only when selecting) */}
+        {selectMode && (
+          <div className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-slate-900 px-5 py-3 text-sm text-white">
+            <p className="font-semibold tracking-tight">
+              已选 {selected.size} 项
+              {selected.size === 0 && (
+                <span className="ml-2 text-xs font-normal text-slate-400">
+                  点卡片选中,然后批量重置
+                </span>
+              )}
+            </p>
+            <button
+              type="button"
+              onClick={onBulkClear}
+              disabled={selected.size === 0 || bulkPending}
+              className="inline-flex items-center gap-1.5 rounded-full bg-red-500 px-4 py-1.5 text-xs font-semibold tracking-tight text-white transition-colors hover:bg-red-600 disabled:bg-slate-700 disabled:text-slate-400"
+            >
+              <Trash2 className="h-3.5 w-3.5" />
+              {bulkPending ? "清除中…" : `批量重置 (${selected.size})`}
+            </button>
+          </div>
+        )}
 
         {/* Groups */}
         {visibleSlots.length === 0 ? (
@@ -168,7 +241,13 @@ export default function ImageLibrary({
                   </div>
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
                     {groupSlots.map(({ slot }) => (
-                      <SlotCard key={slot.key} slot={slot} />
+                      <SlotCard
+                        key={slot.key}
+                        slot={slot}
+                        selectMode={selectMode}
+                        selected={selected.has(slot.key)}
+                        onToggleSelect={() => toggleSelect(slot.key)}
+                      />
                     ))}
                   </div>
                 </section>

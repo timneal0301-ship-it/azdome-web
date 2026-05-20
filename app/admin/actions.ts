@@ -62,6 +62,25 @@ export async function clearImage(slotKey: string): Promise<ClearResult> {
   }
 }
 
+export type BulkClearResult =
+  | { ok: true; cleared: number }
+  | { ok: false; error: string };
+
+export async function clearImages(slotKeys: string[]): Promise<BulkClearResult> {
+  await requireAuth();
+  const valid = slotKeys.filter((k) => findSlot(k));
+  if (valid.length === 0) {
+    return { ok: false, error: "没有有效的槽位" };
+  }
+  try {
+    await Promise.all(valid.map((k) => db.delete(`image:${k}`)));
+    revalidatePath("/", "layout");
+    return { ok: true, cleared: valid.length };
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : "批量清除失败" };
+  }
+}
+
 export async function updateImage(formData: FormData): Promise<UpdateResult> {
   await requireAuth();
 

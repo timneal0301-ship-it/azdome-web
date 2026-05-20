@@ -3,16 +3,21 @@
 import { useEffect, useMemo, useState } from "react";
 import {
   CheckCircle2,
+  Code,
   Download,
   ExternalLink,
+  LayoutList,
   RotateCcw,
   Save,
   Undo2,
   XCircle,
 } from "lucide-react";
 
+import ArrayEditor from "@/components/admin/ArrayEditor";
+import { getArraySchema } from "@/lib/content/array-schemas";
 import {
   resetContentAction,
+  restoreVersionAction,
   revertContentAction,
   saveContentAction,
   type Result,
@@ -27,6 +32,7 @@ type Props = {
   defaultValue: unknown;
   isOverridden: boolean;
   hasPrev: boolean;
+  history?: { ts: number }[];
 };
 
 /** True iff value is a plain object whose every value is a boolean — the
@@ -70,8 +76,11 @@ export default function ContentEditor({
   defaultValue,
   isOverridden,
   hasPrev,
+  history = [],
 }: Props) {
   const toggleMode = isToggleMap(currentValue) && isToggleMap(defaultValue);
+  const arraySchema = getArraySchema(sectionKey);
+  const arrayMode = !!arraySchema && Array.isArray(currentValue);
 
   const currentJson = useMemo(
     () => JSON.stringify(currentValue, null, 2),
@@ -86,6 +95,9 @@ export default function ContentEditor({
   const [pending, setPending] = useState<"save" | "reset" | "revert" | null>(null);
   const [result, setResult] = useState<Result | null>(null);
   const [parseError, setParseError] = useState<string | null>(null);
+  // For array-form sections, allow the user to drop into raw JSON if needed.
+  const [forceJson, setForceJson] = useState(false);
+  const showArrayEditor = arrayMode && !forceJson;
 
   // Validate on every keystroke (cheap; JSON.parse on ~10KB strings is fine).
   useEffect(() => {
@@ -116,6 +128,21 @@ export default function ContentEditor({
     setText(JSON.stringify(next, null, 2));
   };
 
+  // Same idea for array-form: parse text into items, mutate via form, push
+  // back to text so the existing save flow is unchanged.
+  const arrayItems: Record<string, unknown>[] = useMemo(() => {
+    if (!arrayMode || parseError) return [];
+    try {
+      const parsed = JSON.parse(text);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
+  }, [text, arrayMode, parseError]);
+  const setArrayItems = (next: Record<string, unknown>[]) => {
+    setText(JSON.stringify(next, null, 2));
+  };
+
   const onSave = async () => {
     if (parseError) return;
     setPending("save");
@@ -138,6 +165,15 @@ export default function ContentEditor({
     setPending("revert");
     setResult(null);
     setResult(await revertContentAction(sectionKey));
+    setPending(null);
+  };
+
+  const onRestoreVersion = async (index: number, ts: number) => {
+    const label = new Date(ts).toLocaleString("zh-CN", { hour12: false });
+    if (!confirm(`恢复 ${label} 这个版本?当前内容会被推到历史栈。`)) return;
+    setPending("revert");
+    setResult(null);
+    setResult(await restoreVersionAction(sectionKey, index));
     setPending(null);
   };
 
@@ -188,6 +224,26 @@ export default function ContentEditor({
         </div>
       </header>
 
+      {/* Editor mode switch (only for sections that have an array schema) */}
+      {arrayMode && (
+        <div className="flex items-center gap-1 self-start rounded-full bg-slate-100 p-1">
+          <ModeButton
+            active={!forceJson}
+            onClick={() => setForceJson(false)}
+            icon={LayoutList}
+          >
+            表单
+          </ModeButton>
+          <ModeButton
+            active={forceJson}
+            onClick={() => setForceJson(true)}
+            icon={Code}
+          >
+            JSON
+          </ModeButton>
+        </div>
+      )}
+
       {toggleMode ? (
         <div className="rounded-2xl bg-white p-2 shadow-sm ring-1 ring-slate-100">
           <ul className="divide-y divide-slate-100">
@@ -225,6 +281,12 @@ export default function ContentEditor({
             ))}
           </ul>
         </div>
+      ) : showArrayEditor ? (
+        <ArrayEditor
+          items={arrayItems}
+          schema={arraySchema!}
+          onChange={setArrayItems}
+        />
       ) : (
         <div>
           <div className="mb-2 flex items-center justify-between text-xs text-slate-500">
@@ -321,6 +383,73 @@ export default function ContentEditor({
           {result.ok ? result.message : result.error}
         </p>
       )}
+
+      {history.length > 0 && (
+        <details className="overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-100">
+          <summary className="flex cursor-pointer items-center justify-between gap-3 px-5 py-3.5 hover:bg-slate-50">
+            <span className="text-sm font-semibold tracking-tight text-slate-900">
+              历史版本
+            </span>
+            <span className="text-xs tabular-nums text-slate-400">
+              {history.length} 个快照
+            </span>
+          </summary>
+          <ul className="divide-y divide-slate-100 border-t border-slate-100">
+            {history.map((h, i) => (
+              <li
+                key={`${h.ts}-${i}`}
+                className="flex items-center justify-between gap-3 px-5 py-3 text-xs"
+              >
+                <div>
+                  <p className="font-mono tracking-tight text-slate-900">
+                    {new Date(h.ts).toLocaleString("zh-CN", { hour12: false })}
+                  </p>
+                  <p className="mt-0.5 text-[11px] text-slate-400">
+                    {i === 0 ? "上一版本(最近)" : `第 ${i + 1} 步之前`}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => onRestoreVersion(i, h.ts)}
+                  disabled={pending !== null}
+                  className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-3 py-1.5 text-[11px] font-semibold tracking-tight text-slate-700 transition-colors hover:bg-slate-200 disabled:opacity-50"
+                >
+                  <Undo2 className="h-3 w-3" />
+                  恢复
+                </button>
+              </li>
+            ))}
+          </ul>
+        </details>
+      )}
     </div>
+  );
+}
+
+function ModeButton({
+  active,
+  onClick,
+  icon: Icon,
+  children,
+}: {
+  active: boolean;
+  onClick: () => void;
+  icon: React.ComponentType<{ className?: string }>;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={[
+        "inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold tracking-tight transition-colors",
+        active
+          ? "bg-white text-slate-900 shadow-sm"
+          : "text-slate-500 hover:text-slate-900",
+      ].join(" ")}
+    >
+      <Icon className="h-3 w-3" />
+      {children}
+    </button>
   );
 }

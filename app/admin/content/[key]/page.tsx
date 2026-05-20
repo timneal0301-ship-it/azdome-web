@@ -3,7 +3,11 @@ import { notFound } from "next/navigation";
 import { ChevronLeft } from "lucide-react";
 
 import ContentEditor from "@/components/admin/ContentEditor";
-import { getContentDetailed, getSection } from "@/lib/content-server";
+import {
+  getContentDetailed,
+  getHistory,
+  getSection,
+} from "@/lib/content-server";
 
 export const dynamic = "force-dynamic";
 
@@ -15,7 +19,10 @@ export default async function ContentSectionEditPage({
   const key = decodeURIComponent(params.key);
   const section = getSection(key);
   if (!section) notFound();
-  const { value, isOverridden, hasPrev } = await getContentDetailed(section);
+  const [{ value, isOverridden, hasPrev }, history] = await Promise.all([
+    getContentDetailed(section),
+    getHistory(section.key),
+  ]);
 
   return (
     <main className="mx-auto max-w-7xl px-4 pb-24 pt-10 sm:px-6 lg:px-10">
@@ -36,6 +43,7 @@ export default async function ContentSectionEditPage({
           defaultValue={section.defaults}
           isOverridden={isOverridden}
           hasPrev={hasPrev}
+          history={history.map((h) => ({ ts: h.ts }))}
         />
       </div>
     </main>
