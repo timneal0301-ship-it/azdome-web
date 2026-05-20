@@ -10,10 +10,19 @@ import {
   X,
 } from "lucide-react";
 
-import type { AnyContentSection } from "@/lib/content/types";
+/** A serializable subset of ContentSection — leaves out `defaults`, which
+ * can include non-serializable values (lucide icon components, etc) that
+ * would crash the server → client boundary. */
+export type SectionSummary = {
+  key: string;
+  label: string;
+  description?: string;
+  previewHref?: string;
+  page: string;
+};
 
 type Entry = {
-  section: AnyContentSection;
+  section: SectionSummary;
   isOverridden: boolean;
   hasPrev: boolean;
 };

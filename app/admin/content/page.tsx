@@ -35,7 +35,20 @@ export default async function ContentAdminPage() {
   const entries = await Promise.all(
     ALL_SECTIONS.map(async (section) => {
       const { isOverridden, hasPrev } = await getContentDetailed(section);
-      return { section, isOverridden, hasPrev };
+      // Strip defaults — some section defaults contain lucide icon
+      // components (functions) which can't cross the RSC boundary into
+      // the client ContentList. The list only needs the metadata.
+      return {
+        section: {
+          key: section.key,
+          label: section.label,
+          description: section.description,
+          previewHref: section.previewHref,
+          page: section.page,
+        },
+        isOverridden,
+        hasPrev,
+      };
     }),
   );
 
