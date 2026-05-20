@@ -17,6 +17,7 @@ import {
 
 import { useCart } from "./CartProvider";
 import { useLocale } from "./LocaleProvider";
+import { useAssetUrl, useAssetUrls } from "./AssetUrlsProvider";
 import { PRODUCTS, type ProductDetail } from "@/lib/products";
 import type { FirmwareRelease, Manual } from "@/lib/downloads";
 
@@ -62,6 +63,7 @@ export default function ProductBuyBox({
     : product.name;
   const cartItemVariant = variant?.label;
 
+  const cartImage = useAssetUrl(product.image);
   const handleAddToCart = () => {
     add({
       id: cartItemId,
@@ -69,13 +71,15 @@ export default function ProductBuyBox({
       name: cartItemName,
       variant: cartItemVariant,
       price,
-      image: product.image,
+      image: cartImage,
     });
     open();
   };
 
   const images = product.gallery.length > 0 ? product.gallery : [{ src: product.image, alt: product.name }];
+  const resolvedSrcs = useAssetUrls(images.map((i) => i.src));
   const activeImg = images[activeImage] ?? images[0];
+  const activeSrc = resolvedSrcs[activeImage] ?? resolvedSrcs[0];
 
   return (
     <section className="bg-white">
@@ -91,7 +95,7 @@ export default function ProductBuyBox({
                 className="absolute inset-0"
               >
                 <Image
-                  src={activeImg.src}
+                  src={activeSrc}
                   alt={activeImg.alt}
                   fill
                   sizes="(min-width: 1024px) 60vw, 100vw"
@@ -119,7 +123,7 @@ export default function ProductBuyBox({
                         ].join(" ")}
                       >
                         <Image
-                          src={img.src}
+                          src={resolvedSrcs[i] ?? img.src}
                           alt={img.alt}
                           fill
                           sizes="96px"

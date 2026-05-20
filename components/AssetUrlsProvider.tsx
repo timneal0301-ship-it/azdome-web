@@ -31,3 +31,14 @@ export function useAssetUrl(staticPath: string): string {
   const map = useContext(AssetUrlsContext);
   return map[staticPath] ?? staticPath;
 }
+
+/**
+ * Batch version — resolves an array of static paths through the same
+ * provider in one shot. Use this when a component renders multiple
+ * images (eg a product gallery) and calling useAssetUrl in a loop
+ * would violate the rules of hooks.
+ */
+export function useAssetUrls(staticPaths: string[]): string[] {
+  const map = useContext(AssetUrlsContext);
+  return staticPaths.map((p) => map[p] ?? p);
+}

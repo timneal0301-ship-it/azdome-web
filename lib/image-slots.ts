@@ -24,7 +24,6 @@ export type ImageSlot = {
 
 export const GROUPS: { key: ImageGroup; label: string }[] = [
   { key: "brand", label: "品牌 Logo" },
-  { key: "hero", label: "Hero & 视频海报" },
   { key: "banners", label: "首页 Hero Carousel 大 Banner" },
   { key: "miniBanners", label: "首页 Bento 小 Banner" },
   { key: "products", label: "产品图集" },
@@ -35,6 +34,9 @@ export const GROUPS: { key: ImageGroup; label: string }[] = [
   { key: "aplus", label: "A+ 长图文 & 其他" },
   { key: "avatars", label: "用户头像" },
   { key: "reviews", label: "评价照片" },
+  // "hero" group is hidden from admin — its two slots (hero-poster
+  // for the 404 page, video-poster for the video modal) rarely change.
+  // Re-add { key: "hero", label: "Hero & 视频海报" } above to show them.
 ];
 
 export const SLOTS: ImageSlot[] = [
@@ -43,9 +45,8 @@ export const SLOTS: ImageSlot[] = [
   { key: "logo-primary", label: "Logo · 主色(浅色背景)",   group: "brand", path: "images/brand/logo-primary.png", width: 384, height: 60 },
   { key: "logo-inverse", label: "Logo · 反白(深色背景)",   group: "brand", path: "images/brand/logo-inverse.png", width: 384, height: 60 },
 
-  // Hero / Video poster
-  { key: "hero-poster",  label: "Hero Poster · 404 页 / 备用(首页不使用)", group: "hero", path: "images/hero-poster.jpg",        width: 1920, height: 1080 },
-  { key: "video-poster", label: "视频区海报",                                  group: "hero", path: "images/aplus/video-poster.jpg", width: 1920, height: 1080 },
+  // Hero / Video poster — admin-hidden (not editable). 404 page and the
+  // video modal pull these paths directly. Keep the files in /public.
 
   // Hero Carousel — multi-slide banners (★ 首页大图轮播 ★ 改这里 ★)
   { key: "banner-1", label: "★ 首页 Hero Slide 1 (M550 Pro)",   group: "banners", path: "images/banners/hero-1.jpg", width: 1920, height: 1080 },

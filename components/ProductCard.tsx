@@ -5,6 +5,8 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { Star } from "lucide-react";
 
+import { useAssetUrl } from "./AssetUrlsProvider";
+
 export type Product = {
   slug: string;
   name: string;
@@ -30,6 +32,7 @@ export default function ProductCard({
   product: Product;
   href?: string;
 }) {
+  const imageSrc = useAssetUrl(product.image);
   return (
     <motion.div
       whileHover={{ y: -6, rotateX: 2, rotateY: -2, scale: 1.015 }}
@@ -43,7 +46,7 @@ export default function ProductCard({
       >
         <div className="relative aspect-square w-full">
           <Image
-            src={product.image}
+            src={imageSrc}
             alt={product.name}
             fill
             sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"

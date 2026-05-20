@@ -7,6 +7,7 @@ import { ShoppingBag } from "lucide-react";
 
 import { useCart } from "./CartProvider";
 import { useLocale } from "./LocaleProvider";
+import { useAssetUrl } from "./AssetUrlsProvider";
 
 type StickyBottomCTAProps = {
   productSlug?: string;
@@ -41,6 +42,7 @@ export default function StickyBottomCTA({
   const [visible, setVisible] = useState(false);
   const { add, open } = useCart();
   const { t } = useLocale();
+  const resolvedImage = useAssetUrl(image);
 
   const handleAdd = () => {
     add({
@@ -48,7 +50,7 @@ export default function StickyBottomCTA({
       productSlug,
       name: productName,
       price,
-      image,
+      image: resolvedImage,
     });
     open();
   };
@@ -95,7 +97,7 @@ export default function StickyBottomCTA({
             <div className="flex min-w-0 flex-1 items-center gap-3 md:gap-4">
               <div className="relative h-12 w-12 flex-shrink-0 overflow-hidden rounded-xl bg-slate-50 md:h-14 md:w-14">
                 <Image
-                  src={image}
+                  src={resolvedImage}
                   alt={productName}
                   fill
                   sizes="56px"
