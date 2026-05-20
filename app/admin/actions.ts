@@ -47,6 +47,21 @@ export type UpdateResult =
   | { ok: true; path: string; backupPath?: string; ts: number }
   | { ok: false; error: string };
 
+export type ClearResult = { ok: true } | { ok: false; error: string };
+
+export async function clearImage(slotKey: string): Promise<ClearResult> {
+  await requireAuth();
+  const slot = findSlot(slotKey);
+  if (!slot) return { ok: false, error: "未知的图片槽位" };
+  try {
+    await db.delete(`image:${slot.key}`);
+    revalidatePath("/", "layout");
+    return { ok: true };
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : "清除失败" };
+  }
+}
+
 export async function updateImage(formData: FormData): Promise<UpdateResult> {
   await requireAuth();
 

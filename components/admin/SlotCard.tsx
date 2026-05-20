@@ -3,9 +3,9 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { CheckCircle2, UploadCloud, X } from "lucide-react";
+import { CheckCircle2, RotateCcw, UploadCloud, X } from "lucide-react";
 
-import { updateImage } from "@/app/admin/actions";
+import { clearImage, updateImage } from "@/app/admin/actions";
 import { useAssetUrl } from "@/components/AssetUrlsProvider";
 import type { ImageSlot } from "@/lib/image-slots";
 
@@ -70,9 +70,29 @@ export default function SlotCard({ slot }: { slot: ImageSlot }) {
     }
   };
 
+  const onClear = async () => {
+    if (!window.confirm(`确定要清除「${slot.label}」的上传记录吗?前台会回退到种子图。`)) {
+      return;
+    }
+    setPending(true);
+    setFeedback(null);
+    const res = await clearImage(slot.key);
+    setPending(false);
+    if (res.ok) {
+      setFeedback({ kind: "success", msg: "已清除,前台已回退" });
+      setOptimisticUrl(`/${slot.path}`);
+      router.refresh();
+    } else {
+      setFeedback({ kind: "error", msg: res.error });
+    }
+  };
+
   const currentSrc = optimisticUrl ?? liveUrl;
   const displaySrc = preview ?? currentSrc;
   const isSquare = slot.width === slot.height;
+  // True when the live URL is the static seed (no override active).
+  const hasOverride =
+    currentSrc !== `/${slot.path}` && !currentSrc.endsWith(slot.path);
 
   return (
     <div className="flex flex-col rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-100">
@@ -135,6 +155,19 @@ export default function SlotCard({ slot }: { slot: ImageSlot }) {
           {pending ? "上传中…" : "上传"}
         </button>
       </div>
+
+      {hasOverride && !preview && (
+        <button
+          type="button"
+          onClick={onClear}
+          disabled={pending}
+          className="mt-2 inline-flex items-center justify-center gap-1 self-start rounded-full px-3 py-1.5 text-[11px] font-semibold tracking-tight text-slate-500 transition-colors hover:bg-red-50 hover:text-red-600 disabled:opacity-50"
+          title="把这个槽位回退到代码里的种子图"
+        >
+          <RotateCcw className="h-3 w-3" />
+          重置上传
+        </button>
+      )}
 
       {feedback && (
         <p
