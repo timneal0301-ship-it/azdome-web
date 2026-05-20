@@ -62,8 +62,18 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   const assetUrls = await getAssetUrlMap();
+  // Temporary diagnostic: surface what the layout actually saw at render
+  // time, so we can compare it against /admin/diag without trusting either.
+  const diagPayload = JSON.stringify({
+    count: Object.keys(assetUrls).length,
+    keys: Object.keys(assetUrls),
+    renderedAt: new Date().toISOString(),
+  });
   return (
     <html lang="en" className={inter.variable}>
+      <head>
+        <meta name="azdome-asset-map-diag" content={diagPayload} />
+      </head>
       <body className="bg-white font-sans text-slate-900 antialiased">
         <AuthSessionProvider>
           <AssetUrlsProvider map={assetUrls}>
