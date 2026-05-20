@@ -65,15 +65,16 @@ async function createBlobAdapter(): Promise<StorageAdapter | null> {
       name: "vercel-blob",
       async write(relativePath, data) {
         const safe = relativePath.replace(/^\/+/, "");
-        // Always overwrite at the same logical path — no random suffix —
-        // so stored URLs in KV remain stable across re-uploads.
+        // Overwrite at the same logical path so we don't accumulate stale
+        // blobs, but append a ?v=<ts> cache-buster so the Blob CDN + Next
+        // Image optimizer don't keep serving the previous bytes from cache.
         const result = await put(safe, data, {
           access: "public",
           addRandomSuffix: false,
           contentType: inferContentType(safe),
           allowOverwrite: true,
         });
-        return { url: result.url };
+        return { url: `${result.url}?v=${Date.now()}` };
       },
     };
   } catch (e) {
