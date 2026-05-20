@@ -11,12 +11,22 @@ import {
   Truck,
   Users,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 
 import AnimatedCounter from "@/components/ui/AnimatedCounter";
 import { getContent } from "@/lib/content-server";
 import { ABOUT_PAGE } from "@/lib/content/about";
 
-import { STATS, VALUES, TIMELINE, COMMITMENTS } from "@/lib/content/about";
+const ICONS: Record<string, LucideIcon> = {
+  Eye,
+  Sparkles,
+  Users,
+  Globe2,
+  ShieldCheck,
+  Microscope,
+  Truck,
+  Leaf,
+};
 
 export const metadata = {
   title: "About — AZDOME",
@@ -176,13 +186,15 @@ export default async function AboutPage() {
             </h2>
           </div>
           <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:gap-6">
-            {VALUES.map((v) => (
+            {VALUES.map((v) => {
+              const Icon = ICONS[v.iconName] ?? Sparkles;
+              return (
               <div
                 key={v.title}
                 className="rounded-2xl bg-slate-50 p-8 shadow-sm transition-shadow duration-300 hover:shadow-md"
               >
                 <span className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-white text-blue-600 shadow-sm">
-                  <v.icon className="h-5 w-5" />
+                  <Icon className="h-5 w-5" />
                 </span>
                 <h3 className="mt-5 text-xl font-semibold tracking-tight text-slate-900">
                   {v.title}
@@ -191,7 +203,8 @@ export default async function AboutPage() {
                   {v.body}
                 </p>
               </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
@@ -208,10 +221,12 @@ export default async function AboutPage() {
             </h2>
           </div>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:gap-5">
-            {COMMITMENTS.map((c) => (
+            {COMMITMENTS.map((c) => {
+              const Icon = ICONS[c.iconName] ?? ShieldCheck;
+              return (
               <div key={c.title} className="rounded-2xl bg-white p-7 shadow-sm">
                 <span className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-blue-50 text-blue-600">
-                  <c.icon className="h-5 w-5" />
+                  <Icon className="h-5 w-5" />
                 </span>
                 <h3 className="mt-5 text-base font-semibold tracking-tight text-slate-900">
                   {c.title}
@@ -220,7 +235,8 @@ export default async function AboutPage() {
                   {c.body}
                 </p>
               </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>

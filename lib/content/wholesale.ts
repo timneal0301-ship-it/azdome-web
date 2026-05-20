@@ -1,44 +1,66 @@
-import { Boxes, Briefcase, Building2, Headset, Package2, ShieldCheck, Truck, Wrench } from "lucide-react";
 import type { ContentSection } from "./types";
 
-export const TIERS = [
+export const WHOLESALE_BENEFIT_ICONS = [
+  "Package2",
+  "Truck",
+  "ShieldCheck",
+  "Headset",
+  "Wrench",
+  "Building2",
+] as const;
+
+export const WHOLESALE_VERTICAL_ICONS = [
+  "Briefcase",
+  "Boxes",
+  "Building2",
+] as const;
+
+export type WholesaleTier = { range: string; discount: string };
+
+export const TIERS: WholesaleTier[] = [
   { range: "10 – 49 units", discount: "12% off MSRP" },
   { range: "50 – 199 units", discount: "18% off MSRP" },
   { range: "200 – 499 units", discount: "23% off MSRP" },
   { range: "500+ units", discount: "Custom quote" },
 ];
 
-export const BENEFITS = [
-  { icon: Package2, title: "Volume pricing", body: "Tiered discounts from MOQ 10 units, up to negotiated rates for orders of 500+." },
-  { icon: Truck, title: "Bulk shipping", body: "Free freight on orders over $5,000 to the contiguous US. International quotes within 24h." },
-  { icon: ShieldCheck, title: "Extended warranty", body: "3-year warranty on all wholesale units (vs. 2 years retail)." },
-  { icon: Headset, title: "Dedicated account manager", body: "A single human contact who knows your account, your fleet, and your timeline." },
-  { icon: Wrench, title: "Installation services", body: "Optional white-glove install network across major US metros via our certified-installer partners." },
-  { icon: Building2, title: "Co-branded packaging", body: "Custom packaging available for fleet partners (MOQ 500). 4–6 week lead time." },
+export type WholesaleBenefit = { iconName: string; title: string; body: string };
+
+export const BENEFITS: WholesaleBenefit[] = [
+  { iconName: "Package2", title: "Volume pricing", body: "Tiered discounts from MOQ 10 units, up to negotiated rates for orders of 500+." },
+  { iconName: "Truck", title: "Bulk shipping", body: "Free freight on orders over $5,000 to the contiguous US. International quotes within 24h." },
+  { iconName: "ShieldCheck", title: "Extended warranty", body: "3-year warranty on all wholesale units (vs. 2 years retail)." },
+  { iconName: "Headset", title: "Dedicated account manager", body: "A single human contact who knows your account, your fleet, and your timeline." },
+  { iconName: "Wrench", title: "Installation services", body: "Optional white-glove install network across major US metros via our certified-installer partners." },
+  { iconName: "Building2", title: "Co-branded packaging", body: "Custom packaging available for fleet partners (MOQ 500). 4–6 week lead time." },
 ];
 
-export const VERTICALS = [
+export type WholesaleVertical = { iconName: string; title: string; body: string };
+
+export const VERTICALS: WholesaleVertical[] = [
   {
-    icon: Briefcase,
+    iconName: "Briefcase",
     title: "Rideshare & delivery fleets",
     body:
       "M530 3-channel cameras are standard issue for 12 of the top 25 US rideshare cooperatives. Driver-portal integrations for incident review available on request.",
   },
   {
-    icon: Boxes,
+    iconName: "Boxes",
     title: "Logistics & last-mile",
     body:
       "Stealth-mounted M300S deployed in last-mile delivery vehicles across 4 of the largest North American 3PLs. Telematics-system handoffs supported via standard JSON webhooks.",
   },
   {
-    icon: Building2,
+    iconName: "Building2",
     title: "Auto dealerships",
     body:
       "Dealer-installed M550 Pro and GS63H as an upsell package on new- and used-vehicle sales. Includes co-branded install certificates and end-customer onboarding emails.",
   },
 ];
 
-export const FAQ = [
+export type WholesaleFAQ = { q: string; a: string };
+
+export const FAQ: WholesaleFAQ[] = [
   {
     q: "What's the minimum order quantity?",
     a: "Our entry-level wholesale tier starts at 10 units across any combination of SKUs. Below that, our retail pricing on azdome.com is your best path.",
@@ -66,16 +88,19 @@ export const FAQ = [
 ];
 
 export type WholesaleContent = {
-  tiers: typeof TIERS;
-  benefits: typeof BENEFITS;
-  verticals: typeof VERTICALS;
-  faq: typeof FAQ;
+  tiers: WholesaleTier[];
+  benefits: WholesaleBenefit[];
+  verticals: WholesaleVertical[];
+  faq: WholesaleFAQ[];
 };
 
 export const WHOLESALE_PAGE: ContentSection<WholesaleContent> = {
   key: "wholesale.page",
   label: "Wholesale 页 · Tiers / Benefits / Verticals / FAQ",
-  description: "批发/团购页:价格阶梯、福利、行业案例、常见问题。",
+  description:
+    "批发/团购页:价格阶梯、福利、行业案例、常见问题。" +
+    `Benefits iconName: ${WHOLESALE_BENEFIT_ICONS.join(", ")} · ` +
+    `Verticals iconName: ${WHOLESALE_VERTICAL_ICONS.join(", ")}`,
   page: "wholesale",
   previewHref: "/wholesale",
   defaults: { tiers: TIERS, benefits: BENEFITS, verticals: VERTICALS, faq: FAQ },

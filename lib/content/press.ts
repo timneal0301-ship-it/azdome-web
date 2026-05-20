@@ -1,7 +1,15 @@
-import { FileText, ImageIcon, Palette } from "lucide-react";
 import type { ContentSection } from "./types";
 
-export const RELEASES = [
+export const PRESS_KIT_ICONS = ["Palette", "ImageIcon", "FileText"] as const;
+
+export type PressRelease = {
+  date: string;
+  title: string;
+  excerpt: string;
+  body: string;
+};
+
+export const RELEASES: PressRelease[] = [
   {
     date: "April 04, 2026",
     title: "AZDOME launches M550 Pro with Sony Starvis 2 sensor",
@@ -36,7 +44,9 @@ export const RELEASES = [
   },
 ];
 
-export const COVERAGE = [
+export type PressCoverage = { outlet: string; title: string; href: string };
+
+export const COVERAGE: PressCoverage[] = [
   { outlet: "The Verge", title: "AZDOME's M550 Pro is the dash cam to beat in 2026", href: "#" },
   { outlet: "Wired",      title: "How a small DTC brand is challenging the dash-cam category", href: "#" },
   { outlet: "TechCrunch", title: "AZDOME raises Series B for next-gen on-device AI", href: "#" },
@@ -44,7 +54,9 @@ export const COVERAGE = [
   { outlet: "CNET",       title: "The best dash cams for night driving in 2026", href: "#" },
 ];
 
-export const QUOTES = [
+export type PressQuote = { quote: string; outlet: string };
+
+export const QUOTES: PressQuote[] = [
   {
     quote:
       "AZDOME has quietly become the brand to beat at this price point. Night footage is genuinely class-leading.",
@@ -62,23 +74,27 @@ export const QUOTES = [
   },
 ];
 
-export const KIT = [
-  { icon: Palette,    title: "Brand kit (logos, colors, type)", detail: "AI/SVG/PNG · 12 MB" },
-  { icon: ImageIcon,  title: "Product photography",            detail: "Full resolution, web + print · 240 MB" },
-  { icon: FileText,   title: "Fact sheet & exec bios",          detail: "PDF · 1.2 MB" },
+export type PressKitEntry = { iconName: string; title: string; detail: string };
+
+export const KIT: PressKitEntry[] = [
+  { iconName: "Palette",   title: "Brand kit (logos, colors, type)", detail: "AI/SVG/PNG · 12 MB" },
+  { iconName: "ImageIcon", title: "Product photography",            detail: "Full resolution, web + print · 240 MB" },
+  { iconName: "FileText",  title: "Fact sheet & exec bios",          detail: "PDF · 1.2 MB" },
 ];
 
 export type PressContent = {
-  releases: typeof RELEASES;
-  coverage: typeof COVERAGE;
-  quotes: typeof QUOTES;
-  kit: typeof KIT;
+  releases: PressRelease[];
+  coverage: PressCoverage[];
+  quotes: PressQuote[];
+  kit: PressKitEntry[];
 };
 
 export const PRESS_PAGE: ContentSection<PressContent> = {
   key: "press.page",
   label: "Press 页 · Releases / Coverage / Quotes / Brand Kit",
-  description: "媒体页:新闻稿、报道、引语、品牌资源下载条目。",
+  description:
+    "媒体页:新闻稿、报道、引语、品牌资源下载条目。" +
+    `Kit iconName: ${PRESS_KIT_ICONS.join(", ")}`,
   page: "press",
   previewHref: "/press",
   defaults: { releases: RELEASES, coverage: COVERAGE, quotes: QUOTES, kit: KIT },

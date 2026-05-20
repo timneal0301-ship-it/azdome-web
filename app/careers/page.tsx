@@ -1,8 +1,6 @@
 import Link from "next/link";
 import { getContent } from "@/lib/content-server";
 import { CAREERS_PAGE } from "@/lib/content/careers";
-
-import { ROLES, VALUES, BENEFITS, PROCESS } from "@/lib/content/careers";
 import {
   ArrowRight,
   BookOpen,
@@ -14,6 +12,17 @@ import {
   Users,
   Wifi,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+
+const ICONS: Record<string, LucideIcon> = {
+  Sparkles,
+  Users,
+  BookOpen,
+  HeartPulse,
+  PiggyBank,
+  Plane,
+  Wifi,
+};
 
 export const metadata = { title: "Careers — AZDOME" };
 
@@ -55,18 +64,21 @@ export default async function CareersPage() {
             </h2>
           </div>
           <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
-            {VALUES.map((v) => (
+            {VALUES.map((v) => {
+              const Icon = ICONS[v.iconName] ?? Sparkles;
+              return (
               <div
                 key={v.title}
                 className="rounded-2xl bg-slate-50 p-8 shadow-sm transition-shadow duration-300 hover:shadow-md"
               >
                 <span className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-white text-blue-600 shadow-sm">
-                  <v.icon className="h-5 w-5" />
+                  <Icon className="h-5 w-5" />
                 </span>
                 <h3 className="mt-5 text-lg font-semibold tracking-tight text-slate-900">{v.title}</h3>
                 <p className="mt-3 text-sm leading-relaxed text-slate-600">{v.body}</p>
               </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
@@ -83,15 +95,18 @@ export default async function CareersPage() {
             </h2>
           </div>
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {BENEFITS.map((b) => (
+            {BENEFITS.map((b) => {
+              const Icon = ICONS[b.iconName] ?? HeartPulse;
+              return (
               <div key={b.title} className="rounded-2xl bg-white p-7 shadow-sm">
                 <span className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-blue-50 text-blue-600">
-                  <b.icon className="h-5 w-5" />
+                  <Icon className="h-5 w-5" />
                 </span>
                 <h3 className="mt-5 text-base font-semibold tracking-tight text-slate-900">{b.title}</h3>
                 <p className="mt-2 text-sm leading-relaxed text-slate-500">{b.body}</p>
               </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>

@@ -11,12 +11,22 @@ import {
   Wifi,
   Zap,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 
 import FaqAccordion from "@/components/FaqAccordion";
 import { getContent } from "@/lib/content-server";
 import { APP_PAGE } from "@/lib/content/app-page";
 
-import { FEATURES, FAQ } from "@/lib/content/app-page";
+const ICONS: Record<string, LucideIcon> = {
+  Wifi,
+  Download,
+  Cloud,
+  MapPin,
+  Sparkles,
+  Zap,
+  ShieldCheck,
+  Smartphone,
+};
 
 const COMPATIBILITY: { product: string; firmware: string; ios: string; android: string }[] = [
   { product: "M550 Pro", firmware: "v2.4+", ios: "iOS 14+", android: "Android 8+" },
@@ -103,13 +113,15 @@ export default async function AppPage() {
             </h2>
           </div>
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {FEATURES.map((f) => (
+            {FEATURES.map((f) => {
+              const Icon = ICONS[f.iconName] ?? Wifi;
+              return (
               <div
                 key={f.title}
                 className="rounded-2xl bg-slate-50 p-7 shadow-sm transition-shadow duration-300 hover:shadow-md"
               >
                 <span className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-white text-blue-600 shadow-sm">
-                  <f.icon className="h-5 w-5" />
+                  <Icon className="h-5 w-5" />
                 </span>
                 <h3 className="mt-5 text-base font-semibold tracking-tight text-slate-900">
                   {f.title}
@@ -118,7 +130,8 @@ export default async function AppPage() {
                   {f.body}
                 </p>
               </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>

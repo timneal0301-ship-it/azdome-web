@@ -1,9 +1,14 @@
 import Link from "next/link";
 import { ArrowUpRight, Download, FileText, Image as ImageIcon, Palette } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { getContent } from "@/lib/content-server";
 import { PRESS_PAGE } from "@/lib/content/press";
 
-import { RELEASES, COVERAGE, QUOTES, KIT } from "@/lib/content/press";
+const ICONS: Record<string, LucideIcon> = {
+  Palette,
+  ImageIcon,
+  FileText,
+};
 
 export const metadata = { title: "Press — AZDOME" };
 
@@ -43,14 +48,16 @@ export default async function PressPage() {
             Logos, photography, executive headshots, fact sheet. Updated quarterly.
           </p>
           <ul className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-3">
-            {KIT.map((k) => (
+            {KIT.map((k) => {
+              const Icon = ICONS[k.iconName] ?? FileText;
+              return (
               <li key={k.title}>
                 <Link
                   href="#"
                   className="group flex h-full flex-col rounded-xl bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md"
                 >
                   <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-blue-50 text-blue-600">
-                    <k.icon className="h-5 w-5" />
+                    <Icon className="h-5 w-5" />
                   </span>
                   <p className="mt-4 text-sm font-semibold tracking-tight text-slate-900">
                     {k.title}
@@ -62,7 +69,8 @@ export default async function PressPage() {
                   </span>
                 </Link>
               </li>
-            ))}
+              );
+            })}
           </ul>
         </section>
 

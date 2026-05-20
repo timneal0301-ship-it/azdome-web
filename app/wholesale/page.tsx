@@ -9,12 +9,22 @@ import {
   Truck,
   Wrench,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 
 import FaqAccordion from "@/components/FaqAccordion";
 import { getContent } from "@/lib/content-server";
 import { WHOLESALE_PAGE } from "@/lib/content/wholesale";
 
-import { TIERS, BENEFITS, VERTICALS, FAQ } from "@/lib/content/wholesale";
+const ICONS: Record<string, LucideIcon> = {
+  Package2,
+  Truck,
+  ShieldCheck,
+  Headset,
+  Wrench,
+  Building2,
+  Briefcase,
+  Boxes,
+};
 
 export const metadata = { title: "Wholesale — AZDOME" };
 
@@ -108,15 +118,18 @@ export default async function WholesalePage() {
             </h2>
           </div>
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {BENEFITS.map((b) => (
+            {BENEFITS.map((b) => {
+              const Icon = ICONS[b.iconName] ?? Package2;
+              return (
               <div key={b.title} className="rounded-2xl bg-white p-7 shadow-sm">
                 <span className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-blue-50 text-blue-600">
-                  <b.icon className="h-5 w-5" />
+                  <Icon className="h-5 w-5" />
                 </span>
                 <h3 className="mt-5 text-base font-semibold tracking-tight text-slate-900">{b.title}</h3>
                 <p className="mt-2 text-sm leading-relaxed text-slate-500">{b.body}</p>
               </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
@@ -133,18 +146,21 @@ export default async function WholesalePage() {
             </h2>
           </div>
           <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
-            {VERTICALS.map((v) => (
+            {VERTICALS.map((v) => {
+              const Icon = ICONS[v.iconName] ?? Briefcase;
+              return (
               <div
                 key={v.title}
                 className="rounded-2xl bg-slate-50 p-8 shadow-sm transition-shadow duration-300 hover:shadow-md"
               >
                 <span className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-white text-blue-600 shadow-sm">
-                  <v.icon className="h-5 w-5" />
+                  <Icon className="h-5 w-5" />
                 </span>
                 <h3 className="mt-5 text-lg font-semibold tracking-tight text-slate-900">{v.title}</h3>
                 <p className="mt-3 text-sm leading-relaxed text-slate-600">{v.body}</p>
               </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>

@@ -8,12 +8,20 @@ import {
   Megaphone,
   Users,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 
 import FaqAccordion from "@/components/FaqAccordion";
 import { getContent } from "@/lib/content-server";
 import { AFFILIATE_PAGE } from "@/lib/content/affiliate";
 
-import { STATS, TIERS, HOW_IT_WORKS, FAQ } from "@/lib/content/affiliate";
+const ICONS: Record<string, LucideIcon> = {
+  BadgeCheck,
+  CalendarClock,
+  DollarSign,
+  LineChart,
+  Megaphone,
+  Users,
+};
 
 export const metadata = { title: "Affiliate Program — AZDOME" };
 
@@ -52,15 +60,18 @@ export default async function AffiliatePage() {
       {/* Stats */}
       <section className="py-20 md:py-28">
         <div className="mx-auto grid max-w-5xl grid-cols-2 gap-5 px-6 md:grid-cols-4 lg:px-10">
-          {STATS.map((s) => (
+          {STATS.map((s) => {
+            const Icon = ICONS[s.iconName] ?? DollarSign;
+            return (
             <div key={s.label} className="rounded-2xl bg-slate-50 p-7 text-center shadow-sm">
               <span className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-white text-blue-600 shadow-sm">
-                <s.icon className="h-5 w-5" />
+                <Icon className="h-5 w-5" />
               </span>
               <p className="mt-5 text-3xl font-bold tracking-tight text-slate-900">{s.value}</p>
               <p className="mt-1 text-sm text-slate-500">{s.label}</p>
             </div>
-          ))}
+            );
+          })}
         </div>
       </section>
 
@@ -122,10 +133,12 @@ export default async function AffiliatePage() {
             </h2>
           </div>
           <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4">
-            {HOW_IT_WORKS.map((s) => (
+            {HOW_IT_WORKS.map((s) => {
+              const Icon = ICONS[s.iconName] ?? BadgeCheck;
+              return (
               <div key={s.title} className="rounded-2xl bg-slate-50 p-7 shadow-sm">
                 <span className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-white text-blue-600 shadow-sm">
-                  <s.icon className="h-5 w-5" />
+                  <Icon className="h-5 w-5" />
                 </span>
                 <p className="mt-4 text-xs font-semibold uppercase tracking-[0.14em] text-slate-400">
                   Step {s.n}
@@ -135,7 +148,8 @@ export default async function AffiliatePage() {
                 </h3>
                 <p className="mt-2 text-sm leading-relaxed text-slate-500">{s.body}</p>
               </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>

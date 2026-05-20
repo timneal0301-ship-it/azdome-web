@@ -1,14 +1,38 @@
-import { BadgeCheck, CalendarClock, DollarSign, LineChart, Megaphone, Users } from "lucide-react";
 import type { ContentSection } from "./types";
 
-export const STATS = [
-  { icon: DollarSign, value: "10–18%", label: "Tiered commission" },
-  { icon: Users, value: "60 days", label: "Cookie window" },
-  { icon: LineChart, value: "$190", label: "Average order value" },
-  { icon: CalendarClock, value: "Net-30", label: "Payout schedule" },
+// Icons stored by string name so admin editor can serialize defaults.
+
+export const AFFILIATE_STAT_ICONS = [
+  "DollarSign",
+  "Users",
+  "LineChart",
+  "CalendarClock",
+] as const;
+
+export const AFFILIATE_STEP_ICONS = [
+  "BadgeCheck",
+  "Megaphone",
+  "LineChart",
+  "DollarSign",
+] as const;
+
+export type AffiliateStat = { iconName: string; value: string; label: string };
+
+export const STATS: AffiliateStat[] = [
+  { iconName: "DollarSign", value: "10–18%", label: "Tiered commission" },
+  { iconName: "Users", value: "60 days", label: "Cookie window" },
+  { iconName: "LineChart", value: "$190", label: "Average order value" },
+  { iconName: "CalendarClock", value: "Net-30", label: "Payout schedule" },
 ];
 
-export const TIERS = [
+export type AffiliateTier = {
+  name: string;
+  rate: string;
+  threshold: string;
+  perks: string[];
+};
+
+export const TIERS: AffiliateTier[] = [
   {
     name: "Starter",
     rate: "10%",
@@ -46,34 +70,43 @@ export const TIERS = [
   },
 ];
 
-export const HOW_IT_WORKS = [
+export type AffiliateStep = {
+  n: number;
+  iconName: string;
+  title: string;
+  body: string;
+};
+
+export const HOW_IT_WORKS: AffiliateStep[] = [
   {
     n: 1,
-    icon: BadgeCheck,
+    iconName: "BadgeCheck",
     title: "Apply",
     body: "Submit the short form below. We review every application personally — usually within 2 business days.",
   },
   {
     n: 2,
-    icon: Megaphone,
+    iconName: "Megaphone",
     title: "Promote",
     body: "Use your unique link or discount code in YouTube videos, blog posts, newsletters, or rideshare community groups.",
   },
   {
     n: 3,
-    icon: LineChart,
+    iconName: "LineChart",
     title: "Track",
     body: "Watch clicks, conversions, and earnings in your real-time dashboard. We attribute on a 60-day cookie + last-click model.",
   },
   {
     n: 4,
-    icon: DollarSign,
+    iconName: "DollarSign",
     title: "Get paid",
     body: "Net-30 payouts via PayPal, Wise, or ACH. Minimum payout threshold: $50.",
   },
 ];
 
-export const FAQ = [
+export type AffiliateFAQ = { q: string; a: string };
+
+export const FAQ: AffiliateFAQ[] = [
   {
     q: "What can I promote?",
     a: "Anything sold on azdome.com — dash cameras, accessories, and gift cards. Promotions of refurbished units and current sales are all eligible.",
@@ -101,16 +134,19 @@ export const FAQ = [
 ];
 
 export type AffiliateContent = {
-  stats: typeof STATS;
-  tiers: typeof TIERS;
-  howItWorks: typeof HOW_IT_WORKS;
-  faq: typeof FAQ;
+  stats: AffiliateStat[];
+  tiers: AffiliateTier[];
+  howItWorks: AffiliateStep[];
+  faq: AffiliateFAQ[];
 };
 
 export const AFFILIATE_PAGE: ContentSection<AffiliateContent> = {
   key: "affiliate.page",
   label: "Affiliate 页 · Stats / Tiers / How it works / FAQ",
-  description: "联盟计划页:统计、佣金等级、流程、常见问题。",
+  description:
+    "联盟计划页:统计、佣金等级、流程、常见问题。" +
+    `Stats iconName: ${AFFILIATE_STAT_ICONS.join(", ")} · ` +
+    `Steps iconName: ${AFFILIATE_STEP_ICONS.join(", ")}`,
   page: "affiliate",
   previewHref: "/affiliate",
   defaults: { stats: STATS, tiers: TIERS, howItWorks: HOW_IT_WORKS, faq: FAQ },

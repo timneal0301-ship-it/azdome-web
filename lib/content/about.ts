@@ -1,5 +1,23 @@
-import { Eye, Globe2, Leaf, Microscope, ShieldCheck, Sparkles, Truck, Users } from "lucide-react";
 import type { ContentSection } from "./types";
+
+// Icons are stored by string name so the section's defaults are fully
+// JSON-serializable and can cross the RSC boundary into the admin
+// editor. Consumers (server pages) hold the actual lucide function
+// refs in their own ICONS lookup map.
+
+export const ABOUT_VALUE_ICONS = [
+  "Eye",
+  "Sparkles",
+  "Users",
+  "Globe2",
+] as const;
+
+export const ABOUT_COMMITMENT_ICONS = [
+  "ShieldCheck",
+  "Microscope",
+  "Truck",
+  "Leaf",
+] as const;
 
 export const STATS: {
   to: number;
@@ -15,34 +33,38 @@ export const STATS: {
   { to: 2014, label: "Founded" },
 ];
 
-export const VALUES = [
+export type AboutValue = { iconName: string; title: string; body: string };
+
+export const VALUES: AboutValue[] = [
   {
-    icon: Eye,
+    iconName: "Eye",
     title: "Clarity above all",
     body:
       "Every component — image sensor, lens, codec, capacitor — is selected with one question first: will footage hold up at 2 a.m. on a four-lane highway, or in court three months later? We build to that test, not to the spec sheet.",
   },
   {
-    icon: Sparkles,
+    iconName: "Sparkles",
     title: "Quiet engineering",
     body:
       "We obsess over the details you won't see: cable routing, thermal behavior at 65 °C, capacitor longevity past 50,000 power cycles, firmware that recovers cleanly from a 3-microsecond power blip. The result is a camera that just keeps recording.",
   },
   {
-    icon: Users,
+    iconName: "Users",
     title: "Built with drivers",
     body:
       "Our beta program runs with rideshare drivers, fleet managers, parents on long road trips, and a handful of professional racers. Every product ships only after they've put it through what we can't simulate.",
   },
   {
-    icon: Globe2,
+    iconName: "Globe2",
     title: "Long-term ownership",
     body:
       "We commit to at least five years of free firmware updates on every product we sell. We publish release notes, source our SD cards from manufacturers we've audited, and back our work with a 2-year warranty plus optional accidental-damage cover.",
   },
 ];
 
-export const TIMELINE = [
+export type AboutTimelineEntry = { year: string; title: string; body: string };
+
+export const TIMELINE: AboutTimelineEntry[] = [
   {
     year: "2014",
     title: "AZDOME founded in Shenzhen",
@@ -81,27 +103,29 @@ export const TIMELINE = [
   },
 ];
 
-export const COMMITMENTS = [
+export type AboutCommitment = { iconName: string; title: string; body: string };
+
+export const COMMITMENTS: AboutCommitment[] = [
   {
-    icon: ShieldCheck,
+    iconName: "ShieldCheck",
     title: "Privacy on-device",
     body:
       "We never automatically upload footage. The camera and SD card are yours; what they record stays with you.",
   },
   {
-    icon: Microscope,
+    iconName: "Microscope",
     title: "Independent testing",
     body:
       "Every product is tested by TÜV Rheinland for EMC and an independent low-light lab for sensor performance before launch.",
   },
   {
-    icon: Truck,
+    iconName: "Truck",
     title: "Responsible shipping",
     body:
       "Carbon-neutral shipping on every US order. Reduced-volume packaging cut shipping CO₂ per unit by 38% in 2025.",
   },
   {
-    icon: Leaf,
+    iconName: "Leaf",
     title: "Repair over replace",
     body:
       "Out-of-warranty repair is offered for every model. We restock and resell certified-refurbished units at a discount instead of recycling them.",
@@ -110,15 +134,18 @@ export const COMMITMENTS = [
 
 export type AboutContent = {
   stats: typeof STATS;
-  values: typeof VALUES;
-  timeline: typeof TIMELINE;
-  commitments: typeof COMMITMENTS;
+  values: AboutValue[];
+  timeline: AboutTimelineEntry[];
+  commitments: AboutCommitment[];
 };
 
 export const ABOUT_PAGE: ContentSection<AboutContent> = {
   key: "about.page",
   label: "About 页 · Stats / Values / Timeline / Commitments",
-  description: "About 页所有可编辑卡片。Stats 是数字计数器(到达视野动画),Timeline 是大事记。",
+  description:
+    "About 页所有可编辑卡片。Stats 是数字计数器(到达视野动画),Timeline 是大事记。" +
+    `Values iconName 可选: ${ABOUT_VALUE_ICONS.join(", ")} · ` +
+    `Commitments iconName 可选: ${ABOUT_COMMITMENT_ICONS.join(", ")}`,
   page: "about",
   previewHref: "/about",
   defaults: { stats: STATS, values: VALUES, timeline: TIMELINE, commitments: COMMITMENTS },
