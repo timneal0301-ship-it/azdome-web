@@ -8,7 +8,7 @@ export default async function DownloadsAdminPage() {
   const manuals = await getAllManuals();
 
   return (
-    <main className="mx-auto max-w-6xl px-6 pb-24 pt-10 lg:px-10">
+    <main className="mx-auto max-w-7xl px-4 pb-24 pt-10 sm:px-6 lg:px-10">
       <header className="mb-10 border-b border-slate-200 pb-8">
         <p className="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-blue-600">
           Downloads

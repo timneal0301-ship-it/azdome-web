@@ -18,7 +18,7 @@ export default async function ContentSectionEditPage({
   const { value, isOverridden, hasPrev } = await getContentDetailed(section);
 
   return (
-    <main className="mx-auto max-w-5xl px-6 pb-24 pt-10 lg:px-10">
+    <main className="mx-auto max-w-7xl px-4 pb-24 pt-10 sm:px-6 lg:px-10">
       <Link
         href="/admin/content"
         className="inline-flex items-center gap-1 text-xs font-semibold tracking-tight text-slate-500 transition-colors duration-300 hover:text-slate-900"
