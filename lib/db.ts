@@ -2,8 +2,12 @@
 //
 // Adapter is picked at first call based on environment:
 //   • Vercel KV  — when KV_REST_API_URL + KV_REST_API_TOKEN are present
-//                  (Vercel auto-injects these when you connect a KV store)
-//   • Local JSON — otherwise (writes to data/db.json, for `npm run dev`)
+//                  (legacy Vercel KV auto-injects these)
+//                  OR when UPSTASH_REDIS_REST_URL + UPSTASH_REDIS_REST_TOKEN
+//                  are present (new Vercel Marketplace Upstash integration)
+//   • Local JSON — otherwise (writes to data/db.json, for `npm run dev`).
+//                  On Vercel serverless this would hit a read-only fs, so
+//                  we refuse to use it there and throw a clear error instead.
 
 import "server-only";
 
@@ -14,6 +18,21 @@ import {
   writeFileSync,
 } from "fs";
 import { dirname, join } from "path";
+
+// Bridge new Marketplace var names → what @vercel/kv expects, before its
+// first import. @vercel/kv reads env at module init, so map names early.
+if (
+  !process.env.KV_REST_API_URL &&
+  process.env.UPSTASH_REDIS_REST_URL
+) {
+  process.env.KV_REST_API_URL = process.env.UPSTASH_REDIS_REST_URL;
+}
+if (
+  !process.env.KV_REST_API_TOKEN &&
+  process.env.UPSTASH_REDIS_REST_TOKEN
+) {
+  process.env.KV_REST_API_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN;
+}
 
 type Store = Record<string, unknown>;
 
@@ -40,6 +59,14 @@ function readStore(): Store {
 }
 
 function writeStore(store: Store) {
+  if (process.env.VERCEL) {
+    throw new Error(
+      "[db] Refusing to write to local JSON on Vercel — the serverless " +
+        "filesystem is read-only. Connect a KV/Upstash store and ensure " +
+        "KV_REST_API_URL + KV_REST_API_TOKEN (or UPSTASH_REDIS_REST_URL + " +
+        "UPSTASH_REDIS_REST_TOKEN) are set in Project Settings → Environment Variables.",
+    );
+  }
   mkdirSync(dirname(DB_PATH), { recursive: true });
   writeFileSync(DB_PATH, JSON.stringify(store, null, 2));
 }
