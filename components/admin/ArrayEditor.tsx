@@ -4,13 +4,16 @@ import { useState } from "react";
 import {
   ChevronDown,
   ChevronUp,
+  ExternalLink,
   Eye,
   EyeOff,
+  ImageOff,
   Plus,
   Trash2,
   X,
 } from "lucide-react";
 
+import { useAssetUrl } from "@/components/AssetUrlsProvider";
 import type { FieldSpec, ItemSchema } from "@/lib/content/array-schemas";
 import { buildBlankItem } from "@/lib/content/array-schemas";
 
@@ -242,6 +245,44 @@ function FieldGrid({
   );
 }
 
+function FieldLabel({
+  spec,
+  value,
+  onClear,
+}: {
+  spec: { label: string; optional?: boolean; kind: string };
+  value: unknown;
+  onClear: () => void;
+}) {
+  const hasValue =
+    spec.kind === "number"
+      ? typeof value === "number"
+      : typeof value === "string" && value.length > 0;
+  return (
+    <div className="mb-1 flex items-center justify-between gap-2">
+      <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">
+        {spec.label}
+        {spec.optional && (
+          <span className="ml-2 rounded-full bg-slate-100 px-1.5 py-0.5 text-[9px] font-bold normal-case tracking-normal text-slate-500">
+            可选
+          </span>
+        )}
+      </span>
+      {spec.optional && hasValue && (
+        <button
+          type="button"
+          onClick={onClear}
+          className="inline-flex items-center gap-0.5 rounded-full px-2 py-0.5 text-[10px] font-semibold text-slate-400 transition-colors hover:bg-red-50 hover:text-red-600"
+          title="清除此字段(前台不再渲染)"
+        >
+          <X className="h-3 w-3" />
+          清除
+        </button>
+      )}
+    </div>
+  );
+}
+
 function FieldInput({
   spec,
   value,
@@ -256,12 +297,12 @@ function FieldInput({
   const inputClass =
     "w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-600/15";
 
-  if (spec.kind === "text" || spec.kind === "url") {
+  if (spec.kind === "text") {
     return (
-      <label>
-        <span className={labelClass}>{spec.label}</span>
+      <div>
+        <FieldLabel spec={spec} value={value} onClear={() => onChange("")} />
         <input
-          type={spec.kind === "url" ? "url" : "text"}
+          type="text"
           value={typeof value === "string" ? value : ""}
           placeholder={spec.placeholder}
           onChange={(e) => onChange(e.target.value)}
@@ -270,13 +311,67 @@ function FieldInput({
         {spec.hint && (
           <p className="mt-1 text-[11px] text-slate-400">{spec.hint}</p>
         )}
-      </label>
+      </div>
+    );
+  }
+  if (spec.kind === "url") {
+    const url = typeof value === "string" ? value : "";
+    return (
+      <div>
+        <FieldLabel spec={spec} value={value} onClear={() => onChange("")} />
+        <div className="flex items-center gap-1.5">
+          <input
+            type="url"
+            value={url}
+            placeholder={spec.placeholder}
+            onChange={(e) => onChange(e.target.value)}
+            className={inputClass}
+          />
+          {url && (
+            <a
+              href={url.startsWith("/") || url.startsWith("http") ? url : `/${url}`}
+              target="_blank"
+              rel="noreferrer"
+              title="新标签页打开"
+              className="inline-flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700"
+            >
+              <ExternalLink className="h-3.5 w-3.5" />
+            </a>
+          )}
+        </div>
+        {spec.hint && (
+          <p className="mt-1 text-[11px] text-slate-400">{spec.hint}</p>
+        )}
+      </div>
+    );
+  }
+  if (spec.kind === "image") {
+    const src = typeof value === "string" ? value : "";
+    return (
+      <div>
+        <FieldLabel spec={spec} value={value} onClear={() => onChange("")} />
+        <div className="flex items-start gap-2">
+          <ImageThumb src={src} />
+          <div className="min-w-0 flex-1">
+            <input
+              type="text"
+              value={src}
+              placeholder={spec.placeholder ?? "/images/..."}
+              onChange={(e) => onChange(e.target.value)}
+              className={inputClass + " font-mono text-[12px]"}
+            />
+            {spec.hint && (
+              <p className="mt-1 text-[11px] text-slate-400">{spec.hint}</p>
+            )}
+          </div>
+        </div>
+      </div>
     );
   }
   if (spec.kind === "textarea") {
     return (
-      <label>
-        <span className={labelClass}>{spec.label}</span>
+      <div>
+        <FieldLabel spec={spec} value={value} onClear={() => onChange("")} />
         <textarea
           value={typeof value === "string" ? value : ""}
           placeholder={spec.placeholder}
@@ -287,13 +382,13 @@ function FieldInput({
         {spec.hint && (
           <p className="mt-1 text-[11px] text-slate-400">{spec.hint}</p>
         )}
-      </label>
+      </div>
     );
   }
   if (spec.kind === "number") {
     return (
-      <label>
-        <span className={labelClass}>{spec.label}</span>
+      <div>
+        <FieldLabel spec={spec} value={value} onClear={() => onChange(undefined)} />
         <input
           type="number"
           value={typeof value === "number" ? value : ""}
@@ -303,7 +398,7 @@ function FieldInput({
           }}
           className={inputClass + " tabular-nums"}
         />
-      </label>
+      </div>
     );
   }
   if (spec.kind === "boolean") {
@@ -334,8 +429,8 @@ function FieldInput({
   }
   if (spec.kind === "select") {
     return (
-      <label>
-        <span className={labelClass}>{spec.label}</span>
+      <div>
+        <FieldLabel spec={spec} value={value} onClear={() => onChange("")} />
         <select
           value={typeof value === "string" ? value : ""}
           onChange={(e) => onChange(e.target.value)}
@@ -348,16 +443,81 @@ function FieldInput({
             </option>
           ))}
         </select>
-      </label>
+      </div>
     );
   }
   if (spec.kind === "object") {
-    const obj = (value && typeof value === "object" ? value : {}) as Record<string, unknown>;
+    const isDefined = value !== null && value !== undefined && typeof value === "object";
+    if (spec.optional && !isDefined) {
+      // Render an "add" placeholder when the optional object is undefined.
+      return (
+        <div className="rounded-xl border border-dashed border-slate-200 bg-slate-50 p-3">
+          <div className="mb-2 flex items-center justify-between">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">
+              {spec.label}
+              <span className="ml-2 rounded-full bg-slate-100 px-1.5 py-0.5 text-[9px] font-bold normal-case tracking-normal text-slate-500">
+                可选
+              </span>
+            </p>
+            <button
+              type="button"
+              onClick={() =>
+                onChange(
+                  Object.fromEntries(
+                    Object.entries(spec.fields).map(([k, sub]) => [
+                      k,
+                      sub.kind === "boolean"
+                        ? false
+                        : sub.kind === "number"
+                        ? 0
+                        : sub.kind === "stringList" ||
+                          sub.kind === "objectList" ||
+                          sub.kind === "tupleList"
+                        ? []
+                        : "",
+                    ]),
+                  ),
+                )
+              }
+              className="inline-flex items-center gap-1 rounded-full bg-blue-50 px-3 py-1 text-[11px] font-semibold tracking-tight text-blue-700 hover:bg-blue-100"
+            >
+              <Plus className="h-3 w-3" />
+              添加
+            </button>
+          </div>
+          <p className="text-[11px] text-slate-400">
+            未添加 — 前台不会渲染此区块。
+          </p>
+        </div>
+      );
+    }
+    const obj = (isDefined ? (value as Record<string, unknown>) : {}) as Record<
+      string,
+      unknown
+    >;
     return (
       <div className="rounded-xl bg-slate-50 p-3 ring-1 ring-slate-100">
-        <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">
-          {spec.label}
-        </p>
+        <div className="mb-2 flex items-center justify-between">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">
+            {spec.label}
+            {spec.optional && (
+              <span className="ml-2 rounded-full bg-slate-100 px-1.5 py-0.5 text-[9px] font-bold normal-case tracking-normal text-slate-500">
+                可选
+              </span>
+            )}
+          </p>
+          {spec.optional && (
+            <button
+              type="button"
+              onClick={() => onChange(undefined)}
+              title="移除此区块(前台不再渲染)"
+              className="inline-flex items-center gap-0.5 rounded-full px-2 py-0.5 text-[10px] font-semibold text-slate-400 transition-colors hover:bg-red-50 hover:text-red-600"
+            >
+              <X className="h-3 w-3" />
+              移除
+            </button>
+          )}
+        </div>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           {Object.entries(spec.fields).map(([key, sub]) => (
             <FieldInput
@@ -650,6 +810,38 @@ function InlineObjectList({
         新增{itemLabel}
       </button>
     </div>
+  );
+}
+
+/** Small image preview for image-path fields. Goes through useAssetUrl
+ * so admin-uploaded overrides take effect immediately. */
+function ImageThumb({ src }: { src: string }) {
+  const resolved = useAssetUrl(src || "/");
+  if (!src) {
+    return (
+      <span className="inline-flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-300">
+        <ImageOff className="h-4 w-4" />
+      </span>
+    );
+  }
+  return (
+    <a
+      href={resolved}
+      target="_blank"
+      rel="noreferrer"
+      title="新标签页打开原图"
+      className="relative inline-block h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg bg-slate-100 ring-1 ring-slate-200 hover:ring-blue-300"
+    >
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={resolved}
+        alt=""
+        className="h-full w-full object-cover"
+        onError={(e) => {
+          (e.currentTarget as HTMLImageElement).style.display = "none";
+        }}
+      />
+    </a>
   );
 }
 

@@ -11,6 +11,7 @@ export type PrimitiveKind =
   | "number"
   | "boolean"
   | "url"
+  | "image"
   | "select";
 
 export type FieldSpec =
@@ -21,12 +22,19 @@ export type FieldSpec =
       hint?: string;
       options?: { value: string; label: string }[];
       rows?: number;
+      /** If true, an inline "✕ 清除" button is shown; cleared fields render
+       * nothing on the public site (consumers use truthy guards). */
+      optional?: boolean;
     }
   | {
       kind: "object";
       label: string;
       fields: Record<string, FieldSpec>;
       hint?: string;
+      /** If true, the whole sub-object can be removed/added. When removed,
+       * the parent's property is set to undefined and the public site
+       * renders nothing. */
+      optional?: boolean;
     }
   | {
       kind: "stringList";
@@ -73,11 +81,11 @@ const HOME_HERO_SCHEMA: ItemSchema = {
   order: ["eyebrow", "titleA", "titleB", "subtitle", "image", "tone", "primary", "secondary", "hidden", "id"],
   fields: {
     id: { kind: "text", label: "ID", hint: "唯一标识,不可重复" },
-    eyebrow: { kind: "text", label: "Eyebrow(标题上方小字)" },
+    eyebrow: { kind: "text", label: "Eyebrow(标题上方小字)", optional: true },
     titleA: { kind: "text", label: "标题(主)" },
-    titleB: { kind: "text", label: "标题(蓝色渐变后半)" },
-    subtitle: { kind: "textarea", label: "副标题", rows: 3 },
-    image: { kind: "text", label: "背景图路径", placeholder: "/images/banners/hero-1.jpg" },
+    titleB: { kind: "text", label: "标题(蓝色渐变后半)", optional: true },
+    subtitle: { kind: "textarea", label: "副标题", rows: 3, optional: true },
+    image: { kind: "image", label: "背景图路径", placeholder: "/images/banners/hero-1.jpg" },
     tone: {
       kind: "select",
       label: "色调",
@@ -89,6 +97,7 @@ const HOME_HERO_SCHEMA: ItemSchema = {
     primary: {
       kind: "object",
       label: "主 CTA 按钮",
+      optional: true,
       fields: {
         label: { kind: "text", label: "文字" },
         href: { kind: "url", label: "链接", placeholder: "/products/m550-pro" },
@@ -97,6 +106,7 @@ const HOME_HERO_SCHEMA: ItemSchema = {
     secondary: {
       kind: "object",
       label: "次 CTA 按钮",
+      optional: true,
       fields: {
         label: { kind: "text", label: "文字" },
         href: { kind: "url", label: "链接" },
@@ -112,11 +122,11 @@ const HOME_BANNERS_SCHEMA: ItemSchema = {
   order: ["eyebrow", "title", "subtitle", "accent", "image", "href", "tone", "span", "hidden", "id"],
   fields: {
     id: { kind: "text", label: "ID" },
-    eyebrow: { kind: "text", label: "Eyebrow" },
+    eyebrow: { kind: "text", label: "Eyebrow", optional: true },
     title: { kind: "text", label: "标题" },
-    subtitle: { kind: "text", label: "副标题" },
-    accent: { kind: "text", label: "Accent(如价格)", placeholder: "From $129.99" },
-    image: { kind: "text", label: "图片路径" },
+    subtitle: { kind: "text", label: "副标题", optional: true },
+    accent: { kind: "text", label: "Accent(如价格)", placeholder: "From $129.99", optional: true },
+    image: { kind: "image", label: "图片路径" },
     href: { kind: "url", label: "跳转链接" },
     tone: {
       kind: "select",
@@ -131,6 +141,7 @@ const HOME_BANNERS_SCHEMA: ItemSchema = {
       label: "网格 span(Tailwind 类)",
       placeholder: "lg:col-span-2 lg:row-span-2",
       hint: "留空则按默认 1 格放置",
+      optional: true,
     },
     hidden: { kind: "boolean", label: "隐藏" },
   },
@@ -148,8 +159,8 @@ const PDP_REVIEWS_SCHEMA: ItemSchema = {
     name: { kind: "text", label: "评价人姓名" },
     date: { kind: "text", label: "日期", placeholder: "Verified buyer · Mar 12, 2026" },
     verified: { kind: "boolean", label: "已验证购买" },
-    helpful: { kind: "number", label: "Helpful 数(可选)" },
-    photo: { kind: "text", label: "图片路径(可选)" },
+    helpful: { kind: "number", label: "Helpful 数", optional: true },
+    photo: { kind: "image", label: "图片路径", optional: true },
     hidden: { kind: "boolean", label: "隐藏" },
   },
 };
@@ -178,7 +189,7 @@ const FEATURE_SPLIT_SCHEMA: ItemSchema = {
     eyebrow: { kind: "text", label: "Eyebrow" },
     title: { kind: "text", label: "标题" },
     description: { kind: "textarea", label: "描述", rows: 3 },
-    image: { kind: "text", label: "右侧图片路径" },
+    image: { kind: "image", label: "右侧图片路径" },
     hidden: { kind: "boolean", label: "隐藏" },
   },
 };
@@ -222,7 +233,7 @@ const USE_CASE_TABS_SCHEMA: ItemSchema = {
       label: "要点(每条一行)",
       itemLabel: "要点",
     },
-    image: { kind: "text", label: "图片路径" },
+    image: { kind: "image", label: "图片路径" },
     hidden: { kind: "boolean", label: "隐藏" },
   },
 };
@@ -255,7 +266,7 @@ const CATALOG_PRODUCTS_SCHEMA: ItemSchema = {
     },
     name: { kind: "text", label: "完整产品名" },
     short: { kind: "text", label: "短名(卡片显示)" },
-    tagline: { kind: "text", label: "Tagline 标语" },
+    tagline: { kind: "text", label: "Tagline 标语", optional: true },
     category: {
       kind: "select",
       label: "类目",
@@ -265,15 +276,15 @@ const CATALOG_PRODUCTS_SCHEMA: ItemSchema = {
       ],
     },
     image: {
-      kind: "text",
+      kind: "image",
       label: "主图路径",
       placeholder: "/images/product/m550-front.jpg",
     },
     price: { kind: "number", label: "售价(USD)" },
-    comparePrice: { kind: "number", label: "划线价(USD,可选)" },
-    rating: { kind: "number", label: "星级(0-5)" },
-    reviewCount: { kind: "number", label: "评价数" },
-    badge: { kind: "text", label: "角标文字(如 NEW / 热销)" },
+    comparePrice: { kind: "number", label: "划线价(USD)", optional: true },
+    rating: { kind: "number", label: "星级(0-5)", optional: true },
+    reviewCount: { kind: "number", label: "评价数", optional: true },
+    badge: { kind: "text", label: "角标文字(如 NEW / 热销)", optional: true },
     description: {
       kind: "textarea",
       label: "完整描述",
@@ -309,7 +320,7 @@ const CATALOG_PRODUCTS_SCHEMA: ItemSchema = {
         order: ["src", "alt", "hidden"],
         fields: {
           src: {
-            kind: "text",
+            kind: "image",
             label: "图片路径",
             placeholder: "/images/product/m550-front.jpg",
           },
