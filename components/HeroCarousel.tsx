@@ -72,7 +72,10 @@ export default function HeroCarousel({ slides: rawSlides, intervalMs = 6500 }: P
   };
 
   const slide = slides[index];
-  const tone = slide.tone ?? "dark";
+  // Use ||, not ??, so an empty string (eg from a cleared select) also
+  // falls back to dark instead of dropping into the light-on-dark unreadable
+  // state.
+  const tone = slide.tone || "dark";
   const isDark = tone === "dark";
 
   return (

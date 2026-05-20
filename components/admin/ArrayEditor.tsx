@@ -436,7 +436,10 @@ function FieldInput({
           onChange={(e) => onChange(e.target.value)}
           className={inputClass}
         >
-          <option value="">—</option>
+          {/* Only show the "—" empty option for fields that are explicitly
+              optional. Required selects (eg `tone` on a Slide) MUST hold a
+              valid value so the consumer can branch without `||` games. */}
+          {spec.optional && <option value="">—</option>}
           {spec.options?.map((o) => (
             <option key={o.value} value={o.value}>
               {o.label}

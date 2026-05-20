@@ -98,7 +98,7 @@ export default function ProductBanners({
 }
 
 function BannerCard({ banner, index }: { banner: ProductBanner; index: number }) {
-  const isDark = (banner.tone ?? "dark") === "dark";
+  const isDark = (banner.tone || "dark") === "dark";
   const src = useAssetUrl(banner.image);
 
   return (
