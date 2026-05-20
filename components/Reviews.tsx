@@ -59,7 +59,7 @@ export default function Reviews({
             Customer reviews
           </p>
           <h2 className="text-balance text-3xl font-bold tracking-tight text-slate-900 md:text-5xl">
-            12,000+ drivers can't be wrong.
+            Real reviews from verified drivers.
           </h2>
         </motion.div>
 

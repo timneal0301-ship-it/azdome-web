@@ -23,11 +23,12 @@ export type CompareContent = {
 export const DEFAULT_COMPARE: CompareContent = {
   eyebrow: "Why AZDOME",
   title: "More inside. Less to pay.",
-  body: "We benchmarked the M550 Pro against the dash cams shoppers ask about most. Here's what you get for your money — and what you don't.",
+  body:
+    "Common dash cam categories at this price point — what you usually get, and what the M550 Pro adds. Comparison based on publicly available spec sheets as of April 2026.",
   brands: [
     { name: "AZDOME M550 Pro", price: "$129.99", highlight: true },
-    { name: "Brand X 4K", price: "$169" },
-    { name: "Brand Y Mirror", price: "$239" },
+    { name: "Typical 4K dash cam", price: "~$159" },
+    { name: "Mirror-style cam", price: "~$229" },
   ],
   rows: [
     { feature: "True 4K (3840×2160) front", values: ["✓", "✓", "✗"] },
