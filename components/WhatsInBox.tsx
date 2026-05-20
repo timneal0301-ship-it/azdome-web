@@ -40,11 +40,13 @@ const fadeUp = {
 
 export default function WhatsInBox({
   image = "/images/whatsinbox.jpg",
-  items = DEFAULT_BOX_ITEMS,
+  items: rawItems = DEFAULT_BOX_ITEMS,
 }: {
   image?: string;
   items?: BoxItem[];
 }) {
+  const items = rawItems.filter((i) => !i.hidden);
+  if (items.length === 0) return null;
   return (
     <section className="bg-slate-50 py-24 md:py-32">
       <div className="mx-auto max-w-7xl px-6 lg:px-10">

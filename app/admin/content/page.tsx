@@ -6,6 +6,7 @@ import { ALL_SECTIONS, getContentDetailed } from "@/lib/content-server";
 export const dynamic = "force-dynamic";
 
 const PAGE_LABELS: Record<string, string> = {
+  layout: "Layout · 模块开关(隐藏整版面)",
   home: "Home · 首页 Hero 轮播 + Bento Banner",
   catalog: "Catalog · 产品目录(10 SKU 共用数据源)",
   pdp: "PDP · 产品详情页(规格 / 评价 / FAQ / 沉浸式 / 应用场景)",
@@ -19,6 +20,7 @@ const PAGE_LABELS: Record<string, string> = {
 };
 
 const PAGE_ORDER = [
+  "layout",
   "home",
   "catalog",
   "pdp",

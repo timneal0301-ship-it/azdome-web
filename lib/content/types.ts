@@ -17,6 +17,7 @@ export type ContentSection<T = unknown> = {
     | "home"
     | "pdp"
     | "catalog"
+    | "layout"
     | "legal"
     | "about"
     | "careers"

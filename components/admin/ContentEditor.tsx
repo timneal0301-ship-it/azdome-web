@@ -29,6 +29,38 @@ type Props = {
   hasPrev: boolean;
 };
 
+/** True iff value is a plain object whose every value is a boolean — the
+ * shape used by LayoutConfig sections (page === "layout"). */
+function isToggleMap(v: unknown): v is Record<string, boolean> {
+  if (v === null || typeof v !== "object" || Array.isArray(v)) return false;
+  const entries = Object.entries(v as Record<string, unknown>);
+  if (entries.length === 0) return false;
+  return entries.every(([, val]) => typeof val === "boolean");
+}
+
+const MODULE_LABELS: Record<string, string> = {
+  // Home
+  hero: "Hero 轮播",
+  banners: "Bento Banner",
+  press: "Press Logos",
+  featured: "Featured Products",
+  video: "Video CTA",
+  scenarios: "应用场景",
+  tech: "Tech Feature",
+  testimonials: "客户故事",
+  newsletter: "邮件订阅",
+  // PDP
+  immersive: "Immersive 沉浸段",
+  featureSplit: "Feature Split 图文",
+  specs: "Specs 规格",
+  whatsInBox: "What's in the Box",
+  useCases: "Use Case Tabs",
+  reviews: "Reviews 评价",
+  faq: "FAQ",
+  related: "Related Products",
+  compare: "Product Compare",
+};
+
 export default function ContentEditor({
   sectionKey,
   label,
@@ -39,6 +71,8 @@ export default function ContentEditor({
   isOverridden,
   hasPrev,
 }: Props) {
+  const toggleMode = isToggleMap(currentValue) && isToggleMap(defaultValue);
+
   const currentJson = useMemo(
     () => JSON.stringify(currentValue, null, 2),
     [currentValue],
@@ -65,6 +99,22 @@ export default function ContentEditor({
 
   const isDirty = text !== currentJson;
   const lineCount = text.split("\n").length;
+
+  // Toggle-map view derives a typed view of `text` and lets users flip booleans
+  // without touching JSON. Mutations re-serialize back into `text` so the
+  // existing save flow works unchanged.
+  const toggleValue: Record<string, boolean> = useMemo(() => {
+    if (!toggleMode || parseError) return {};
+    try {
+      return JSON.parse(text);
+    } catch {
+      return {};
+    }
+  }, [text, toggleMode, parseError]);
+  const setToggle = (key: string, value: boolean) => {
+    const next = { ...toggleValue, [key]: value };
+    setText(JSON.stringify(next, null, 2));
+  };
 
   const onSave = async () => {
     if (parseError) return;
@@ -138,35 +188,74 @@ export default function ContentEditor({
         </div>
       </header>
 
-      <div>
-        <div className="mb-2 flex items-center justify-between text-xs text-slate-500">
-          <span>
-            JSON · <span className="tabular-nums">{lineCount}</span> lines ·{" "}
-            <span className="tabular-nums">{text.length}</span> chars
-          </span>
-          {parseError ? (
-            <span className="inline-flex items-center gap-1 text-red-600">
-              <XCircle className="h-3.5 w-3.5" />
-              {parseError}
-            </span>
-          ) : (
-            <span className="inline-flex items-center gap-1 text-emerald-600">
-              <CheckCircle2 className="h-3.5 w-3.5" />
-              Valid JSON
-            </span>
-          )}
+      {toggleMode ? (
+        <div className="rounded-2xl bg-white p-2 shadow-sm ring-1 ring-slate-100">
+          <ul className="divide-y divide-slate-100">
+            {Object.entries(toggleValue).map(([key, on]) => (
+              <li
+                key={key}
+                className="flex items-center justify-between gap-4 px-4 py-3.5"
+              >
+                <div className="min-w-0">
+                  <p className="text-sm font-semibold tracking-tight text-slate-900">
+                    {MODULE_LABELS[key] ?? key}
+                  </p>
+                  <p className="mt-0.5 font-mono text-[11px] text-slate-400">
+                    {key}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setToggle(key, !on)}
+                  role="switch"
+                  aria-checked={on}
+                  className={[
+                    "relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer items-center rounded-full transition-colors duration-300",
+                    on ? "bg-blue-600" : "bg-slate-300",
+                  ].join(" ")}
+                >
+                  <span
+                    className={[
+                      "inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition-transform duration-300",
+                      on ? "translate-x-5" : "translate-x-0.5",
+                    ].join(" ")}
+                  />
+                </button>
+              </li>
+            ))}
+          </ul>
         </div>
-        <textarea
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          spellCheck={false}
-          className={[
-            "w-full rounded-2xl border bg-slate-950 p-5 font-mono text-[13px] leading-relaxed text-slate-100 shadow-inner focus:outline-none focus:ring-2 focus:ring-blue-600/30",
-            parseError ? "border-red-400/40" : "border-slate-200",
-          ].join(" ")}
-          style={{ minHeight: "60vh" }}
-        />
-      </div>
+      ) : (
+        <div>
+          <div className="mb-2 flex items-center justify-between text-xs text-slate-500">
+            <span>
+              JSON · <span className="tabular-nums">{lineCount}</span> lines ·{" "}
+              <span className="tabular-nums">{text.length}</span> chars
+            </span>
+            {parseError ? (
+              <span className="inline-flex items-center gap-1 text-red-600">
+                <XCircle className="h-3.5 w-3.5" />
+                {parseError}
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1 text-emerald-600">
+                <CheckCircle2 className="h-3.5 w-3.5" />
+                Valid JSON
+              </span>
+            )}
+          </div>
+          <textarea
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            spellCheck={false}
+            className={[
+              "w-full rounded-2xl border bg-slate-950 p-5 font-mono text-[13px] leading-relaxed text-slate-100 shadow-inner focus:outline-none focus:ring-2 focus:ring-blue-600/30",
+              parseError ? "border-red-400/40" : "border-slate-200",
+            ].join(" ")}
+            style={{ minHeight: "60vh" }}
+          />
+        </div>
+      )}
 
       <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-slate-50 p-4">
         <div className="flex flex-wrap gap-2">

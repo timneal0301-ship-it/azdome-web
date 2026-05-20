@@ -30,7 +30,7 @@ export default function UseCaseTabs({
 }: {
   tabs?: UseCaseTab[];
 }) {
-  const TABS = tabs;
+  const TABS = tabs.filter((t) => !t.hidden);
   const [activeId, setActiveId] = useState(TABS[0]?.id ?? "");
   const active = TABS.find((t) => t.id === activeId) ?? TABS[0];
   const imageSrc = useAssetUrl(active?.image ?? "");

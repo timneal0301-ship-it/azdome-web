@@ -14,6 +14,7 @@ import {
   PDP_WHATS_IN_BOX,
   PDP_USE_CASES,
 } from "@/lib/content/pdp";
+import { PDP_LAYOUT } from "@/lib/content/layout";
 
 export function generateStaticParams() {
   return PRODUCTS.map((p) => ({ slug: p.slug }));
@@ -45,6 +46,7 @@ export default async function ProductPage({
     features,
     boxItems,
     useCases,
+    layout,
   ] = await Promise.all([
     getManualEntry(params.slug),
     getLatestFirmware(params.slug),
@@ -55,6 +57,7 @@ export default async function ProductPage({
     getContent(PDP_FEATURE_SPLIT),
     getContent(PDP_WHATS_IN_BOX),
     getContent(PDP_USE_CASES),
+    getContent(PDP_LAYOUT),
   ]);
   return (
     <ProductPDP
@@ -68,6 +71,7 @@ export default async function ProductPage({
       features={features}
       boxItems={boxItems}
       useCases={useCases}
+      layout={layout}
     />
   );
 }

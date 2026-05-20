@@ -20,6 +20,8 @@ export type ProductBanner = {
   tone?: "dark" | "light";
   /** Optional accent (e.g., price badge). */
   accent?: string;
+  /** Set to true to skip rendering this banner. */
+  hidden?: boolean;
 };
 
 export const DEFAULT_BANNERS: ProductBanner[] = [
@@ -80,11 +82,13 @@ export default function ProductBanners({
 }: {
   banners?: ProductBanner[];
 }) {
+  const visible = banners.filter((b) => !b.hidden);
+  if (visible.length === 0) return null;
   return (
     <section className="bg-white py-16 md:py-20">
       <div className="mx-auto max-w-7xl px-6 lg:px-10">
         <div className="grid auto-rows-[260px] grid-cols-1 gap-4 md:auto-rows-[300px] md:grid-cols-2 lg:auto-rows-[280px] lg:grid-cols-4">
-          {banners.map((b, i) => (
+          {visible.map((b, i) => (
             <BannerCard key={b.id} banner={b} index={i} />
           ))}
         </div>

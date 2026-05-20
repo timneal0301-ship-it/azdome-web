@@ -19,6 +19,8 @@ export type Slide = {
   secondary?: { label: string; href: string };
   /** Optional gradient overlay tweak — defaults to dark cinematic. */
   tone?: "dark" | "light";
+  /** Set to true to skip rendering this slide. */
+  hidden?: boolean;
 };
 
 type Props = {
@@ -27,11 +29,14 @@ type Props = {
   intervalMs?: number;
 };
 
-export default function HeroCarousel({ slides, intervalMs = 6500 }: Props) {
+export default function HeroCarousel({ slides: rawSlides, intervalMs = 6500 }: Props) {
+  const slides = rawSlides.filter((s) => !s.hidden);
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
   const [direction, setDirection] = useState<1 | -1>(1);
   const touchStart = useRef<{ x: number; y: number } | null>(null);
+
+  if (slides.length === 0) return null;
 
   useEffect(() => {
     if (paused || intervalMs === 0 || slides.length <= 1) return;

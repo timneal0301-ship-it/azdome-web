@@ -18,8 +18,10 @@ export type ProductDetail = {
   badge?: string;
   description: string;
   variants?: Variant[];
-  gallery: { src: string; alt: string }[];
+  gallery: { src: string; alt: string; hidden?: boolean }[];
   category: "dash-cam" | "accessory";
+  /** Set to true to soft-hide the product from collection/featured grids. */
+  hidden?: boolean;
 };
 
 // Lineup based on AZDOME's official VIP store catalog.

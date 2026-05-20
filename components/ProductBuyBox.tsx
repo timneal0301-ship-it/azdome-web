@@ -76,7 +76,8 @@ export default function ProductBuyBox({
     open();
   };
 
-  const images = product.gallery.length > 0 ? product.gallery : [{ src: product.image, alt: product.name }];
+  const visibleGallery = product.gallery.filter((g) => !g.hidden);
+  const images = visibleGallery.length > 0 ? visibleGallery : [{ src: product.image, alt: product.name }];
   const resolvedSrcs = useAssetUrls(images.map((i) => i.src));
   const activeImg = images[activeImage] ?? images[0];
   const activeSrc = resolvedSrcs[activeImage] ?? resolvedSrcs[0];

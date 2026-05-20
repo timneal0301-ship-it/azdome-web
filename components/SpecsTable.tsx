@@ -9,7 +9,8 @@ export default function SpecsTable({
 }: {
   specs?: SpecGroup[];
 }) {
-  const SPECS = specs;
+  const SPECS = specs.filter((g) => !g.hidden);
+  if (SPECS.length === 0) return null;
   return (
     <section className="bg-white py-24 md:py-32">
       <div className="mx-auto max-w-5xl px-6 lg:px-10">

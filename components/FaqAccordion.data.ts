@@ -1,4 +1,9 @@
-export type FAQ = { q: string; a: string };
+export type FAQ = {
+  q: string;
+  a: string;
+  /** Set to true to skip rendering this question. */
+  hidden?: boolean;
+};
 
 export const DEFAULT_FAQS: FAQ[] = [
   {

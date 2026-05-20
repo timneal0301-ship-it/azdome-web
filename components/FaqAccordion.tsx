@@ -16,7 +16,7 @@ const fadeUp = {
 };
 
 export default function FaqAccordion({
-  faqs = DEFAULT_FAQS,
+  faqs: rawFaqs = DEFAULT_FAQS,
   title = "Questions, answered.",
   eyebrow = "FAQ",
 }: {
@@ -24,7 +24,9 @@ export default function FaqAccordion({
   title?: string;
   eyebrow?: string;
 }) {
+  const faqs = rawFaqs.filter((f) => !f.hidden);
   const [openIndex, setOpenIndex] = useState<number | null>(0);
+  if (faqs.length === 0) return null;
 
   return (
     <section className="bg-white py-24 md:py-32">

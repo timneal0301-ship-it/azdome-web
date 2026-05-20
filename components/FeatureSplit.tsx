@@ -32,10 +32,12 @@ export default function FeatureSplit({
 }: {
   features?: FeatureBlock[];
 }) {
+  const visible = features.filter((f) => !f.hidden);
+  if (visible.length === 0) return null;
   return (
     <section className="bg-white py-24 md:py-32">
       <div className="mx-auto flex max-w-7xl flex-col gap-24 px-6 md:gap-32 lg:px-10">
-        {features.map((feature, i) => (
+        {visible.map((feature, i) => (
           <FeatureRow
             key={feature.title}
             feature={feature}

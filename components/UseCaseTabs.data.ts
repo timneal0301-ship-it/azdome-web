@@ -16,6 +16,8 @@ export type UseCaseTab = {
   body: string;
   bullets: string[];
   image: string;
+  /** Set to true to skip rendering this tab. */
+  hidden?: boolean;
 };
 
 export const DEFAULT_USE_CASE_TABS: UseCaseTab[] = [

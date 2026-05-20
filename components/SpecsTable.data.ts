@@ -1,6 +1,8 @@
 export type SpecGroup = {
   title: string;
   rows: [string, string][];
+  /** Set to true to skip rendering this group. */
+  hidden?: boolean;
 };
 
 export const DEFAULT_SPECS: SpecGroup[] = [

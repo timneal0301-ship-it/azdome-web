@@ -15,6 +15,8 @@ export type BoxItem = {
   iconName: string;
   name: string;
   detail: string;
+  /** Set to true to skip rendering this item. */
+  hidden?: boolean;
 };
 
 export const DEFAULT_BOX_ITEMS: BoxItem[] = [

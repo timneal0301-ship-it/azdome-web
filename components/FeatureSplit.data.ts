@@ -16,6 +16,8 @@ export type FeatureBlock = {
   title: string;
   description: string;
   image: string;
+  /** Set to true to skip rendering this feature block. */
+  hidden?: boolean;
 };
 
 export const DEFAULT_FEATURES: FeatureBlock[] = [

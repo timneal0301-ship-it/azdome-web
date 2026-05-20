@@ -69,6 +69,7 @@ export async function resetContent(key: string): Promise<void> {
 import * as HOME from "./content/home";
 import * as PDP from "./content/pdp";
 import * as PRODUCTS_C from "./content/products";
+import * as LAYOUT from "./content/layout";
 import * as LEGAL from "./content/legal";
 import * as ABOUT from "./content/about";
 import * as CAREERS from "./content/careers";
@@ -83,6 +84,7 @@ const ALL_RAW: unknown[] = [
   ...Object.values(HOME),
   ...Object.values(PDP),
   ...Object.values(PRODUCTS_C),
+  ...Object.values(LAYOUT),
   ...Object.values(LEGAL),
   ...Object.values(ABOUT),
   ...Object.values(CAREERS),

@@ -8,6 +8,8 @@ export type Review = {
   verified?: boolean;
   helpful?: number;
   photo?: string;
+  /** Set to true to skip rendering this review. */
+  hidden?: boolean;
 };
 
 export const DEFAULT_REVIEWS: Review[] = [

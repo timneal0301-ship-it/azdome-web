@@ -23,7 +23,7 @@ export default function Reviews({
 }: {
   reviews?: Review[];
 }) {
-  const REVIEWS = reviews;
+  const REVIEWS = reviews.filter((r) => !r.hidden);
   const [filter, setFilter] = useState("All");
   const [visible, setVisible] = useState(3);
   const [modalOpen, setModalOpen] = useState(false);
