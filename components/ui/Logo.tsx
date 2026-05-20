@@ -34,17 +34,51 @@ export default function Logo({
   accent,
   inverse = false,
 }: LogoProps) {
-  const path = inverse ? INVERSE_PATH : PRIMARY_PATH;
-  const resolved = useAssetUrl(path);
+  const primaryResolved = useAssetUrl(PRIMARY_PATH);
+  const inverseResolved = useAssetUrl(INVERSE_PATH);
+  const primaryUploaded = primaryResolved !== PRIMARY_PATH;
+  const inverseUploaded = inverseResolved !== INVERSE_PATH;
 
-  // Admin has uploaded a custom logo when the resolver returns a URL that
-  // differs from the static seed path (i.e., a Vercel Blob URL or any
-  // override). Render it as an image and let it scale to height = size.
-  if (resolved !== path) {
+  // Render order of preference:
+  //   1. inverse context + dedicated inverse upload — perfect.
+  //   2. inverse context + only primary upload — reuse primary, tint white
+  //      via a brightness/invert CSS filter so it reads on dark backgrounds.
+  //   3. light-bg context + primary upload — as-is.
+  //   4. nothing uploaded — fall through to the inline SVG wordmark.
+  if (inverse && inverseUploaded) {
     return (
       // eslint-disable-next-line @next/next/no-img-element
       <img
-        src={resolved}
+        src={inverseResolved}
+        alt="AZDOME"
+        height={size}
+        style={{ height: size, width: "auto", display: "inline-block" }}
+        className={className}
+      />
+    );
+  }
+  if (inverse && primaryUploaded) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img
+        src={primaryResolved}
+        alt="AZDOME"
+        height={size}
+        style={{
+          height: size,
+          width: "auto",
+          display: "inline-block",
+          filter: "brightness(0) invert(1)",
+        }}
+        className={className}
+      />
+    );
+  }
+  if (!inverse && primaryUploaded) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img
+        src={primaryResolved}
         alt="AZDOME"
         height={size}
         style={{ height: size, width: "auto", display: "inline-block" }}

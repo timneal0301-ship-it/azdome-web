@@ -135,7 +135,8 @@ export default function Navbar() {
               className="inline-flex transition-opacity duration-300 hover:opacity-80"
             >
               <Logo
-                size={22}
+                size={28}
+                inverse={useLightTheme}
                 color={useLightTheme ? "#ffffff" : "#0066CC"}
                 accent={useLightTheme ? "#60a5fa" : "#0066CC"}
               />

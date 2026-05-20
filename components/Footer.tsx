@@ -80,7 +80,7 @@ export default function Footer() {
         <div className="grid grid-cols-2 gap-10 md:grid-cols-4 md:gap-8">
           <div className="col-span-2 md:col-span-1">
             <Link href="/" aria-label="AZDOME" className="inline-flex">
-              <Logo size={26} color="#ffffff" accent="#60a5fa" />
+              <Logo size={30} inverse color="#ffffff" accent="#60a5fa" />
             </Link>
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-slate-400">
               {t.footer.brandLine}
