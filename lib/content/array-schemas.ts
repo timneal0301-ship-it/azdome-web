@@ -2,8 +2,31 @@
 // admin /admin/content/[key] page can render a typed form (add row /
 // move / hide / delete) instead of a raw JSON textarea.
 //
-// Only sections registered here get the form UI. Anything else still
-// falls back to the JSON editor.
+// Two registries:
+//   ARRAY_SCHEMAS         — section.defaults is itself an array
+//   OBJECT_SECTION_SCHEMAS — section.defaults is { foo: [...], bar: [...] }
+//                            (about / careers / wholesale / etc.)
+//
+// Anything not registered here still falls back to the JSON editor.
+
+import {
+  ABOUT_VALUE_ICONS,
+  ABOUT_COMMITMENT_ICONS,
+} from "./about";
+import {
+  AFFILIATE_STAT_ICONS,
+  AFFILIATE_STEP_ICONS,
+} from "./affiliate";
+import {
+  CAREER_VALUE_ICONS,
+  CAREER_BENEFIT_ICONS,
+} from "./careers";
+import { PRESS_KIT_ICONS } from "./press";
+import {
+  WHOLESALE_BENEFIT_ICONS,
+  WHOLESALE_VERTICAL_ICONS,
+} from "./wholesale";
+import { APP_FEATURE_ICONS } from "./app-page";
 
 export type PrimitiveKind =
   | "text"
@@ -367,6 +390,278 @@ export const ARRAY_SCHEMAS: Record<string, ItemSchema> = {
 
 export function getArraySchema(sectionKey: string): ItemSchema | undefined {
   return ARRAY_SCHEMAS[sectionKey];
+}
+
+// ── Sub-array schemas (used inside object-section editors) ─────────
+
+const iconSelect = (names: readonly string[]) => ({
+  kind: "select" as const,
+  label: "图标",
+  options: names.map((v) => ({ value: v, label: v })),
+});
+
+const FAQ_SCHEMA: ItemSchema = {
+  titleKey: "q",
+  fields: {
+    q: { kind: "text", label: "问题" },
+    a: { kind: "textarea", label: "回答", rows: 4 },
+  },
+};
+
+const ABOUT_STATS_SCHEMA: ItemSchema = {
+  titleKey: "label",
+  subtitleKey: "to",
+  order: ["label", "to", "prefix", "suffix", "decimals", "separator"],
+  fields: {
+    label: { kind: "text", label: "标签" },
+    to: { kind: "number", label: "目标数字" },
+    prefix: { kind: "text", label: "前缀", placeholder: "$", optional: true },
+    suffix: { kind: "text", label: "后缀", placeholder: "K+", optional: true },
+    decimals: { kind: "number", label: "小数位数", optional: true },
+    separator: { kind: "boolean", label: "千分位逗号" },
+  },
+};
+
+const ABOUT_VALUES_SCHEMA: ItemSchema = {
+  titleKey: "title",
+  subtitleKey: "iconName",
+  fields: {
+    iconName: iconSelect(ABOUT_VALUE_ICONS),
+    title: { kind: "text", label: "标题" },
+    body: { kind: "textarea", label: "正文", rows: 4 },
+  },
+};
+
+const ABOUT_TIMELINE_SCHEMA: ItemSchema = {
+  titleKey: "year",
+  subtitleKey: "title",
+  fields: {
+    year: { kind: "text", label: "年份" },
+    title: { kind: "text", label: "标题" },
+    body: { kind: "textarea", label: "正文", rows: 3 },
+  },
+};
+
+const ABOUT_COMMITMENTS_SCHEMA: ItemSchema = {
+  titleKey: "title",
+  subtitleKey: "iconName",
+  fields: {
+    iconName: iconSelect(ABOUT_COMMITMENT_ICONS),
+    title: { kind: "text", label: "标题" },
+    body: { kind: "textarea", label: "正文", rows: 3 },
+  },
+};
+
+const AFFILIATE_STATS_SCHEMA: ItemSchema = {
+  titleKey: "label",
+  subtitleKey: "value",
+  fields: {
+    iconName: iconSelect(AFFILIATE_STAT_ICONS),
+    value: { kind: "text", label: "数值(可含 %、$)" },
+    label: { kind: "text", label: "标签" },
+  },
+};
+
+const AFFILIATE_TIERS_SCHEMA: ItemSchema = {
+  titleKey: "name",
+  subtitleKey: "rate",
+  fields: {
+    name: { kind: "text", label: "等级名" },
+    rate: { kind: "text", label: "佣金比例", placeholder: "10%" },
+    threshold: { kind: "text", label: "门槛要求" },
+    perks: { kind: "stringList", label: "权益", itemLabel: "权益" },
+  },
+};
+
+const AFFILIATE_STEPS_SCHEMA: ItemSchema = {
+  titleKey: "title",
+  subtitleKey: "n",
+  order: ["n", "iconName", "title", "body"],
+  fields: {
+    n: { kind: "number", label: "步骤序号" },
+    iconName: iconSelect(AFFILIATE_STEP_ICONS),
+    title: { kind: "text", label: "标题" },
+    body: { kind: "textarea", label: "正文", rows: 3 },
+  },
+};
+
+const CAREER_ROLES_SCHEMA: ItemSchema = {
+  titleKey: "title",
+  subtitleKey: "team",
+  fields: {
+    title: { kind: "text", label: "职位名" },
+    team: { kind: "text", label: "团队" },
+    location: { kind: "text", label: "地点", placeholder: "Remote (US)" },
+    level: { kind: "text", label: "级别", placeholder: "Mid-Senior" },
+    type: { kind: "text", label: "类型", placeholder: "Full-time" },
+  },
+};
+
+const CAREER_VALUES_SCHEMA: ItemSchema = {
+  titleKey: "title",
+  subtitleKey: "iconName",
+  fields: {
+    iconName: iconSelect(CAREER_VALUE_ICONS),
+    title: { kind: "text", label: "标题" },
+    body: { kind: "textarea", label: "正文", rows: 3 },
+  },
+};
+
+const CAREER_BENEFITS_SCHEMA: ItemSchema = {
+  titleKey: "title",
+  subtitleKey: "iconName",
+  fields: {
+    iconName: iconSelect(CAREER_BENEFIT_ICONS),
+    title: { kind: "text", label: "标题" },
+    body: { kind: "text", label: "简要描述" },
+  },
+};
+
+const CAREER_PROCESS_SCHEMA: ItemSchema = {
+  titleKey: "title",
+  subtitleKey: "n",
+  order: ["n", "title", "body"],
+  fields: {
+    n: { kind: "number", label: "步骤序号" },
+    title: { kind: "text", label: "标题" },
+    body: { kind: "textarea", label: "正文", rows: 3 },
+  },
+};
+
+const PRESS_RELEASES_SCHEMA: ItemSchema = {
+  titleKey: "title",
+  subtitleKey: "date",
+  fields: {
+    date: { kind: "text", label: "日期", placeholder: "April 04, 2026" },
+    title: { kind: "text", label: "新闻稿标题" },
+    excerpt: { kind: "textarea", label: "摘要(列表显示)", rows: 2 },
+    body: { kind: "textarea", label: "完整正文", rows: 6 },
+  },
+};
+
+const PRESS_COVERAGE_SCHEMA: ItemSchema = {
+  titleKey: "title",
+  subtitleKey: "outlet",
+  fields: {
+    outlet: { kind: "text", label: "媒体 / 出版方" },
+    title: { kind: "text", label: "报道标题" },
+    href: { kind: "url", label: "链接", placeholder: "https://..." },
+  },
+};
+
+const PRESS_QUOTES_SCHEMA: ItemSchema = {
+  titleKey: "outlet",
+  subtitleKey: "quote",
+  fields: {
+    quote: { kind: "textarea", label: "引语", rows: 3 },
+    outlet: { kind: "text", label: "出处媒体" },
+  },
+};
+
+const PRESS_KIT_SCHEMA: ItemSchema = {
+  titleKey: "title",
+  subtitleKey: "detail",
+  fields: {
+    iconName: iconSelect(PRESS_KIT_ICONS),
+    title: { kind: "text", label: "条目标题" },
+    detail: { kind: "text", label: "细节(如格式 / 大小)" },
+  },
+};
+
+const WHOLESALE_TIERS_SCHEMA: ItemSchema = {
+  titleKey: "range",
+  subtitleKey: "discount",
+  fields: {
+    range: { kind: "text", label: "数量段", placeholder: "10 – 49 units" },
+    discount: { kind: "text", label: "折扣 / 价格", placeholder: "12% off MSRP" },
+  },
+};
+
+const WHOLESALE_BENEFITS_SCHEMA: ItemSchema = {
+  titleKey: "title",
+  subtitleKey: "iconName",
+  fields: {
+    iconName: iconSelect(WHOLESALE_BENEFIT_ICONS),
+    title: { kind: "text", label: "标题" },
+    body: { kind: "textarea", label: "正文", rows: 3 },
+  },
+};
+
+const WHOLESALE_VERTICALS_SCHEMA: ItemSchema = {
+  titleKey: "title",
+  subtitleKey: "iconName",
+  fields: {
+    iconName: iconSelect(WHOLESALE_VERTICAL_ICONS),
+    title: { kind: "text", label: "标题" },
+    body: { kind: "textarea", label: "正文", rows: 4 },
+  },
+};
+
+const APP_FEATURES_SCHEMA: ItemSchema = {
+  titleKey: "title",
+  subtitleKey: "iconName",
+  fields: {
+    iconName: iconSelect(APP_FEATURE_ICONS),
+    title: { kind: "text", label: "标题" },
+    body: { kind: "textarea", label: "正文", rows: 3 },
+  },
+};
+
+// ── Object-section registry ─────────────────────────────────────────
+
+export type ObjectPropEntry = {
+  /** Friendly label shown above this sub-array in the editor. */
+  label: string;
+  /** Optional short description / hint. */
+  hint?: string;
+  /** Item schema for the sub-array. */
+  schema: ItemSchema;
+};
+
+export const OBJECT_SECTION_SCHEMAS: Record<
+  string,
+  Record<string, ObjectPropEntry>
+> = {
+  "about.page": {
+    stats: { label: "数字统计(底部计数器)", schema: ABOUT_STATS_SCHEMA },
+    values: { label: "价值观(4 张)", schema: ABOUT_VALUES_SCHEMA },
+    timeline: { label: "大事记 / 时间线", schema: ABOUT_TIMELINE_SCHEMA },
+    commitments: { label: "承诺", schema: ABOUT_COMMITMENTS_SCHEMA },
+  },
+  "affiliate.page": {
+    stats: { label: "数字统计", schema: AFFILIATE_STATS_SCHEMA },
+    tiers: { label: "佣金等级", schema: AFFILIATE_TIERS_SCHEMA },
+    howItWorks: { label: "流程步骤", schema: AFFILIATE_STEPS_SCHEMA },
+    faq: { label: "常见问题", schema: FAQ_SCHEMA },
+  },
+  "careers.page": {
+    roles: { label: "开放岗位", schema: CAREER_ROLES_SCHEMA },
+    values: { label: "文化价值观", schema: CAREER_VALUES_SCHEMA },
+    benefits: { label: "福利", schema: CAREER_BENEFITS_SCHEMA },
+    process: { label: "面试流程", schema: CAREER_PROCESS_SCHEMA },
+  },
+  "press.page": {
+    releases: { label: "新闻稿", schema: PRESS_RELEASES_SCHEMA },
+    coverage: { label: "媒体报道列表", schema: PRESS_COVERAGE_SCHEMA },
+    quotes: { label: "媒体引语", schema: PRESS_QUOTES_SCHEMA },
+    kit: { label: "Brand Kit 下载条目", schema: PRESS_KIT_SCHEMA },
+  },
+  "wholesale.page": {
+    tiers: { label: "数量价格阶梯", schema: WHOLESALE_TIERS_SCHEMA },
+    benefits: { label: "批发权益", schema: WHOLESALE_BENEFITS_SCHEMA },
+    verticals: { label: "行业案例", schema: WHOLESALE_VERTICALS_SCHEMA },
+    faq: { label: "常见问题", schema: FAQ_SCHEMA },
+  },
+  "app.page": {
+    features: { label: "App 功能", schema: APP_FEATURES_SCHEMA },
+    faq: { label: "常见问题", schema: FAQ_SCHEMA },
+  },
+};
+
+export function getObjectSchema(
+  sectionKey: string,
+): Record<string, ObjectPropEntry> | undefined {
+  return OBJECT_SECTION_SCHEMAS[sectionKey];
 }
 
 /** Build a blank item from a schema (used when user clicks "新增"). */

@@ -14,7 +14,8 @@ import {
 } from "lucide-react";
 
 import ArrayEditor from "@/components/admin/ArrayEditor";
-import { getArraySchema } from "@/lib/content/array-schemas";
+import ObjectEditor from "@/components/admin/ObjectEditor";
+import { getArraySchema, getObjectSchema } from "@/lib/content/array-schemas";
 import {
   resetContentAction,
   restoreVersionAction,
@@ -81,6 +82,12 @@ export default function ContentEditor({
   const toggleMode = isToggleMap(currentValue) && isToggleMap(defaultValue);
   const arraySchema = getArraySchema(sectionKey);
   const arrayMode = !!arraySchema && Array.isArray(currentValue);
+  const objectSchema = getObjectSchema(sectionKey);
+  const objectMode =
+    !!objectSchema &&
+    !Array.isArray(currentValue) &&
+    typeof currentValue === "object" &&
+    currentValue !== null;
 
   const currentJson = useMemo(
     () => JSON.stringify(currentValue, null, 2),
@@ -95,9 +102,11 @@ export default function ContentEditor({
   const [pending, setPending] = useState<"save" | "reset" | "revert" | null>(null);
   const [result, setResult] = useState<Result | null>(null);
   const [parseError, setParseError] = useState<string | null>(null);
-  // For array-form sections, allow the user to drop into raw JSON if needed.
+  // For form-eligible sections, allow the user to drop into raw JSON.
   const [forceJson, setForceJson] = useState(false);
   const showArrayEditor = arrayMode && !forceJson;
+  const showObjectEditor = objectMode && !forceJson;
+  const formCapable = arrayMode || objectMode;
 
   // Validate on every keystroke (cheap; JSON.parse on ~10KB strings is fine).
   useEffect(() => {
@@ -140,6 +149,23 @@ export default function ContentEditor({
     }
   }, [text, arrayMode, parseError]);
   const setArrayItems = (next: Record<string, unknown>[]) => {
+    setText(JSON.stringify(next, null, 2));
+  };
+
+  // Same for object-section: parse text into an object, mutate via the
+  // ObjectEditor, push back to text.
+  const objectValue: Record<string, unknown> = useMemo(() => {
+    if (!objectMode || parseError) return {};
+    try {
+      const parsed = JSON.parse(text);
+      return parsed && typeof parsed === "object" && !Array.isArray(parsed)
+        ? parsed
+        : {};
+    } catch {
+      return {};
+    }
+  }, [text, objectMode, parseError]);
+  const setObjectValue = (next: Record<string, unknown>) => {
     setText(JSON.stringify(next, null, 2));
   };
 
@@ -224,8 +250,8 @@ export default function ContentEditor({
         </div>
       </header>
 
-      {/* Editor mode switch (only for sections that have an array schema) */}
-      {arrayMode && (
+      {/* Editor mode switch (only for form-capable sections) */}
+      {formCapable && (
         <div className="flex items-center gap-1 self-start rounded-full bg-slate-100 p-1">
           <ModeButton
             active={!forceJson}
@@ -286,6 +312,12 @@ export default function ContentEditor({
           items={arrayItems}
           schema={arraySchema!}
           onChange={setArrayItems}
+        />
+      ) : showObjectEditor ? (
+        <ObjectEditor
+          value={objectValue}
+          schema={objectSchema!}
+          onChange={setObjectValue}
         />
       ) : (
         <div>
