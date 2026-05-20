@@ -415,7 +415,242 @@ function FieldInput({
       </div>
     );
   }
+  if (spec.kind === "objectList") {
+    const arr: Item[] = Array.isArray(value) ? (value as Item[]) : [];
+    return (
+      <InlineObjectList
+        label={spec.label}
+        itemLabel={spec.itemLabel ?? "项"}
+        hint={spec.hint}
+        items={arr}
+        item={spec.item}
+        onChange={onChange}
+      />
+    );
+  }
+  if (spec.kind === "tupleList") {
+    const arr: [string, string][] = Array.isArray(value)
+      ? (value as unknown[]).map((row) => {
+          if (Array.isArray(row)) {
+            return [String(row[0] ?? ""), String(row[1] ?? "")];
+          }
+          return ["", ""] as [string, string];
+        })
+      : [];
+    return (
+      <div>
+        <p className={labelClass}>{spec.label}</p>
+        {spec.hint && (
+          <p className="mb-2 text-[11px] text-slate-400">{spec.hint}</p>
+        )}
+        {arr.length > 0 && (
+          <div className="mb-1.5 grid grid-cols-[1fr_1fr_36px] gap-2 px-1 text-[10px] font-semibold uppercase tracking-[0.1em] text-slate-400">
+            <span>{spec.columns[0]}</span>
+            <span>{spec.columns[1]}</span>
+            <span></span>
+          </div>
+        )}
+        <div className="space-y-1.5">
+          {arr.length === 0 && (
+            <p className="text-[11px] text-slate-400">
+              空表。点下面"新增一行"。
+            </p>
+          )}
+          {arr.map((row, i) => (
+            <div key={i} className="grid grid-cols-[1fr_1fr_36px] gap-2">
+              <input
+                type="text"
+                value={row[0]}
+                onChange={(e) => {
+                  const next = arr.slice();
+                  next[i] = [e.target.value, row[1]];
+                  onChange(next);
+                }}
+                placeholder={spec.columns[0]}
+                className={inputClass}
+              />
+              <input
+                type="text"
+                value={row[1]}
+                onChange={(e) => {
+                  const next = arr.slice();
+                  next[i] = [row[0], e.target.value];
+                  onChange(next);
+                }}
+                placeholder={spec.columns[1]}
+                className={inputClass}
+              />
+              <button
+                type="button"
+                onClick={() => onChange(arr.filter((_, idx) => idx !== i))}
+                aria-label="删除"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-full text-slate-400 hover:bg-red-50 hover:text-red-600"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
+            </div>
+          ))}
+        </div>
+        <button
+          type="button"
+          onClick={() => onChange([...arr, ["", ""]])}
+          className="mt-2 inline-flex items-center gap-1 rounded-full bg-slate-100 px-3 py-1 text-[11px] font-semibold tracking-tight text-slate-700 hover:bg-slate-200"
+        >
+          <Plus className="h-3 w-3" />
+          新增一行
+        </button>
+      </div>
+    );
+  }
   return null;
+}
+
+function InlineObjectList({
+  label,
+  itemLabel,
+  hint,
+  items,
+  item,
+  onChange,
+}: {
+  label: string;
+  itemLabel: string;
+  hint?: string;
+  items: Item[];
+  item: {
+    titleKey?: string;
+    subtitleKey?: string;
+    order?: string[];
+    fields: Record<string, FieldSpec>;
+  };
+  onChange: (next: unknown) => void;
+}) {
+  const [expanded, setExpanded] = useState<Set<number>>(new Set());
+  const toggle = (i: number) =>
+    setExpanded((prev) => {
+      const next = new Set(prev);
+      if (next.has(i)) next.delete(i);
+      else next.add(i);
+      return next;
+    });
+  const update = (i: number, next: Item) => {
+    const arr = items.slice();
+    arr[i] = next;
+    onChange(arr);
+  };
+  const remove = (i: number) => {
+    if (!window.confirm(`删除「${itemLabel}」第 ${i + 1} 项?`)) return;
+    onChange(items.filter((_, idx) => idx !== i));
+  };
+  const move = (i: number, dir: -1 | 1) => {
+    const j = i + dir;
+    if (j < 0 || j >= items.length) return;
+    const arr = items.slice();
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+    onChange(arr);
+  };
+  const add = () => {
+    onChange([...items, buildBlankItem({ fields: item.fields })]);
+    setExpanded((prev) => new Set(prev).add(items.length));
+  };
+
+  return (
+    <div className="rounded-xl bg-slate-50 p-3 ring-1 ring-slate-100">
+      <p className="mb-2 flex items-baseline justify-between text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">
+        <span>{label}</span>
+        <span className="font-mono tabular-nums normal-case tracking-normal text-slate-400">
+          {items.length} 项
+        </span>
+      </p>
+      {hint && (
+        <p className="mb-2 text-[11px] text-slate-400">{hint}</p>
+      )}
+      <div className="space-y-2">
+        {items.length === 0 && (
+          <p className="text-[11px] text-slate-400">
+            空列表。点下面"新增{itemLabel}"。
+          </p>
+        )}
+        {items.map((it, i) => {
+          const isOpen = expanded.has(i);
+          const title =
+            (item.titleKey && firstString(it[item.titleKey])) ||
+            `${itemLabel} ${i + 1}`;
+          const subtitle =
+            item.subtitleKey && firstString(it[item.subtitleKey]);
+          return (
+            <div
+              key={i}
+              className="overflow-hidden rounded-lg bg-white ring-1 ring-slate-100"
+            >
+              <div className="flex items-center gap-2 px-3 py-2">
+                <button
+                  type="button"
+                  onClick={() => toggle(i)}
+                  className="flex min-w-0 flex-1 items-center gap-1.5 text-left"
+                >
+                  {isOpen ? (
+                    <ChevronUp className="h-3 w-3 text-slate-400" />
+                  ) : (
+                    <ChevronDown className="h-3 w-3 text-slate-400" />
+                  )}
+                  <span className="truncate text-xs font-semibold tracking-tight text-slate-900">
+                    {title}
+                  </span>
+                  {subtitle && (
+                    <span className="ml-1 truncate text-[11px] text-slate-400">
+                      · {subtitle}
+                    </span>
+                  )}
+                </button>
+                <div className="flex flex-shrink-0 items-center gap-0.5">
+                  <IconButton
+                    onClick={() => move(i, -1)}
+                    disabled={i === 0}
+                    title="上移"
+                  >
+                    ↑
+                  </IconButton>
+                  <IconButton
+                    onClick={() => move(i, 1)}
+                    disabled={i === items.length - 1}
+                    title="下移"
+                  >
+                    ↓
+                  </IconButton>
+                  <IconButton onClick={() => remove(i)} title="删除" tone="danger">
+                    <Trash2 className="h-3 w-3" />
+                  </IconButton>
+                </div>
+              </div>
+              {isOpen && (
+                <div className="border-t border-slate-100 p-3">
+                  <FieldGrid
+                    item={it}
+                    schema={{
+                      titleKey: item.titleKey,
+                      subtitleKey: item.subtitleKey,
+                      order: item.order,
+                      fields: item.fields,
+                    }}
+                    onChange={(next) => update(i, next)}
+                  />
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+      <button
+        type="button"
+        onClick={add}
+        className="mt-2 inline-flex items-center gap-1 rounded-full bg-blue-50 px-3 py-1 text-[11px] font-semibold tracking-tight text-blue-700 hover:bg-blue-100"
+      >
+        <Plus className="h-3 w-3" />
+        新增{itemLabel}
+      </button>
+    </div>
+  );
 }
 
 function IconButton({

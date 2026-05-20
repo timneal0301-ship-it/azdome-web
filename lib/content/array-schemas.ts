@@ -33,6 +33,26 @@ export type FieldSpec =
       label: string;
       itemLabel?: string;
       hint?: string;
+    }
+  | {
+      kind: "objectList";
+      label: string;
+      itemLabel?: string;
+      hint?: string;
+      /** Sub-schema used to render each child item inline. */
+      item: {
+        titleKey?: string;
+        subtitleKey?: string;
+        order?: string[];
+        fields: Record<string, FieldSpec>;
+      };
+    }
+  | {
+      kind: "tupleList";
+      label: string;
+      /** Two column headers, e.g. ["参数名", "参数值"] */
+      columns: [string, string];
+      hint?: string;
     };
 
 export type ItemSchema = {
@@ -207,8 +227,120 @@ const USE_CASE_TABS_SCHEMA: ItemSchema = {
   },
 };
 
-// catalog.products has nested arrays (variants, gallery) — too complex
-// for the v1 form editor. Registered without schema so it stays JSON.
+const CATALOG_PRODUCTS_SCHEMA: ItemSchema = {
+  titleKey: "name",
+  subtitleKey: "tagline",
+  order: [
+    "slug",
+    "name",
+    "short",
+    "tagline",
+    "category",
+    "image",
+    "price",
+    "comparePrice",
+    "rating",
+    "reviewCount",
+    "badge",
+    "description",
+    "variants",
+    "gallery",
+    "hidden",
+  ],
+  fields: {
+    slug: {
+      kind: "text",
+      label: "Slug(URL 路径,改了链接会断)",
+      hint: "唯一标识。除非你确定要换 URL,不要改",
+    },
+    name: { kind: "text", label: "完整产品名" },
+    short: { kind: "text", label: "短名(卡片显示)" },
+    tagline: { kind: "text", label: "Tagline 标语" },
+    category: {
+      kind: "select",
+      label: "类目",
+      options: [
+        { value: "dash-cam", label: "Dash Cam 行车记录仪" },
+        { value: "accessory", label: "Accessory 配件" },
+      ],
+    },
+    image: {
+      kind: "text",
+      label: "主图路径",
+      placeholder: "/images/product/m550-front.jpg",
+    },
+    price: { kind: "number", label: "售价(USD)" },
+    comparePrice: { kind: "number", label: "划线价(USD,可选)" },
+    rating: { kind: "number", label: "星级(0-5)" },
+    reviewCount: { kind: "number", label: "评价数" },
+    badge: { kind: "text", label: "角标文字(如 NEW / 热销)" },
+    description: {
+      kind: "textarea",
+      label: "完整描述",
+      rows: 4,
+    },
+    variants: {
+      kind: "objectList",
+      label: "变体(颜色 / 套装 / 容量)",
+      itemLabel: "变体",
+      item: {
+        titleKey: "label",
+        subtitleKey: "sub",
+        order: ["id", "label", "sub", "priceDelta"],
+        fields: {
+          id: { kind: "text", label: "ID" },
+          label: { kind: "text", label: "标签(如 Pro 套装)" },
+          sub: { kind: "text", label: "副标(展示在标签下)" },
+          priceDelta: {
+            kind: "number",
+            label: "加价 / 减价(相对主售价,USD)",
+            hint: "0 表示同价。-20 表示便宜 $20。",
+          },
+        },
+      },
+    },
+    gallery: {
+      kind: "objectList",
+      label: "PDP 图集(顺序即左侧大图顺序)",
+      itemLabel: "图片",
+      item: {
+        titleKey: "alt",
+        subtitleKey: "src",
+        order: ["src", "alt", "hidden"],
+        fields: {
+          src: {
+            kind: "text",
+            label: "图片路径",
+            placeholder: "/images/product/m550-front.jpg",
+          },
+          alt: { kind: "text", label: "Alt 文字(无障碍/SEO)" },
+          hidden: { kind: "boolean", label: "隐藏这张图" },
+        },
+      },
+    },
+    hidden: {
+      kind: "boolean",
+      label: "整个 SKU 隐藏(列表里不显示,PDP 直接访问仍可)",
+    },
+  },
+};
+
+const PDP_SPECS_SCHEMA: ItemSchema = {
+  titleKey: "title",
+  order: ["title", "rows", "hidden"],
+  fields: {
+    title: {
+      kind: "text",
+      label: "组标题(如 Imaging / Display & Interface)",
+    },
+    rows: {
+      kind: "tupleList",
+      label: "参数行(左列 = 名称,右列 = 值)",
+      columns: ["参数名", "参数值"],
+    },
+    hidden: { kind: "boolean", label: "隐藏整组" },
+  },
+};
 
 export const ARRAY_SCHEMAS: Record<string, ItemSchema> = {
   "home.hero": HOME_HERO_SCHEMA,
@@ -218,6 +350,8 @@ export const ARRAY_SCHEMAS: Record<string, ItemSchema> = {
   "pdp.feature-split": FEATURE_SPLIT_SCHEMA,
   "pdp.whats-in-box": WHATS_IN_BOX_SCHEMA,
   "pdp.use-cases": USE_CASE_TABS_SCHEMA,
+  "pdp.specs": PDP_SPECS_SCHEMA,
+  "catalog.products": CATALOG_PRODUCTS_SCHEMA,
 };
 
 export function getArraySchema(sectionKey: string): ItemSchema | undefined {
@@ -225,13 +359,18 @@ export function getArraySchema(sectionKey: string): ItemSchema | undefined {
 }
 
 /** Build a blank item from a schema (used when user clicks "新增"). */
-export function buildBlankItem(schema: ItemSchema): Record<string, unknown> {
+export function buildBlankItem(schema: {
+  fields: Record<string, FieldSpec>;
+}): Record<string, unknown> {
   const out: Record<string, unknown> = {};
   for (const [key, spec] of Object.entries(schema.fields)) {
     if (spec.kind === "boolean") out[key] = false;
     else if (spec.kind === "number") out[key] = 0;
     else if (spec.kind === "stringList") out[key] = [];
-    else if (spec.kind === "object") out[key] = buildBlankItem({ fields: spec.fields });
+    else if (spec.kind === "objectList") out[key] = [];
+    else if (spec.kind === "tupleList") out[key] = [];
+    else if (spec.kind === "object")
+      out[key] = buildBlankItem({ fields: spec.fields });
     else out[key] = "";
   }
   return out;
