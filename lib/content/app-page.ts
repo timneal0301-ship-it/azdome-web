@@ -23,51 +23,51 @@ export type AppFeature = {
 export const FEATURES: AppFeature[] = [
   {
     iconName: "Wifi",
-    title: "Wi-Fi 一键配对",
+    title: "One-tap Wi-Fi pairing",
     body:
-      "5 GHz / 2.4 GHz 双频 Wi-Fi 与行车记录仪直连。无需路由器,扫一下机身二维码或在 App 内选择 SSID 即完成。",
+      "Dual-band 5 GHz / 2.4 GHz Wi-Fi connects you directly to the dash cam — no router, no cables. Scan the camera's QR or pick its SSID in-app and you're paired.",
   },
   {
     iconName: "PlayCircle",
-    title: "实时画面预览",
+    title: "Live camera preview",
     body:
-      "在手机上看到行车记录仪当前视角,装机调位、确认覆盖范围,不用启动汽车反复试摆。",
+      "See exactly what the dash cam sees, in real time on your phone. Position the mount, frame the lens, and confirm coverage without starting the car twice.",
   },
   {
     iconName: "Download",
-    title: "回放与下载",
+    title: "Playback & download",
     body:
-      "浏览 SD 卡里所有片段,选中即下载到手机相册,4K 视频典型速度约 12-15 MB/s。",
+      "Browse every clip on the SD card. Tap to download full-resolution 4K straight to your phone's camera roll — typically 12–15 MB/s on M550 Pro.",
   },
   {
     iconName: "MapPin",
-    title: "GPS 轨迹回放",
+    title: "GPS trip playback",
     body:
-      "M550 Pro / GS63H 等带 GPS 的型号,App 内可在地图上看到行驶轨迹、速度、方向,事故还原一目了然。",
+      "On GPS-equipped models (M550 Pro / GS63H), replay each trip on a live map with speed and direction stamped on the clip — perfect for incident review.",
   },
   {
     iconName: "Settings",
-    title: "相机设置",
+    title: "Camera settings",
     body:
-      "分辨率、码率、停车监控模式、G-sensor 灵敏度、循环录制时长、时区水印,全在 App 里调。",
+      "Adjust resolution, bitrate, parking-mode behavior, G-sensor sensitivity, loop-recording length, and timestamp watermark from your phone.",
   },
   {
     iconName: "Mic",
-    title: "语音指令配置",
+    title: "Voice command setup",
     body:
-      "为支持语音控制的机型(M550 Pro / M550 Max)开启 / 关闭「锁定视频」、「拍照」等语音命令。",
+      "Enable or disable voice commands like \"Lock Video\" and \"Take Photo\" for cameras with the built-in mic (M550 Pro / M550 Max).",
   },
   {
     iconName: "ShieldCheck",
-    title: "OTA 固件升级",
+    title: "OTA firmware updates",
     body:
-      "新固件可用时 App 会通知,通过 Wi-Fi 一键 OTA 升级,无需拆 SD 卡。",
+      "Get notified when a new firmware ships, install it over Wi-Fi with one tap. No SD card removal, no PC required.",
   },
   {
     iconName: "Languages",
-    title: "多语言界面",
+    title: "11-language interface",
     body:
-      "英文 / 简中 / 繁中 / 日文 / 德文 / 法文 / 西班牙文 / 意大利文 / 葡萄牙文 / 韩文 / 阿拉伯文 11 种,跟随手机系统语言。",
+      "English, Simplified Chinese, Traditional Chinese, Japanese, Korean, German, French, Italian, Spanish, Portuguese, and Arabic. Follows your phone's language.",
   },
 ];
 
@@ -75,32 +75,32 @@ export type AppFAQ = { q: string; a: string; hidden?: boolean };
 
 export const FAQ: AppFAQ[] = [
   {
-    q: "AZDOME App 是免费的吗?",
-    a: "完全免费。配对相机、浏览片段、下载视频、固件升级全部不收费,也没有内购解锁。",
+    q: "Is the AZDOME app free?",
+    a: "Yes — completely free. Pair the camera, browse clips, download footage, and apply firmware updates without ever paying. No in-app purchases, no premium tier.",
   },
   {
-    q: "连接相机后手机能继续上网吗?",
-    a: "与相机连接期间,手机会临时切到相机的 Wi-Fi 热点,所以手机原本的家庭 Wi-Fi 会断开。配对完成、退出 App 后会自动恢复。蜂窝数据(4G/5G)不受影响。",
+    q: "Will my phone still have internet while I'm connected to the camera?",
+    a: "While paired, your phone temporarily switches to the camera's Wi-Fi hotspot, so your home Wi-Fi disconnects. Cellular data (4G / 5G) is unaffected. Your normal Wi-Fi reconnects automatically once you close the app.",
   },
   {
-    q: "电脑上怎么查看视频?",
-    a: "最简单是把 SD 卡插电脑直接读取。AZDOME 视频是标准 MP4 格式,任何视频播放器都能打开。需要带 GPS / 速度叠加层的版本,可在 App 内导出后传到电脑。",
+    q: "How do I view footage on my computer?",
+    a: "Easiest path: pop the SD card into your computer and open the MP4 files directly — they play in any video player. If you want the GPS / speed overlay version, export it from the app first and AirDrop / email it to yourself.",
   },
   {
-    q: "App 支持哪些语言?",
-    a: "英语、简体中文、繁体中文、日语、韩语、德语、法语、意大利语、西班牙语、葡萄牙语、阿拉伯语,共 11 种。跟随手机系统语言自动切换。",
+    q: "What languages does the app support?",
+    a: "English, Simplified Chinese, Traditional Chinese, Japanese, Korean, German, French, Italian, Spanish, Portuguese, and Arabic — 11 in total. The app follows your phone's system language automatically.",
   },
   {
-    q: "AZDOME 能看到我的录像吗?",
-    a: "不能。视频存在 SD 卡和你的手机上,App 不会把视频上传到 AZDOME 服务器。我们没有任何渠道访问你的录像。",
+    q: "Can AZDOME see my footage?",
+    a: "No. Footage stays on the SD card and on your phone — the app does not upload to AZDOME servers. We have no technical way to access your clips.",
   },
   {
-    q: "怎么把视频分享给保险公司?",
-    a: "在 App 内选中片段下载到手机相册,然后通过任何 App 分享 —— 邮箱、微信、WhatsApp、iMessage 都可以。导出时可选择是否叠加 GPS 和速度信息。",
+    q: "How do I share a clip with my insurance company?",
+    a: "Download the clip to your phone's camera roll, then share via any app — email, iMessage, WhatsApp, Messenger. You can choose whether to include the GPS and speed overlay on export.",
   },
 ];
 
-// ─── New: Download section (QR + store URLs) ────────────────────────
+// ─── Download section (QR + store URLs) ─────────────────────────────
 
 export type AppDownload = {
   eyebrow: string;
@@ -128,34 +128,34 @@ export type AppDownload = {
 
 export const DEFAULT_DOWNLOAD: AppDownload = {
   eyebrow: "AZDOME App",
-  title: "扫码下载 · iOS & Android",
+  title: "Scan to download · iOS & Android",
   subtitle:
-    "扫描二维码,自动跳转到对应应用商店。一个 App 管理你所有 AZDOME 行车记录仪。",
+    "Point your phone camera at the QR — it'll send you to the App Store or Google Play automatically. One app, every AZDOME dash cam.",
   qrImage: "/images/app/qr.png",
-  qrCaption: "用手机相机扫一扫",
+  qrCaption: "Scan with your phone camera",
   appStoreUrl: "https://apps.apple.com/app/azdome",
   googlePlayUrl: "https://play.google.com/store/apps/details?id=com.azdome",
   appIcon: "/images/app/icon.png",
   phoneScreenshot: "/images/product/m550-app.jpg",
-  rating: "★ 4.7 · App Store 18,000+ 评价",
+  rating: "★ 4.7 · 18,000+ App Store reviews",
   bullets: [
-    "免费下载,无内购",
-    "兼容所有 AZDOME 行车记录仪",
+    "Free — no in-app purchases",
+    "Works with every AZDOME dash cam",
     "iOS 14+ · Android 8+",
   ],
 };
 
 export const APP_DOWNLOAD: ContentSection<AppDownload> = {
   key: "app.download",
-  label: "App 页 · 二维码下载区",
+  label: "App page · QR download hero",
   description:
-    "首屏二维码 + 商店链接。把 admin/images 里上传的 QR 图路径填到 qrImage 即可。如要做 OS 自动跳转商店,把 QR 内容指向一个智能跳转 URL(如 https://azdome.com/app/install)。",
+    "Top-of-page download card. Upload the QR to the app-qr slot in /admin/images and put its path here in qrImage. For OS-aware redirect, point the QR's content at a smart-link URL (eg https://azdome.com/app/install) that 302s based on user agent.",
   page: "app",
   previewHref: "/app",
   defaults: DEFAULT_DOWNLOAD,
 };
 
-// ─── Compatibility table (now editable) ─────────────────────────────
+// ─── Compatibility table (editable) ─────────────────────────────────
 
 export type AppCompatRow = {
   product: string;
@@ -177,14 +177,14 @@ export const COMPATIBILITY: AppCompatRow[] = [
 
 export const APP_COMPATIBILITY: ContentSection<AppCompatRow[]> = {
   key: "app.compatibility",
-  label: "App 页 · 兼容性表格",
-  description: "App 支持的型号列表。",
+  label: "App page · Compatibility table",
+  description: "Per-model app compatibility (firmware / iOS / Android requirements).",
   page: "app",
   previewHref: "/app",
   defaults: COMPATIBILITY,
 };
 
-// ─── Existing page section (features + faq) ─────────────────────────
+// ─── Page core (features + faq) ─────────────────────────────────────
 
 export type AppPageContent = {
   features: AppFeature[];
@@ -193,10 +193,10 @@ export type AppPageContent = {
 
 export const APP_PAGE: ContentSection<AppPageContent> = {
   key: "app.page",
-  label: "App 页 · Features / FAQ",
+  label: "App page · Features / FAQ",
   description:
-    "App 推广页核心:功能卡片 + 常见问题。下载区 / 兼容性表是单独的 section。" +
-    `Features iconName: ${APP_FEATURE_ICONS.join(", ")}`,
+    "App marketing page core: feature cards + FAQ. Download hero and compatibility table are separate sections. " +
+    `Features iconName options: ${APP_FEATURE_ICONS.join(", ")}`,
   page: "app",
   previewHref: "/app",
   defaults: { features: FEATURES, faq: FAQ },

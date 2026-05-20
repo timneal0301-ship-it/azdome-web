@@ -252,13 +252,14 @@ export default async function AppPage() {
             </table>
           </div>
           <p className="mt-4 text-xs text-slate-400">
-            旧固件型号请通过 support 页下载相应版本的 legacy app。
+            Older firmware versions are supported by the legacy AZDOME app
+            available on the support page.
           </p>
         </div>
       </section>
 
       {/* FAQ */}
-      <FaqAccordion faqs={FAQ} title="App 常见问题" eyebrow="FAQ" />
+      <FaqAccordion faqs={FAQ} title="App questions, answered." eyebrow="FAQ" />
 
       {/* CTA */}
       <section className="bg-slate-50 py-20 md:py-28">
