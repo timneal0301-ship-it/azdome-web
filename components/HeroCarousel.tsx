@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
@@ -31,6 +31,7 @@ export default function HeroCarousel({ slides, intervalMs = 6500 }: Props) {
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
   const [direction, setDirection] = useState<1 | -1>(1);
+  const touchStart = useRef<{ x: number; y: number } | null>(null);
 
   useEffect(() => {
     if (paused || intervalMs === 0 || slides.length <= 1) return;
@@ -46,6 +47,25 @@ export default function HeroCarousel({ slides, intervalMs = 6500 }: Props) {
     setIndex((next + slides.length) % slides.length);
   };
 
+  const onTouchStart = (e: React.TouchEvent) => {
+    const t = e.touches[0];
+    touchStart.current = { x: t.clientX, y: t.clientY };
+    setPaused(true);
+  };
+
+  const onTouchEnd = (e: React.TouchEvent) => {
+    const start = touchStart.current;
+    touchStart.current = null;
+    setPaused(false);
+    if (!start || slides.length <= 1) return;
+    const t = e.changedTouches[0];
+    const dx = t.clientX - start.x;
+    const dy = t.clientY - start.y;
+    // Need a clearly horizontal swipe of at least 40px to count.
+    if (Math.abs(dx) < 40 || Math.abs(dx) < Math.abs(dy)) return;
+    go(dx < 0 ? index + 1 : index - 1);
+  };
+
   const slide = slides[index];
   const tone = slide.tone ?? "dark";
   const isDark = tone === "dark";
@@ -55,8 +75,10 @@ export default function HeroCarousel({ slides, intervalMs = 6500 }: Props) {
       data-hero-dark={isDark || undefined}
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
+      onTouchStart={onTouchStart}
+      onTouchEnd={onTouchEnd}
       className={[
-        "relative min-h-[88vh] w-full overflow-hidden",
+        "relative min-h-[88vh] w-full touch-pan-y overflow-hidden",
         isDark ? "bg-slate-950 text-white" : "bg-slate-50 text-slate-900",
       ].join(" ")}
     >
