@@ -4,19 +4,19 @@ import type { ProductBanner } from "@/components/ProductBanners";
 import {
   DEFAULT_PROMISES,
   type Promise as PromiseItem,
-} from "@/components/PromiseThreeCol";
+} from "@/components/PromiseThreeCol.data";
 import {
   DEFAULT_COMPARE,
   type CompareContent,
-} from "@/components/PriceCompare";
+} from "@/components/PriceCompare.data";
 import {
   DEFAULT_PRESS_QUOTES,
   type PressQuoteItem,
-} from "@/components/PressQuotesStrip";
+} from "@/components/PressQuotesStrip.data";
 import {
   DEFAULT_FLASH_SALE,
   type FlashSaleContent,
-} from "@/components/FlashSaleBar";
+} from "@/components/FlashSaleBar.data";
 
 // ─── Hero carousel slides ──────────────────────────────────────────
 

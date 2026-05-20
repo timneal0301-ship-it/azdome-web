@@ -33,6 +33,10 @@ export type Slide = {
   subtitle?: string;
   /** Background image — used for all layouts except "video". */
   image: string;
+  /** Mobile-only override. When present, swapped in below the md
+   * breakpoint so portrait phones don't crop the landscape desktop
+   * image awkwardly. Leave empty to reuse `image`. */
+  mobileImage?: string;
   /** Background video — used only when layout === "video". MP4 / WebM. */
   videoSrc?: string;
   primary?: { label: string; href: string };
@@ -235,6 +239,9 @@ function SlideLayer({
   layout: SlideLayout;
 }) {
   const imageSrc = useAssetUrl(slide.image);
+  // Falls back to the desktop image when admin hasn't uploaded a mobile
+  // variant — so adding mobileImage is purely additive.
+  const mobileImageSrc = useAssetUrl(slide.mobileImage || slide.image);
   const videoSrc = useAssetUrl(slide.videoSrc || "");
 
   // Common framer-motion enter/exit.
@@ -258,13 +265,10 @@ function SlideLayer({
               imageOnLeft ? "lg:order-1" : "lg:order-2",
             ].join(" ")}
           >
-            <Image
-              src={imageSrc}
-              alt=""
-              fill
+            <ResponsiveHeroImage
+              desktopSrc={imageSrc}
+              mobileSrc={mobileImageSrc}
               sizes="(min-width: 1024px) 50vw, 100vw"
-              priority
-              className="object-cover"
             />
             <GradientOverlay slide={slide} isDark={isDark} containerized />
           </div>
@@ -296,13 +300,10 @@ function SlideLayer({
           poster={imageSrc}
         />
       ) : (
-        <Image
-          src={imageSrc}
-          alt=""
-          fill
+        <ResponsiveHeroImage
+          desktopSrc={imageSrc}
+          mobileSrc={mobileImageSrc}
           sizes="100vw"
-          priority
-          className="object-cover"
         />
       )}
       <GradientOverlay slide={slide} isDark={isDark} />
@@ -310,6 +311,54 @@ function SlideLayer({
         <SlideCopy slide={slide} isDark={isDark} variant="centered" />
       </div>
     </motion.div>
+  );
+}
+
+/** Renders two stacked Next/Image elements — one optimized for mobile,
+ * one for desktop — toggled via CSS at the md breakpoint. Both URLs go
+ * through useAssetUrl so admin uploads override the static seeds. */
+function ResponsiveHeroImage({
+  desktopSrc,
+  mobileSrc,
+  sizes,
+}: {
+  desktopSrc: string;
+  mobileSrc: string;
+  sizes: string;
+}) {
+  // When the two URLs are identical (no mobile override) just render one
+  // image so the browser doesn't double-fetch.
+  if (mobileSrc === desktopSrc) {
+    return (
+      <Image
+        src={desktopSrc}
+        alt=""
+        fill
+        sizes={sizes}
+        priority
+        className="object-cover"
+      />
+    );
+  }
+  return (
+    <>
+      <Image
+        src={mobileSrc}
+        alt=""
+        fill
+        sizes="100vw"
+        priority
+        className="object-cover md:hidden"
+      />
+      <Image
+        src={desktopSrc}
+        alt=""
+        fill
+        sizes={sizes}
+        priority
+        className="hidden object-cover md:block"
+      />
+    </>
   );
 }
 

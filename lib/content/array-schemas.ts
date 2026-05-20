@@ -27,7 +27,7 @@ import {
   WHOLESALE_VERTICAL_ICONS,
 } from "./wholesale";
 import { APP_FEATURE_ICONS } from "./app-page";
-import { PROMISE_ICONS } from "@/components/PromiseThreeCol";
+import { PROMISE_ICONS } from "@/components/PromiseThreeCol.data";
 
 export type PrimitiveKind =
   | "text"
@@ -116,6 +116,7 @@ const HOME_HERO_SCHEMA: ItemSchema = {
     "titleB",
     "subtitle",
     "image",
+    "mobileImage",
     "videoSrc",
     "tone",
     "accentColor",
@@ -152,8 +153,16 @@ const HOME_HERO_SCHEMA: ItemSchema = {
     subtitle: { kind: "textarea", label: "副标题", rows: 3, optional: true },
     image: {
       kind: "image",
-      label: "背景图路径",
+      label: "背景图(桌面端)",
       placeholder: "/images/banners/hero-1.jpg",
+      hint: "宽幅。建议 1920×1080 或 16:9",
+    },
+    mobileImage: {
+      kind: "image",
+      label: "背景图(手机端)",
+      placeholder: "/images/banners/hero-1-mobile.jpg",
+      hint: "竖版裁切,建议 750×1334 或 9:16。留空则手机端复用桌面图。",
+      optional: true,
     },
     videoSrc: {
       kind: "text",
