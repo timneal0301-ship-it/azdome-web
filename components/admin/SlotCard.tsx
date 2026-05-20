@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { CheckCircle2, UploadCloud, X } from "lucide-react";
 
 import { updateImage } from "@/app/admin/actions";
+import { useAssetUrl } from "@/components/AssetUrlsProvider";
 import type { ImageSlot } from "@/lib/image-slots";
 
 export default function SlotCard({ slot }: { slot: ImageSlot }) {
@@ -18,8 +19,13 @@ export default function SlotCard({ slot }: { slot: ImageSlot }) {
     | { kind: "error"; msg: string }
     | null
   >(null);
-  // Bumped after a successful upload to bust the <Image> cache.
-  const [version, setVersion] = useState(0);
+  // Set to the URL returned by the upload action so the thumbnail flips to
+  // the new image instantly, before router.refresh propagates new KV state.
+  const [optimisticUrl, setOptimisticUrl] = useState<string | null>(null);
+
+  // Live URL from the AssetUrlsProvider — Blob URL if uploaded, else the
+  // static seed path. After router.refresh this re-reads the latest map.
+  const liveUrl = useAssetUrl(`/${slot.path}`);
 
   useEffect(() => {
     return () => {
@@ -54,7 +60,7 @@ export default function SlotCard({ slot }: { slot: ImageSlot }) {
     setPending(false);
     if (res.ok) {
       setFeedback({ kind: "success", msg: "已更新,前台已刷新" });
-      setVersion((v) => v + 1);
+      setOptimisticUrl(res.path);
       if (preview) URL.revokeObjectURL(preview);
       setPreview(null);
       if (inputRef.current) inputRef.current.value = "";
@@ -64,7 +70,7 @@ export default function SlotCard({ slot }: { slot: ImageSlot }) {
     }
   };
 
-  const currentSrc = `/${slot.path}${version > 0 ? `?v=${version}` : ""}`;
+  const currentSrc = optimisticUrl ?? liveUrl;
   const displaySrc = preview ?? currentSrc;
   const isSquare = slot.width === slot.height;
 
@@ -77,7 +83,7 @@ export default function SlotCard({ slot }: { slot: ImageSlot }) {
         ].join(" ")}
       >
         <Image
-          key={`${slot.key}-${version}-${preview ? "preview" : "current"}`}
+          key={`${slot.key}-${displaySrc}`}
           src={displaySrc}
           alt={slot.label}
           fill
