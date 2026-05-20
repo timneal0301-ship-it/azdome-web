@@ -14,8 +14,8 @@ import {
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
-// Admin-editable: stored as string names so JSON serializes cleanly.
-// Add new entries to ICONS to expand the allowed set.
+import { DEFAULT_FEATURES, type FeatureBlock } from "./FeatureSplit.data";
+
 const ICONS: Record<string, LucideIcon> = {
   Eye,
   ShieldCheck,
@@ -26,43 +26,6 @@ const ICONS: Record<string, LucideIcon> = {
   Camera,
   Cloud,
 };
-export const FEATURE_SPLIT_ICONS = Object.keys(ICONS);
-
-export type FeatureBlock = {
-  /** Lucide icon name — see FEATURE_SPLIT_ICONS for allowed values. */
-  iconName: string;
-  eyebrow: string;
-  title: string;
-  description: string;
-  image: string;
-};
-
-export const DEFAULT_FEATURES: FeatureBlock[] = [
-  {
-    iconName: "Eye",
-    eyebrow: "4K Resolution",
-    title: "Read license plates four lanes away.",
-    description:
-      "True 3840×2160 capture preserves the details that matter when it counts. Frame-perfect evidence — every drive, every angle.",
-    image: "/images/aplus/4k-detail.jpg",
-  },
-  {
-    iconName: "ShieldCheck",
-    eyebrow: "24H Parking Mode",
-    title: "Your car never sleeps. Neither does the camera.",
-    description:
-      "Buffered parking mode records the moments before an impact. Motion and collision detection wake the camera only when something happens.",
-    image: "/images/aplus/parking.jpg",
-  },
-  {
-    iconName: "Smartphone",
-    eyebrow: "AZDOME App",
-    title: "Footage in your pocket, instantly.",
-    description:
-      "Pair via 5GHz Wi-Fi for one-tap clip downloads. Share to insurance, family, or socials without ever removing the SD card.",
-    image: "/images/aplus/app.jpg",
-  },
-];
 
 export default function FeatureSplit({
   features = DEFAULT_FEATURES,

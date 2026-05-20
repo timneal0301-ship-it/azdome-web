@@ -18,13 +18,13 @@ import UseCaseTabs from "@/components/UseCaseTabs";
 import ProductCompare from "@/components/ProductCompare";
 import type { ProductDetail } from "@/lib/products";
 import type { FirmwareRelease, Manual } from "@/lib/downloads";
-import type { SpecGroup } from "@/components/SpecsTable";
-import type { Review } from "@/components/Reviews";
-import type { FAQ } from "@/components/FaqAccordion";
-import type { ImmersiveContent } from "@/components/ImmersiveFeature";
-import type { FeatureBlock } from "@/components/FeatureSplit";
-import type { BoxItem } from "@/components/WhatsInBox";
-import type { UseCaseTab } from "@/components/UseCaseTabs";
+import type { SpecGroup } from "@/components/SpecsTable.data";
+import type { Review } from "@/components/Reviews.data";
+import type { FAQ } from "@/components/FaqAccordion.data";
+import type { ImmersiveContent } from "@/components/ImmersiveFeature.data";
+import type { FeatureBlock } from "@/components/FeatureSplit.data";
+import type { BoxItem } from "@/components/WhatsInBox.data";
+import type { UseCaseTab } from "@/components/UseCaseTabs.data";
 
 export default function ProductPDP({
   product,

@@ -1,20 +1,20 @@
 import type { ContentSection } from "./types";
-import { DEFAULT_SPECS } from "@/components/SpecsTable";
-import { DEFAULT_REVIEWS } from "@/components/Reviews";
-import { DEFAULT_FAQS } from "@/components/FaqAccordion";
-import { DEFAULT_IMMERSIVE } from "@/components/ImmersiveFeature";
+import { DEFAULT_SPECS } from "@/components/SpecsTable.data";
+import { DEFAULT_REVIEWS } from "@/components/Reviews.data";
+import { DEFAULT_FAQS } from "@/components/FaqAccordion.data";
+import { DEFAULT_IMMERSIVE } from "@/components/ImmersiveFeature.data";
 import {
   DEFAULT_FEATURES,
   FEATURE_SPLIT_ICONS,
-} from "@/components/FeatureSplit";
+} from "@/components/FeatureSplit.data";
 import {
   DEFAULT_BOX_ITEMS,
   WHATS_IN_BOX_ICONS,
-} from "@/components/WhatsInBox";
+} from "@/components/WhatsInBox.data";
 import {
   DEFAULT_USE_CASE_TABS,
   USE_CASE_ICONS,
-} from "@/components/UseCaseTabs";
+} from "@/components/UseCaseTabs.data";
 
 export const PDP_SPECS: ContentSection<typeof DEFAULT_SPECS> = {
   key: "pdp.specs",
