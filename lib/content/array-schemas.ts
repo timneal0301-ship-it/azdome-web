@@ -155,13 +155,13 @@ const HOME_HERO_SCHEMA: ItemSchema = {
       kind: "image",
       label: "背景图(桌面端)",
       placeholder: "/images/banners/hero-1.jpg",
-      hint: "宽幅。建议 1920×1080 或 16:9",
+      hint: "推荐 2878×1002(约 2.87:1 影院宽幅)。窄屏会从中间裁切,主体和文字位置请放在画面中部 60%。",
     },
     mobileImage: {
       kind: "image",
       label: "背景图(手机端)",
       placeholder: "/images/banners/hero-1-mobile.jpg",
-      hint: "竖版裁切,建议 750×1334 或 9:16。留空则手机端复用桌面图。",
+      hint: "竖版裁切,推荐 750×1334(9:16)。留空则手机端复用桌面图。",
       optional: true,
     },
     videoSrc: {

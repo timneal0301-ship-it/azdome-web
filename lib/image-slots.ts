@@ -49,16 +49,19 @@ export const SLOTS: ImageSlot[] = [
   // video modal pull these paths directly. Keep the files in /public.
 
   // Hero Carousel — multi-slide banners (★ 首页大图轮播 ★ 改这里 ★)
-  { key: "banner-1", label: "★ 首页 Hero Slide 1 (M550 Pro) · 桌面", group: "banners", path: "images/banners/hero-1.jpg", width: 1920, height: 1080 },
-  { key: "banner-2", label: "★ 首页 Hero Slide 2 (PG17 Pro) · 桌面", group: "banners", path: "images/banners/hero-2.jpg", width: 1920, height: 1080 },
-  { key: "banner-3", label: "★ 首页 Hero Slide 3 (M550 Max) · 桌面", group: "banners", path: "images/banners/hero-3.jpg", width: 1920, height: 1080 },
-  { key: "banner-4", label: "★ 首页 Hero Slide 4 (Promo) · 桌面",    group: "banners", path: "images/banners/hero-4.jpg", width: 1920, height: 1080 },
+  // Desktop recommended size: 2878×1002 (≈2.87:1 cinematic wide). Image
+  // will be center-cropped on narrower viewports, so keep your subject
+  // and title-zone in the middle ~60% of the canvas.
+  { key: "banner-1", label: "★ 首页 Hero Slide 1 (M550 Pro) · 桌面 2878×1002", group: "banners", path: "images/banners/hero-1.jpg", width: 2878, height: 1002 },
+  { key: "banner-2", label: "★ 首页 Hero Slide 2 (PG17 Pro) · 桌面 2878×1002", group: "banners", path: "images/banners/hero-2.jpg", width: 2878, height: 1002 },
+  { key: "banner-3", label: "★ 首页 Hero Slide 3 (M550 Max) · 桌面 2878×1002", group: "banners", path: "images/banners/hero-3.jpg", width: 2878, height: 1002 },
+  { key: "banner-4", label: "★ 首页 Hero Slide 4 (Promo) · 桌面 2878×1002",    group: "banners", path: "images/banners/hero-4.jpg", width: 2878, height: 1002 },
   // Mobile (portrait) variants — referenced by slide.mobileImage in
   // home.hero. Recommended ~9:16. Optional — empty falls back to desktop.
-  { key: "banner-1-mobile", label: "★ Hero Slide 1 · 手机版(竖版)", group: "banners", path: "images/banners/hero-1-mobile.jpg", width: 750, height: 1334 },
-  { key: "banner-2-mobile", label: "★ Hero Slide 2 · 手机版(竖版)", group: "banners", path: "images/banners/hero-2-mobile.jpg", width: 750, height: 1334 },
-  { key: "banner-3-mobile", label: "★ Hero Slide 3 · 手机版(竖版)", group: "banners", path: "images/banners/hero-3-mobile.jpg", width: 750, height: 1334 },
-  { key: "banner-4-mobile", label: "★ Hero Slide 4 · 手机版(竖版)", group: "banners", path: "images/banners/hero-4-mobile.jpg", width: 750, height: 1334 },
+  { key: "banner-1-mobile", label: "★ Hero Slide 1 · 手机版(竖版 750×1334)", group: "banners", path: "images/banners/hero-1-mobile.jpg", width: 750, height: 1334 },
+  { key: "banner-2-mobile", label: "★ Hero Slide 2 · 手机版(竖版 750×1334)", group: "banners", path: "images/banners/hero-2-mobile.jpg", width: 750, height: 1334 },
+  { key: "banner-3-mobile", label: "★ Hero Slide 3 · 手机版(竖版 750×1334)", group: "banners", path: "images/banners/hero-3-mobile.jpg", width: 750, height: 1334 },
+  { key: "banner-4-mobile", label: "★ Hero Slide 4 · 手机版(竖版 750×1334)", group: "banners", path: "images/banners/hero-4-mobile.jpg", width: 750, height: 1334 },
 
   // Mini bento banners
   { key: "mini-m550-pro",     label: "Mini · M550 Pro",       group: "miniBanners", path: "images/banners/mini-m550-pro.jpg",     width: 1200, height: 900 },
