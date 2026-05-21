@@ -3,10 +3,18 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { Check, CheckCircle2, RotateCcw, UploadCloud, X } from "lucide-react";
+import {
+  Check,
+  CheckCircle2,
+  RotateCcw,
+  Search,
+  UploadCloud,
+  X,
+} from "lucide-react";
 
 import { clearImage, updateImage } from "@/app/admin/actions";
 import { useAssetUrl } from "@/components/AssetUrlsProvider";
+import ImageLightbox from "@/components/admin/ImageLightbox";
 import type { ImageSlot } from "@/lib/image-slots";
 
 export default function SlotCard({
@@ -28,6 +36,7 @@ export default function SlotCard({
   const inputRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
   const [feedback, setFeedback] = useState<
     | { kind: "success"; msg: string }
     | { kind: "error"; msg: string }
@@ -166,7 +175,7 @@ export default function SlotCard({
       )}
       <div
         className={[
-          "relative overflow-hidden rounded-xl bg-slate-100",
+          "group/preview relative overflow-hidden rounded-xl bg-slate-100",
           isSquare ? "aspect-square" : "aspect-[4/3]",
         ].join(" ")}
       >
@@ -179,12 +188,30 @@ export default function SlotCard({
           className="object-cover"
           unoptimized={!!preview}
         />
+        {/* Magnifier — shows on hover, opens fullscreen lightbox of the
+            currently-displayed image (preview or live URL). */}
+        {!selectMode && (
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              setLightboxOpen(true);
+            }}
+            aria-label="查看大图"
+            title="查看大图"
+            className="absolute inset-0 z-10 flex items-center justify-center bg-slate-900/0 opacity-0 transition-all duration-300 group-hover/preview:bg-slate-900/30 group-hover/preview:opacity-100"
+          >
+            <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/90 text-slate-900 shadow-lg backdrop-blur-md transition-transform duration-300 group-hover/preview:scale-110">
+              <Search className="h-4 w-4" />
+            </span>
+          </button>
+        )}
         {preview && (
           <button
             type="button"
             onClick={reset}
             aria-label="清除预览"
-            className="absolute right-2 top-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-slate-900/70 text-white backdrop-blur-md transition-colors hover:bg-slate-900"
+            className="absolute right-2 top-2 z-20 inline-flex h-7 w-7 items-center justify-center rounded-full bg-slate-900/70 text-white backdrop-blur-md transition-colors hover:bg-slate-900"
           >
             <X className="h-3.5 w-3.5" />
           </button>
@@ -271,6 +298,13 @@ export default function SlotCard({
           {feedback.msg}
         </p>
       )}
+
+      <ImageLightbox
+        src={displaySrc}
+        alt={slot.label}
+        open={lightboxOpen}
+        onClose={() => setLightboxOpen(false)}
+      />
     </div>
   );
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import {
   CheckSquare,
@@ -14,6 +15,7 @@ import {
 } from "lucide-react";
 
 import { clearImages } from "@/app/admin/actions";
+import GroupBulkUpload from "@/components/admin/GroupBulkUpload";
 import SlotCard from "@/components/admin/SlotCard";
 import { useAssetUrls } from "@/components/AssetUrlsProvider";
 import type { ImageGroup, ImageSlot } from "@/lib/image-slots";
@@ -163,16 +165,22 @@ export default function ImageLibrary({
                         </span>
                       </div>
                       <div className="mt-1.5 h-1 overflow-hidden rounded-full bg-slate-100">
-                        <div
+                        <motion.div
+                          initial={{ width: 0 }}
+                          animate={{ width: `${g.percent}%` }}
+                          transition={{
+                            duration: 0.9,
+                            ease: [0.22, 1, 0.36, 1],
+                            delay: 0.05,
+                          }}
                           className={[
-                            "h-full rounded-full transition-all duration-500",
+                            "h-full rounded-full",
                             g.percent === 100
                               ? "bg-emerald-500"
                               : g.percent > 0
                               ? "bg-blue-500"
                               : "bg-slate-200",
                           ].join(" ")}
-                          style={{ width: `${g.percent}%` }}
                         />
                       </div>
                     </a>
@@ -306,16 +314,22 @@ export default function ImageLibrary({
                         </h2>
                         <div className="mt-2 flex items-center gap-3">
                           <div className="h-1 w-32 overflow-hidden rounded-full bg-slate-100">
-                            <div
+                            <motion.div
+                              initial={{ width: 0 }}
+                              animate={{ width: `${stat.percent}%` }}
+                              transition={{
+                                duration: 1,
+                                ease: [0.22, 1, 0.36, 1],
+                                delay: 0.1,
+                              }}
                               className={[
-                                "h-full rounded-full transition-all duration-500",
+                                "h-full rounded-full",
                                 stat.percent === 100
                                   ? "bg-emerald-500"
                                   : stat.percent > 0
                                   ? "bg-blue-500"
                                   : "bg-slate-200",
                               ].join(" ")}
-                              style={{ width: `${stat.percent}%` }}
                             />
                           </div>
                           <span className="text-[11px] tabular-nums text-slate-500">
@@ -326,11 +340,21 @@ export default function ImageLibrary({
                           </span>
                         </div>
                       </div>
-                      {filterActive && groupSlots.length !== stat.total && (
-                        <span className="text-[11px] tabular-nums text-slate-400">
-                          (筛选中 {groupSlots.length} 项可见)
-                        </span>
-                      )}
+                      <div className="flex items-center gap-3">
+                        {filterActive && groupSlots.length !== stat.total && (
+                          <span className="text-[11px] tabular-nums text-slate-400">
+                            (筛选中 {groupSlots.length} 项可见)
+                          </span>
+                        )}
+                        <GroupBulkUpload
+                          groupLabel={group.label}
+                          emptySlotKeys={decorated
+                            .filter(
+                              (d) => d.slot.group === group.key && !d.edited,
+                            )
+                            .map((d) => d.slot.key)}
+                        />
+                      </div>
                     </div>
                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                       {groupSlots.map(({ slot, edited }) => (
