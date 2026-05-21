@@ -11,11 +11,15 @@ import type { ImageSlot } from "@/lib/image-slots";
 
 export default function SlotCard({
   slot,
+  edited,
   selectMode = false,
   selected = false,
   onToggleSelect,
 }: {
   slot: ImageSlot;
+  /** Override exists in KV (i.e. admin has uploaded an image to this
+   * slot). Drives the status pill on the card. */
+  edited?: boolean;
   selectMode?: boolean;
   selected?: boolean;
   onToggleSelect?: () => void;
@@ -184,6 +188,27 @@ export default function SlotCard({
           >
             <X className="h-3.5 w-3.5" />
           </button>
+        )}
+        {/* Status pill — top-left so it doesn't collide with selectMode
+            check (top-right) or preview clear (top-right). */}
+        {!selectMode && !preview && edited !== undefined && (
+          <span
+            className={[
+              "absolute left-2 top-2 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider backdrop-blur-md",
+              edited
+                ? "bg-emerald-500/90 text-white"
+                : "bg-white/85 text-slate-500 ring-1 ring-slate-200",
+            ].join(" ")}
+          >
+            {edited ? (
+              <>
+                <Check className="h-3 w-3" strokeWidth={3} />
+                已上传
+              </>
+            ) : (
+              "未上传"
+            )}
+          </span>
         )}
       </div>
 

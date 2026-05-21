@@ -6,39 +6,21 @@ export const dynamic = "force-dynamic";
 export default function ImagesAdminPage() {
   return (
     <main className="mx-auto max-w-7xl px-4 pb-24 pt-10 sm:px-6 lg:px-10">
-      <header className="mb-10 flex flex-wrap items-end justify-between gap-6 border-b border-slate-200 pb-8">
-        <div>
-          <p className="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-blue-600">
-            Asset Library
-          </p>
+      <header className="mb-8 border-b border-slate-200 pb-6">
+        <p className="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-blue-600">
+          Asset Library
+        </p>
+        <div className="flex flex-wrap items-end justify-between gap-4">
           <h1 className="text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">
             图片资源
           </h1>
-          <p className="mt-2 max-w-2xl text-sm text-slate-500">
-            点任意卡片选新文件上传, 写入 Vercel Blob,前台立即生效。
-            每个 slot 可以"重置上传"回到代码里的种子图。
+          <p className="text-xs text-slate-400">
+            拖拽 / 点击上传 · 写入 Vercel Blob · 单文件 ≤ 8 MB · 前台立即刷新
           </p>
         </div>
-        <div className="flex gap-6 text-right text-xs uppercase tracking-[0.14em] text-slate-400">
-          <div>
-            <div className="text-2xl font-bold tracking-tight tabular-nums text-slate-900">
-              {SLOTS.length}
-            </div>
-            <div className="mt-1">Slots</div>
-          </div>
-          <div>
-            <div className="text-2xl font-bold tracking-tight tabular-nums text-slate-900">
-              {GROUPS.length}
-            </div>
-            <div className="mt-1">Groups</div>
-          </div>
-          <div>
-            <div className="text-2xl font-bold tracking-tight tabular-nums text-slate-900">
-              8MB
-            </div>
-            <div className="mt-1">Max size</div>
-          </div>
-        </div>
+        <p className="mt-3 max-w-2xl text-sm text-slate-500">
+          每个 slot 一个图片入口。上传后会被前台引用对应路径的位置自动取代;若要回退到代码里的种子图,点卡片底部"重置上传"。
+        </p>
       </header>
 
       <ImageLibrary groups={GROUPS} slots={SLOTS} />
