@@ -43,6 +43,11 @@ export type Retailer = {
   perk?: string;
   /** "official" appears in a top tier with a different style. */
   tier?: "official" | "marketplace" | "retailer";
+  /** 2-letter brand monogram displayed on the card. Falls back to first 2
+   * chars of the name. */
+  monogram?: string;
+  /** Tailwind background color class for the monogram chip (eg "bg-amber-500"). */
+  brandColor?: string;
 };
 
 export const RETAILERS: Retailer[] = [
@@ -72,6 +77,8 @@ export const RETAILERS: Retailer[] = [
     id: "amazon",
     name: "Amazon",
     tier: "marketplace",
+    monogram: "Az",
+    brandColor: "bg-amber-500",
     urls: {
       us: "https://www.amazon.com/stores/AZDOME/page/07BFE4C2-1CC4-4EE3-AE5D-8EACABF41000",
       ca: "https://www.amazon.ca/s?k=azdome+dash+cam",
@@ -88,30 +95,40 @@ export const RETAILERS: Retailer[] = [
   },
 
   // ─── US chain retailers ──────────────────────────────────────────
-  { id: "bestbuy", name: "Best Buy", tier: "retailer", urls: { us: "https://www.bestbuy.com/site/searchpage.jsp?st=azdome", ca: "https://www.bestbuy.ca/en-ca/search?search=azdome" }, perk: "In-store pickup available" },
-  { id: "walmart", name: "Walmart", tier: "retailer", urls: { us: "https://www.walmart.com/search?q=azdome+dash+cam" }, perk: "Same-day pickup" },
-  { id: "bhphoto", name: "B&H Photo Video", tier: "retailer", urls: { us: "https://www.bhphotovideo.com/c/search?Ntt=azdome" }, perk: "Free expedited shipping" },
-  { id: "newegg", name: "Newegg", tier: "retailer", urls: { us: "https://www.newegg.com/p/pl?d=azdome" } },
-  { id: "target", name: "Target", tier: "retailer", urls: { us: "https://www.target.com/s?searchTerm=azdome" } },
+  { id: "bestbuy", name: "Best Buy", tier: "retailer", monogram: "BB", brandColor: "bg-blue-500", urls: { us: "https://www.bestbuy.com/site/searchpage.jsp?st=azdome", ca: "https://www.bestbuy.ca/en-ca/search?search=azdome" }, perk: "In-store pickup available" },
+  { id: "walmart", name: "Walmart", tier: "retailer", monogram: "W", brandColor: "bg-sky-500", urls: { us: "https://www.walmart.com/search?q=azdome+dash+cam" }, perk: "Same-day pickup" },
+  { id: "bhphoto", name: "B&H Photo Video", tier: "retailer", monogram: "BH", brandColor: "bg-gray-700", urls: { us: "https://www.bhphotovideo.com/c/search?Ntt=azdome" }, perk: "Free expedited shipping" },
+  { id: "newegg", name: "Newegg", tier: "retailer", monogram: "NE", brandColor: "bg-orange-500", urls: { us: "https://www.newegg.com/p/pl?d=azdome" } },
+  { id: "target", name: "Target", tier: "retailer", monogram: "T", brandColor: "bg-red-600", urls: { us: "https://www.target.com/s?searchTerm=azdome" } },
 
   // ─── UK + EU ─────────────────────────────────────────────────────
-  { id: "argos", name: "Argos", tier: "retailer", urls: { uk: "https://www.argos.co.uk/search/azdome/" } },
-  { id: "currys", name: "Currys", tier: "retailer", urls: { uk: "https://www.currys.co.uk/search?q=azdome" }, perk: "0% finance available" },
-  { id: "mediamarkt", name: "MediaMarkt", tier: "retailer", urls: { de: "https://www.mediamarkt.de/de/search.html?query=azdome" } },
-  { id: "saturn", name: "Saturn", tier: "retailer", urls: { de: "https://www.saturn.de/de/search.html?query=azdome" } },
-  { id: "fnac", name: "Fnac", tier: "retailer", urls: { fr: "https://www.fnac.com/SearchResult/ResultList.aspx?Search=azdome" } },
-  { id: "darty", name: "Darty", tier: "retailer", urls: { fr: "https://www.darty.com/nav/recherche.html?text=azdome" } },
-  { id: "elcorteingles", name: "El Corte Inglés", tier: "retailer", urls: { es: "https://www.elcorteingles.es/search/?s=azdome" } },
-  { id: "mediaworld", name: "MediaWorld", tier: "retailer", urls: { it: "https://www.mediaworld.it/it/search?query=azdome" } },
+  { id: "argos", name: "Argos", tier: "retailer", monogram: "Ar", brandColor: "bg-red-500", urls: { uk: "https://www.argos.co.uk/search/azdome/" } },
+  { id: "currys", name: "Currys", tier: "retailer", monogram: "Cu", brandColor: "bg-purple-600", urls: { uk: "https://www.currys.co.uk/search?q=azdome" }, perk: "0% finance available" },
+  { id: "mediamarkt", name: "MediaMarkt", tier: "retailer", monogram: "MM", brandColor: "bg-red-600", urls: { de: "https://www.mediamarkt.de/de/search.html?query=azdome" } },
+  { id: "saturn", name: "Saturn", tier: "retailer", monogram: "S", brandColor: "bg-yellow-500", urls: { de: "https://www.saturn.de/de/search.html?query=azdome" } },
+  { id: "fnac", name: "Fnac", tier: "retailer", monogram: "F", brandColor: "bg-amber-600", urls: { fr: "https://www.fnac.com/SearchResult/ResultList.aspx?Search=azdome" } },
+  { id: "darty", name: "Darty", tier: "retailer", monogram: "D", brandColor: "bg-red-700", urls: { fr: "https://www.darty.com/nav/recherche.html?text=azdome" } },
+  { id: "elcorteingles", name: "El Corte Inglés", tier: "retailer", monogram: "EC", brandColor: "bg-emerald-700", urls: { es: "https://www.elcorteingles.es/search/?s=azdome" } },
+  { id: "mediaworld", name: "MediaWorld", tier: "retailer", monogram: "MW", brandColor: "bg-red-500", urls: { it: "https://www.mediaworld.it/it/search?query=azdome" } },
 
   // ─── Japan ───────────────────────────────────────────────────────
-  { id: "yodobashi", name: "Yodobashi Camera", nativeName: "ヨドバシカメラ", tier: "retailer", urls: { jp: "https://www.yodobashi.com/?word=azdome" } } as unknown as Retailer,
-  { id: "biccamera", name: "Bic Camera", nativeName: "ビックカメラ", tier: "retailer", urls: { jp: "https://www.biccamera.com/bc/category/?q=azdome" } } as unknown as Retailer,
+  { id: "yodobashi", name: "Yodobashi Camera", tier: "retailer", monogram: "Y", brandColor: "bg-red-600", urls: { jp: "https://www.yodobashi.com/?word=azdome" } },
+  { id: "biccamera", name: "Bic Camera", tier: "retailer", monogram: "B", brandColor: "bg-orange-600", urls: { jp: "https://www.biccamera.com/bc/category/?q=azdome" } },
 
   // ─── Australia ───────────────────────────────────────────────────
-  { id: "jbhifi", name: "JB Hi-Fi", tier: "retailer", urls: { au: "https://www.jbhifi.com.au/search?query=azdome" } },
-  { id: "officeworks", name: "Officeworks", tier: "retailer", urls: { au: "https://www.officeworks.com.au/shop/officeworks/search?q=azdome" } },
+  { id: "jbhifi", name: "JB Hi-Fi", tier: "retailer", monogram: "JB", brandColor: "bg-yellow-500", urls: { au: "https://www.jbhifi.com.au/search?query=azdome" } },
+  { id: "officeworks", name: "Officeworks", tier: "retailer", monogram: "OW", brandColor: "bg-blue-700", urls: { au: "https://www.officeworks.com.au/shop/officeworks/search?q=azdome" } },
 ];
+
+/** Total distinct retail channels across all regions (excluding official). */
+export const TOTAL_CHANNELS = RETAILERS.filter((r) => r.tier !== "official").length;
+
+/** Per-region retailer count (excluding official). Used to label region pills. */
+export function countForRegion(code: RegionCode): number {
+  return RETAILERS.filter(
+    (r) => r.tier !== "official" && Boolean(r.urls[code]),
+  ).length;
+}
 
 export function retailersForRegion(code: RegionCode): Retailer[] {
   return RETAILERS.filter((r) => Boolean(r.urls[code]));
