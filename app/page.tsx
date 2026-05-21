@@ -22,7 +22,7 @@ import {
   HOME_PRESS_STRIP,
   HOME_FLASH_SALE,
 } from "@/lib/content/home";
-import { HOME_LAYOUT } from "@/lib/content/layout";
+import { HOME_LAYOUT, HOME_LAYOUT_DEFAULTS } from "@/lib/content/layout";
 
 export default async function HomePage() {
   const [
@@ -46,28 +46,32 @@ export default async function HomePage() {
     getContent(HOME_PRESS_STRIP),
     getContent(HOME_FLASH_SALE),
   ]);
+  // Merge with in-code defaults so any module added after the admin last
+  // saved /admin/content/layout.home (eg hero2 / hero3) still has its
+  // default visibility instead of falling through as undefined → hidden.
+  const L = { ...HOME_LAYOUT_DEFAULTS, ...layout };
   return (
     <>
-      {layout.flashSale && <FlashSaleBar content={flashSale} />}
+      {L.flashSale && <FlashSaleBar content={flashSale} />}
       <main>
-        {layout.hero && <HeroCarousel slides={slides} />}
-        {layout.promise && <PromiseThreeCol promises={promise} />}
-        {layout.banners && <ProductBanners banners={banners} />}
-        {layout.press && <PressLogos />}
-        {layout.featured && <FeaturedProducts />}
-        {layout.hero2 && slides2.length > 0 && (
+        {L.hero && <HeroCarousel slides={slides} />}
+        {L.promise && <PromiseThreeCol promises={promise} />}
+        {L.banners && <ProductBanners banners={banners} />}
+        {L.press && <PressLogos />}
+        {L.featured && <FeaturedProducts />}
+        {L.hero2 && slides2.length > 0 && (
           <HeroCarousel slides={slides2} />
         )}
-        {layout.priceCompare && <PriceCompare content={compare} />}
-        {layout.video && <VideoModal />}
-        {layout.scenarios && <ScenarioGrid />}
-        {layout.hero3 && slides3.length > 0 && (
+        {L.priceCompare && <PriceCompare content={compare} />}
+        {L.video && <VideoModal />}
+        {L.scenarios && <ScenarioGrid />}
+        {L.hero3 && slides3.length > 0 && (
           <HeroCarousel slides={slides3} />
         )}
-        {layout.tech && <TechFeature />}
-        {layout.pressStrip && <PressQuotesStrip quotes={pressStrip} />}
-        {layout.testimonials && <Testimonials />}
-        {layout.newsletter && <Newsletter />}
+        {L.tech && <TechFeature />}
+        {L.pressStrip && <PressQuotesStrip quotes={pressStrip} />}
+        {L.testimonials && <Testimonials />}
+        {L.newsletter && <Newsletter />}
       </main>
     </>
   );

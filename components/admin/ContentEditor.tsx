@@ -144,14 +144,21 @@ export default function ContentEditor({
   // Toggle-map view derives a typed view of `text` and lets users flip booleans
   // without touching JSON. Mutations re-serialize back into `text` so the
   // existing save flow works unchanged.
+  // Important: we merge any keys from the in-code defaultValue that are
+  // missing in the current override, so new toggles added in code show up
+  // in the UI even when the user already saved an older shape of the layout.
   const toggleValue: Record<string, boolean> = useMemo(() => {
     if (!toggleMode || parseError) return {};
     try {
-      return JSON.parse(text);
+      const parsed = JSON.parse(text) as Record<string, boolean>;
+      if (isToggleMap(defaultValue)) {
+        return { ...defaultValue, ...parsed };
+      }
+      return parsed;
     } catch {
       return {};
     }
-  }, [text, toggleMode, parseError]);
+  }, [text, toggleMode, parseError, defaultValue]);
   const setToggle = (key: string, value: boolean) => {
     const next = { ...toggleValue, [key]: value };
     setText(JSON.stringify(next, null, 2));
