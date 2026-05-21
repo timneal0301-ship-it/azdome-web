@@ -146,12 +146,8 @@ export const SLOTS: ImageSlot[] = [
 // ── Auto-derived product image slots ────────────────────────────────
 // Every SKU in PRODUCTS gets a uniform 6-slot main-image array at the
 // convention path `/images/products/<slug>/<N>.jpg` (N = 1..6). Admin
-// uploads to slot-1 also auto-promote to the product's cover image —
-// see getProductForPDP() in lib/products-server.ts.
-//
-// Plus: any legacy gallery path (i.e. paths in PRODUCTS that don't match
-// either an explicit SLOTS entry or the new 6-slot convention) gets a
-// "legacy" slot so existing PDP gallery items can still be re-uploaded.
+// uploads to slot-1 auto-promote to the product's cover image — see
+// getProductForPDP() in lib/products-server.ts.
 
 import { PRODUCTS } from "./products";
 
@@ -176,8 +172,6 @@ function deriveProductSlots(): ImageSlot[] {
   const seenKeys = new Set<string>();
 
   for (const product of PRODUCTS) {
-    // (A) Standard 6-slot main-image array. Same shape for every SKU
-    //     so admin gets a predictable 2×3 grid in /admin/products/[slug].
     for (let i = 1; i <= PRODUCT_SLOT_COUNT; i++) {
       const path = productSlotPath(product.slug, i);
       const key = productSlotKey(product.slug, i);
@@ -188,30 +182,6 @@ function deriveProductSlots(): ImageSlot[] {
       out.push({
         key,
         label: `★ ${product.short} · 主图 ${i}/${PRODUCT_SLOT_COUNT}`,
-        group: "products",
-        path,
-        width: 1000,
-        height: 1000,
-      });
-    }
-
-    // (B) Legacy paths — anything in product.gallery that isn't already
-    //     covered by an explicit SLOTS entry or the standard 6 above.
-    const legacyPaths = [product.image, ...product.gallery.map((g) => g.src)];
-    for (let i = 0; i < legacyPaths.length; i++) {
-      const raw = legacyPaths[i];
-      if (!raw || !raw.startsWith("/")) continue;
-      const path = raw.slice(1);
-      if (explicitPaths.has(path) || seenPaths.has(path)) continue;
-      const filename = path.split("/").pop() ?? "image";
-      const stem = filename.replace(/\.[^.]+$/, "");
-      const key = `product-${product.slug}-legacy-${stem}`;
-      if (explicitKeys.has(key) || seenKeys.has(key)) continue;
-      seenPaths.add(path);
-      seenKeys.add(key);
-      out.push({
-        key,
-        label: `· ${product.short} · 旧路径 (${filename})`,
         group: "products",
         path,
         width: 1000,

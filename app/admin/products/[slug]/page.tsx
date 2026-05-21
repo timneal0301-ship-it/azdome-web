@@ -1,13 +1,14 @@
+import { existsSync } from "fs";
+import { join } from "path";
+
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
   ArrowUpRight,
-  Check,
   CheckCircle2,
   ChevronLeft,
   ExternalLink,
-  ImagePlus,
   Layers,
   PenLine,
   Sparkles,
@@ -19,10 +20,10 @@ import { getAssetUrlMap } from "@/lib/asset-urls";
 import { getProductWithOverlay } from "@/lib/products-server";
 import {
   PRODUCT_SLOT_COUNT,
-  SLOTS,
   productSlotKey,
   productSlotPath,
 } from "@/lib/image-slots";
+import ProductSlotUpload from "@/components/admin/ProductSlotUpload";
 
 export const dynamic = "force-dynamic";
 
@@ -41,46 +42,25 @@ export default async function ProductDetailPage({
 
   const resolve = (path: string) => assetMap[path] ?? path;
   const isEdited = catalogOverride !== undefined;
+  const publicDir = join(process.cwd(), "public");
 
-  // (A) Standard 6-slot main-image array — uniform layout for every SKU.
-  //     Slot-1 doubles as the cover image (auto-promoted via getProductForPDP).
+  // Standard 6-slot main-image array — uniform layout for every SKU.
+  // Slot-1 doubles as the cover image (auto-promoted via getProductForPDP).
   const standardSlots = Array.from({ length: PRODUCT_SLOT_COUNT }, (_, idx) => {
     const i = idx + 1;
-    const path = `/${productSlotPath(slug, i)}`;
+    const relPath = productSlotPath(slug, i);
+    const path = `/${relPath}`;
     const key = productSlotKey(slug, i);
-    const uploaded = assetMap[path] !== undefined;
     return {
       n: i,
       key,
       path,
-      uploaded,
-      resolved: resolve(path),
+      uploaded: assetMap[path] !== undefined,
+      hasSeed: existsSync(join(publicDir, relPath)),
     };
   });
   const standardUploaded = standardSlots.filter((s) => s.uploaded).length;
-
-  // (B) Extra / legacy paths — anything in product.gallery (or product.image)
-  //     that isn't already covered by the standard 6 above. Mostly seed
-  //     paths from PRODUCTS const before the 6-slot convention existed.
-  const standardPaths = new Set(standardSlots.map((s) => s.path));
-  const legacyPathSet = new Set<string>();
-  for (const raw of [product.image, ...product.gallery.map((g) => g.src)]) {
-    if (!standardPaths.has(raw)) legacyPathSet.add(raw);
-  }
-  const legacyEntries = Array.from(legacyPathSet).map((path) => {
-    const slot = SLOTS.find((s) => `/${s.path}` === path);
-    const uploaded = assetMap[path] !== undefined;
-    const galleryItem = product.gallery.find((g) => g.src === path);
-    return {
-      path,
-      slot,
-      uploaded,
-      isMain: product.image === path,
-      alt: galleryItem?.alt ?? product.short,
-      resolved: resolve(path),
-      hiddenInGallery: galleryItem?.hidden,
-    };
-  });
+  const coverSrc = resolve(`/${productSlotPath(slug, 1)}`);
 
   // Quick links per A+ section.
   const A_PLUS_SECTIONS = [
@@ -112,7 +92,7 @@ export default async function ProductDetailPage({
       <header className="mb-10 grid grid-cols-1 gap-6 rounded-3xl bg-gradient-to-br from-slate-50 to-white p-6 shadow-sm ring-1 ring-slate-100 lg:grid-cols-[200px_1fr] lg:gap-8 lg:p-8">
         <div className="relative aspect-square w-full overflow-hidden rounded-2xl bg-white shadow-sm">
           <Image
-            src={resolve(product.image)}
+            src={coverSrc}
             alt={product.short}
             fill
             sizes="200px"
@@ -212,160 +192,24 @@ export default async function ProductDetailPage({
           </Link>
         </div>
 
-        {/* 2-row × 3-col grid on desktop. Slot-1 gets a distinguishing
-            "封面" pill since it's the auto-promoted cover image. */}
+        {/* 2-row × 3-col grid on desktop. Slot-1 = cover image
+            (auto-promoted via getProductForPDP). Each card uploads
+            inline — no jump to /admin/images. */}
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
           {standardSlots.map((slot) => (
-            <Link
+            <ProductSlotUpload
               key={slot.key}
-              href={`/admin/images?q=${encodeURIComponent(slot.key)}`}
-              className={[
-                "group relative flex flex-col overflow-hidden rounded-2xl bg-white shadow-sm ring-1 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md",
-                slot.uploaded ? "ring-emerald-100" : "ring-slate-100",
-              ].join(" ")}
-            >
-              <div className="relative aspect-square w-full overflow-hidden bg-slate-50">
-                {slot.uploaded ? (
-                  <Image
-                    src={slot.resolved}
-                    alt={`${product.short} · 主图 ${slot.n}`}
-                    fill
-                    sizes="(min-width: 1024px) 25vw, 45vw"
-                    className="object-contain p-3 transition-transform duration-500 group-hover:scale-105"
-                  />
-                ) : (
-                  <div className="flex h-full w-full flex-col items-center justify-center gap-2 text-slate-400">
-                    <ImagePlus className="h-7 w-7" />
-                    <span className="text-[11px] font-semibold tracking-tight">
-                      点这里上传
-                    </span>
-                  </div>
-                )}
-
-                {/* Slot number badge (top-left) */}
-                <span className="absolute left-2 top-2 inline-flex items-center gap-1 rounded-full bg-slate-900/85 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-white backdrop-blur-md">
-                  {slot.n} / {PRODUCT_SLOT_COUNT}
-                  {slot.n === 1 && (
-                    <span className="ml-1 text-amber-300">封面</span>
-                  )}
-                </span>
-
-                {/* Status pill (top-right) */}
-                <span
-                  className={[
-                    "absolute right-2 top-2 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider backdrop-blur-md",
-                    slot.uploaded
-                      ? "bg-emerald-500/90 text-white"
-                      : "bg-white/85 text-slate-500 ring-1 ring-slate-200",
-                  ].join(" ")}
-                >
-                  {slot.uploaded ? (
-                    <>
-                      <Check className="h-3 w-3" strokeWidth={3} />
-                      已上传
-                    </>
-                  ) : (
-                    "未上传"
-                  )}
-                </span>
-              </div>
-              <div className="flex items-center justify-between gap-2 p-3">
-                <p
-                  className="truncate font-mono text-[10px] text-slate-500"
-                  title={slot.path}
-                >
-                  {slot.path.replace("/images/products/", "")}
-                </p>
-                <ArrowUpRight className="h-3 w-3 flex-shrink-0 text-slate-300 transition-colors group-hover:text-blue-600" />
-              </div>
-            </Link>
+              slotKey={slot.key}
+              slotPath={slot.path}
+              slotNumber={slot.n}
+              totalSlots={PRODUCT_SLOT_COUNT}
+              productLabel={product.short}
+              isUploaded={slot.uploaded}
+              hasSeed={slot.hasSeed}
+            />
           ))}
         </div>
       </section>
-
-      {/* Legacy / catalog-curated paths — only shown when product still
-          references paths outside the standard 6-slot convention. */}
-      {legacyEntries.length > 0 && (
-        <section className="mb-10">
-          <div className="mb-4">
-            <h2 className="text-base font-bold tracking-tight text-slate-700 md:text-lg">
-              旧路径图片 ({legacyEntries.length})
-            </h2>
-            <p className="mt-1 text-xs text-slate-500">
-              这些图片由 <code className="rounded bg-slate-100 px-1 py-0.5 font-mono text-[10px]">catalog.products</code> 里的 image / gallery 字段引用,不在标准 6 张主图阵里。建议把内容迁到上面的 6 个 slot 后,在产品编辑器中清空 gallery 数组。
-            </p>
-          </div>
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-            {legacyEntries.map((entry) => (
-              <div
-                key={entry.path}
-                className="overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-100"
-              >
-                <div className="relative aspect-square w-full overflow-hidden bg-slate-50">
-                  <Image
-                    src={entry.resolved}
-                    alt={entry.alt}
-                    fill
-                    sizes="(min-width: 1280px) 20vw, 33vw"
-                    className="object-contain p-3"
-                  />
-                  {entry.isMain && (
-                    <span className="absolute left-2 top-2 inline-flex items-center gap-1 rounded-full bg-blue-600 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-white">
-                      主图
-                    </span>
-                  )}
-                  <span
-                    className={[
-                      "absolute right-2 top-2 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider backdrop-blur-md",
-                      entry.uploaded
-                        ? "bg-emerald-500/90 text-white"
-                        : "bg-white/85 text-slate-500 ring-1 ring-slate-200",
-                    ].join(" ")}
-                  >
-                    {entry.uploaded ? (
-                      <>
-                        <Check className="h-3 w-3" strokeWidth={3} />
-                        已上传
-                      </>
-                    ) : (
-                      "未上传"
-                    )}
-                  </span>
-                  {entry.hiddenInGallery && (
-                    <span className="absolute bottom-2 right-2 inline-flex items-center rounded-full bg-slate-900/80 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-white backdrop-blur-md">
-                      hidden
-                    </span>
-                  )}
-                </div>
-                <div className="p-3">
-                  <p
-                    className="truncate text-[11px] font-mono text-slate-500"
-                    title={entry.path}
-                  >
-                    {entry.path.replace("/images/", "")}
-                  </p>
-                  <p className="mt-0.5 truncate text-[10px] text-slate-400">
-                    {entry.alt}
-                  </p>
-                  {entry.slot ? (
-                    <Link
-                      href={`/admin/images?q=${encodeURIComponent(entry.slot.key)}`}
-                      className="mt-2 inline-flex items-center gap-1 rounded-full bg-blue-50 px-2.5 py-1 text-[10px] font-semibold tracking-tight text-blue-700 hover:bg-blue-100"
-                    >
-                      <ImagePlus className="h-3 w-3" />
-                      上传到 {entry.slot.key}
-                    </Link>
-                  ) : (
-                    <p className="mt-2 text-[10px] italic text-amber-700">
-                      没有对应 slot
-                    </p>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
 
       {/* Variants */}
       {product.variants && product.variants.length > 0 && (

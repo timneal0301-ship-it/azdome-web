@@ -27,13 +27,20 @@ export type ProductDetail = {
 // Lineup based on AZDOME's official VIP store catalog.
 // Real model names, real MSRP, real positioning. Specs and processor models
 // are public manufacturing facts (not copyrightable).
+//
+// Convention: every product's images live under
+//   /images/products/<slug>/<N>.jpg  for N = 1..6
+// — see PRODUCT_SLOT_COUNT in lib/image-slots.ts. We keep `gallery` empty
+// because `getProductForPDP` auto-fills it from the 6 standard slots.
+// `image` always points to slot-1 (the cover); admin uploads to slot-1
+// replace it automatically.
 export const PRODUCTS: ProductDetail[] = [
   {
     slug: "m550-pro",
     name: "M550 Pro 2CH 4K Dash Cam",
     short: "M550 Pro",
     tagline: "Dual-Channel 4K Clarity · Inside & Out",
-    image: "/images/product/m550-front.jpg",
+    image: "/images/products/m550-pro/1.jpg",
     price: 129.99,
     comparePrice: 169.99,
     rating: 4.8,
@@ -45,13 +52,7 @@ export const PRODUCTS: ProductDetail[] = [
       { id: "with-64gb", label: "With 64GB SD", sub: "High-endurance · included", priceDelta: 0 },
       { id: "with-128gb", label: "Upgrade to 128GB", sub: "Up to 2× footage", priceDelta: 14.99 },
     ],
-    gallery: [
-      { src: "/images/product/m550-front.jpg", alt: "M550 Pro front view" },
-      { src: "/images/product/m550-side.jpg", alt: "M550 Pro side profile" },
-      { src: "/images/product/m550-mounted.jpg", alt: "Mounted on windshield" },
-      { src: "/images/product/m550-app.jpg", alt: "AZDOME app preview" },
-      { src: "/images/product/m550-night.jpg", alt: "Night vision sample" },
-    ],
+    gallery: [],
     category: "dash-cam",
   },
   {
@@ -59,7 +60,7 @@ export const PRODUCTS: ProductDetail[] = [
     name: "M550 Max 3CH 4K Dash Cam",
     short: "M550 Max",
     tagline: "Three cameras. One mount.",
-    image: "/images/products/m530.jpg",
+    image: "/images/products/m550-max/1.jpg",
     price: 139.99,
     comparePrice: 179.99,
     rating: 4.7,
@@ -71,11 +72,7 @@ export const PRODUCTS: ProductDetail[] = [
       { id: "with-64gb", label: "With 64GB SD", sub: "Included", priceDelta: 0 },
       { id: "with-128gb", label: "Upgrade to 128GB", sub: "Recommended for 3-channel", priceDelta: 19.99 },
     ],
-    gallery: [
-      { src: "/images/products/m530.jpg", alt: "M550 Max front view" },
-      { src: "/images/product/m550-mounted.jpg", alt: "Mounted view" },
-      { src: "/images/product/m550-app.jpg", alt: "AZDOME app" },
-    ],
+    gallery: [],
     category: "dash-cam",
   },
   {
@@ -83,7 +80,7 @@ export const PRODUCTS: ProductDetail[] = [
     name: "PG17 Pro 4K Mirror Dash Cam",
     short: "PG17 Pro",
     tagline: "Replace your mirror. Upgrade your view.",
-    image: "/images/products/gs63h.jpg",
+    image: "/images/products/pg17-pro/1.jpg",
     price: 279.99,
     comparePrice: 329.99,
     rating: 4.6,
@@ -95,11 +92,7 @@ export const PRODUCTS: ProductDetail[] = [
       { id: "with-64gb", label: "With 64GB SD", sub: "Included", priceDelta: 0 },
       { id: "with-256gb", label: "Upgrade to 256GB", sub: "For 4K continuous parking", priceDelta: 39.99 },
     ],
-    gallery: [
-      { src: "/images/products/gs63h.jpg", alt: "PG17 Pro mirror display" },
-      { src: "/images/product/m550-mounted.jpg", alt: "Mounted view" },
-      { src: "/images/product/m550-app.jpg", alt: "AZDOME app" },
-    ],
+    gallery: [],
     category: "dash-cam",
   },
   {
@@ -107,16 +100,13 @@ export const PRODUCTS: ProductDetail[] = [
     name: "S40 4-Channel 4K 360° Dash Cam",
     short: "S40",
     tagline: "360°. Every corner covered.",
-    image: "/images/product/m550-side.jpg",
+    image: "/images/products/s40/1.jpg",
     price: 299.99,
     rating: 4.6,
     reviewCount: 287,
     description:
       "Four cameras — front, left, right, rear — stitched into a 360° view. The choice for delivery fleets and security-focused owners. WDR night vision and continuous parking mode across all four channels.",
-    gallery: [
-      { src: "/images/product/m550-side.jpg", alt: "S40 system overview" },
-      { src: "/images/product/m550-mounted.jpg", alt: "Mounted view" },
-    ],
+    gallery: [],
     category: "dash-cam",
   },
   {
@@ -124,7 +114,7 @@ export const PRODUCTS: ProductDetail[] = [
     name: "M17 Pro 4K Stealth Dash Cam",
     short: "M17 Pro",
     tagline: "Disappears behind your mirror.",
-    image: "/images/products/m27.jpg",
+    image: "/images/products/m17-pro/1.jpg",
     price: 59.99,
     comparePrice: 79.99,
     rating: 4.5,
@@ -134,10 +124,7 @@ export const PRODUCTS: ProductDetail[] = [
     variants: [
       { id: "with-64gb", label: "With 64GB SD", sub: "Included free", priceDelta: 0 },
     ],
-    gallery: [
-      { src: "/images/products/m27.jpg", alt: "M17 Pro stealth profile" },
-      { src: "/images/product/m550-mounted.jpg", alt: "Mounted view" },
-    ],
+    gallery: [],
     category: "dash-cam",
   },
   {
@@ -145,15 +132,13 @@ export const PRODUCTS: ProductDetail[] = [
     name: "M01 Pro 3K Dual-Channel Dash Cam",
     short: "M01 Pro",
     tagline: "Reliable 3K, every drive.",
-    image: "/images/products/m17.jpg",
+    image: "/images/products/m01-pro/1.jpg",
     price: 34.99,
     rating: 4.3,
     reviewCount: 1102,
     description:
       "The most affordable AZDOME you can put on a windshield. 3K front + 1080p rear, 3-inch IPS screen, ADAS lane assist, GPS, WiFi. No compromises on capture quality — just a price built for everyone.",
-    gallery: [
-      { src: "/images/products/m17.jpg", alt: "M01 Pro front view" },
-    ],
+    gallery: [],
     category: "dash-cam",
   },
   {
@@ -161,13 +146,13 @@ export const PRODUCTS: ProductDetail[] = [
     name: "Hardwire Kit (Type-C, 3-Lead)",
     short: "Hardwire Kit",
     tagline: "Required for 24h parking mode",
-    image: "/images/cart/hardwire.jpg",
+    image: "/images/products/hardwire-kit/1.jpg",
     price: 19.99,
     rating: 4.7,
     reviewCount: 542,
     description:
       "Powers your dash cam from your fuse box with built-in low-voltage cutoff to protect your car battery. The piece you need to unlock 24-hour parking surveillance on any AZDOME model.",
-    gallery: [{ src: "/images/cart/hardwire.jpg", alt: "Hardwire Kit" }],
+    gallery: [],
     category: "accessory",
   },
   {
@@ -175,13 +160,13 @@ export const PRODUCTS: ProductDetail[] = [
     name: "128GB High-Endurance SD Card",
     short: "128GB SD Card",
     tagline: "Class 10 U3, pre-formatted",
-    image: "/images/cart/m550.jpg",
+    image: "/images/products/sd-card-128/1.jpg",
     price: 29.99,
     rating: 4.8,
     reviewCount: 1102,
     description:
       "Designed for continuous dash-cam recording. Survives 3× the write cycles of standard cards. Pre-formatted FAT32 — plug in and go.",
-    gallery: [{ src: "/images/cart/m550.jpg", alt: "128GB SD card" }],
+    gallery: [],
     category: "accessory",
   },
   {
@@ -189,13 +174,13 @@ export const PRODUCTS: ProductDetail[] = [
     name: "Replacement 3M Adhesive Mount",
     short: "3M Mount",
     tagline: "Residue-free, OEM grade",
-    image: "/images/cart/hardwire.jpg",
+    image: "/images/products/mount-3m/1.jpg",
     price: 9.99,
     rating: 4.5,
     reviewCount: 218,
     description:
       "Spare mounting bracket with pre-applied 3M adhesive. Fits all current AZDOME dash cams. Includes alcohol wipe for windshield prep.",
-    gallery: [{ src: "/images/cart/hardwire.jpg", alt: "3M Mount" }],
+    gallery: [],
     category: "accessory",
   },
 ];
