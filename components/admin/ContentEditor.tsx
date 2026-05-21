@@ -21,6 +21,7 @@ import {
   getObjectSchema,
   getSingleObjectSchema,
 } from "@/lib/content/array-schemas";
+import { mergeLayoutWithDefaults } from "@/lib/content/layout";
 import {
   resetContentAction,
   restoreVersionAction,
@@ -141,18 +142,16 @@ export default function ContentEditor({
   const isDirty = text !== currentJson;
   const lineCount = text.split("\n").length;
 
-  // Toggle-map view derives a typed view of `text` and lets users flip booleans
-  // without touching JSON. Mutations re-serialize back into `text` so the
-  // existing save flow works unchanged.
-  // Important: we merge any keys from the in-code defaultValue that are
-  // missing in the current override, so new toggles added in code show up
-  // in the UI even when the user already saved an older shape of the layout.
+  // Toggle-map view derives a typed view of `text` and lets users flip
+  // booleans + reorder rows. Mutations re-serialize back into `text` so
+  // the existing save flow works unchanged. The merge helper preserves
+  // the user's saved key order while surfacing newly-added modules.
   const toggleValue: Record<string, boolean> = useMemo(() => {
     if (!toggleMode || parseError) return {};
     try {
       const parsed = JSON.parse(text) as Record<string, boolean>;
       if (isToggleMap(defaultValue)) {
-        return { ...defaultValue, ...parsed };
+        return mergeLayoutWithDefaults(parsed, defaultValue);
       }
       return parsed;
     } catch {
@@ -160,8 +159,20 @@ export default function ContentEditor({
     }
   }, [text, toggleMode, parseError, defaultValue]);
   const setToggle = (key: string, value: boolean) => {
-    const next = { ...toggleValue, [key]: value };
-    setText(JSON.stringify(next, null, 2));
+    // Use Object.entries to preserve current key order, then update.
+    const entries = Object.entries(toggleValue);
+    const i = entries.findIndex(([k]) => k === key);
+    if (i >= 0) entries[i] = [key, value];
+    else entries.push([key, value]);
+    setText(JSON.stringify(Object.fromEntries(entries), null, 2));
+  };
+  const moveToggle = (key: string, dir: -1 | 1) => {
+    const entries = Object.entries(toggleValue);
+    const i = entries.findIndex(([k]) => k === key);
+    const j = i + dir;
+    if (i < 0 || j < 0 || j >= entries.length) return;
+    [entries[i], entries[j]] = [entries[j], entries[i]];
+    setText(JSON.stringify(Object.fromEntries(entries), null, 2));
   };
 
   // Same idea for array-form: parse text into items, mutate via form, push
@@ -314,18 +325,44 @@ export default function ContentEditor({
 
       {toggleMode ? (
         <div className="rounded-2xl bg-white p-2 shadow-sm ring-1 ring-slate-100">
+          <p className="mb-1 px-4 pt-3 text-[11px] text-slate-400">
+            模块从上到下决定页面渲染顺序 · ↑↓ 调整位置 · 右侧开关启用 /
+            禁用
+          </p>
           <ul className="divide-y divide-slate-100">
-            {Object.entries(toggleValue).map(([key, on]) => (
+            {Object.entries(toggleValue).map(([key, on], i, arr) => (
               <li
                 key={key}
-                className="flex items-center justify-between gap-4 px-4 py-3.5"
+                className="flex items-center justify-between gap-3 px-4 py-3.5"
               >
-                <div className="min-w-0">
+                <div className="flex flex-shrink-0 items-center gap-0.5">
+                  <button
+                    type="button"
+                    onClick={() => moveToggle(key, -1)}
+                    disabled={i === 0}
+                    title="上移"
+                    aria-label="Move up"
+                    className="inline-flex h-7 w-7 items-center justify-center rounded-full text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 disabled:opacity-30 disabled:hover:bg-transparent"
+                  >
+                    ↑
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => moveToggle(key, 1)}
+                    disabled={i === arr.length - 1}
+                    title="下移"
+                    aria-label="Move down"
+                    className="inline-flex h-7 w-7 items-center justify-center rounded-full text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 disabled:opacity-30 disabled:hover:bg-transparent"
+                  >
+                    ↓
+                  </button>
+                </div>
+                <div className="min-w-0 flex-1">
                   <p className="text-sm font-semibold tracking-tight text-slate-900">
                     {MODULE_LABELS[key] ?? key}
                   </p>
                   <p className="mt-0.5 font-mono text-[11px] text-slate-400">
-                    {key}
+                    {i + 1}. {key}
                   </p>
                 </div>
                 <button

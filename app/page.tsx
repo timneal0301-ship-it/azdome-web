@@ -1,3 +1,5 @@
+import { Fragment } from "react";
+
 import HeroCarousel from "@/components/HeroCarousel";
 import ProductBanners from "@/components/ProductBanners";
 import FeaturedProducts from "@/components/FeaturedProducts";
@@ -22,7 +24,11 @@ import {
   HOME_PRESS_STRIP,
   HOME_FLASH_SALE,
 } from "@/lib/content/home";
-import { HOME_LAYOUT, HOME_LAYOUT_DEFAULTS } from "@/lib/content/layout";
+import {
+  HOME_LAYOUT,
+  HOME_LAYOUT_DEFAULTS,
+  mergeLayoutWithDefaults,
+} from "@/lib/content/layout";
 
 export default async function HomePage() {
   const [
@@ -46,32 +52,44 @@ export default async function HomePage() {
     getContent(HOME_PRESS_STRIP),
     getContent(HOME_FLASH_SALE),
   ]);
-  // Merge with in-code defaults so any module added after the admin last
-  // saved /admin/content/layout.home (eg hero2 / hero3) still has its
-  // default visibility instead of falling through as undefined → hidden.
-  const L = { ...HOME_LAYOUT_DEFAULTS, ...layout };
+
+  // Saved order wins; unknown keys appended from code defaults.
+  const L = mergeLayoutWithDefaults(layout, HOME_LAYOUT_DEFAULTS);
+
+  // Renderer registry: each key maps to the JSX to render IF the user
+  // has the toggle on. Order is determined by L's key order, not by
+  // entries in this object.
+  const renderers: Record<string, React.ReactNode> = {
+    hero: <HeroCarousel slides={slides} />,
+    promise: <PromiseThreeCol promises={promise} />,
+    banners: <ProductBanners banners={banners} />,
+    press: <PressLogos />,
+    featured: <FeaturedProducts />,
+    hero2: slides2.length > 0 ? <HeroCarousel slides={slides2} /> : null,
+    priceCompare: <PriceCompare content={compare} />,
+    video: <VideoModal />,
+    scenarios: <ScenarioGrid />,
+    hero3: slides3.length > 0 ? <HeroCarousel slides={slides3} /> : null,
+    tech: <TechFeature />,
+    pressStrip: <PressQuotesStrip quotes={pressStrip} />,
+    testimonials: <Testimonials />,
+    newsletter: <Newsletter />,
+  };
+
+  // flashSale is a special case — renders above <main>, ignores order.
+  const inMainKeys = Object.keys(L).filter(
+    (k) => k !== "flashSale" && renderers[k] !== undefined,
+  );
+
   return (
     <>
       {L.flashSale && <FlashSaleBar content={flashSale} />}
       <main>
-        {L.hero && <HeroCarousel slides={slides} />}
-        {L.promise && <PromiseThreeCol promises={promise} />}
-        {L.banners && <ProductBanners banners={banners} />}
-        {L.press && <PressLogos />}
-        {L.featured && <FeaturedProducts />}
-        {L.hero2 && slides2.length > 0 && (
-          <HeroCarousel slides={slides2} />
+        {inMainKeys.map((key) =>
+          L[key] && renderers[key] ? (
+            <Fragment key={key}>{renderers[key]}</Fragment>
+          ) : null,
         )}
-        {L.priceCompare && <PriceCompare content={compare} />}
-        {L.video && <VideoModal />}
-        {L.scenarios && <ScenarioGrid />}
-        {L.hero3 && slides3.length > 0 && (
-          <HeroCarousel slides={slides3} />
-        )}
-        {L.tech && <TechFeature />}
-        {L.pressStrip && <PressQuotesStrip quotes={pressStrip} />}
-        {L.testimonials && <Testimonials />}
-        {L.newsletter && <Newsletter />}
       </main>
     </>
   );

@@ -9,6 +9,29 @@ import type { ContentSection } from "./types";
 
 export type LayoutConfig = Record<string, boolean>;
 
+/**
+ * Merge a saved layout override with the in-code defaults so:
+ *  - The user's saved key ORDER is preserved (object insertion order in
+ *    JavaScript persists through JSON.parse / structuredClone, so reads
+ *    of the saved value reflect the user's drag-reordering).
+ *  - Keys present in defaults but missing from the override (new modules
+ *    added in code after the user last saved) are appended at the end
+ *    with their default visibility.
+ */
+export function mergeLayoutWithDefaults(
+  override: LayoutConfig,
+  defaults: LayoutConfig,
+): LayoutConfig {
+  const result: LayoutConfig = {};
+  for (const k of Object.keys(override)) {
+    result[k] = override[k];
+  }
+  for (const k of Object.keys(defaults)) {
+    if (!(k in result)) result[k] = defaults[k];
+  }
+  return result;
+}
+
 /** Module visibility for the homepage. Add new modules as the home grows. */
 export const HOME_LAYOUT_DEFAULTS: LayoutConfig = {
   flashSale: false,     // FlashSaleBar (default OFF — turn on for promos)
