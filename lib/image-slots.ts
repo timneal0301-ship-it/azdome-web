@@ -143,6 +143,48 @@ export const SLOTS: ImageSlot[] = [
   { key: "review-3", label: "Lena R. 评价照片",  group: "reviews", path: "images/reviews/r3.jpg", width: 400, height: 400 },
 ];
 
+// ── Auto-derived product image slots ────────────────────────────────
+// New SKUs added to PRODUCTS automatically get image slots for their
+// main image + each gallery item, so the asset library + product editor
+// pages can upload without us hand-registering each new path.
+
+import { PRODUCTS } from "./products";
+
+function deriveProductSlots(): ImageSlot[] {
+  const explicitPaths = new Set(SLOTS.map((s) => s.path));
+  const explicitKeys = new Set(SLOTS.map((s) => s.key));
+  const out: ImageSlot[] = [];
+  const seenPaths = new Set<string>();
+  for (const product of PRODUCTS) {
+    const paths = [product.image, ...product.gallery.map((g) => g.src)];
+    for (let i = 0; i < paths.length; i++) {
+      const raw = paths[i];
+      if (!raw || !raw.startsWith("/")) continue;
+      const path = raw.slice(1); // strip leading slash
+      if (explicitPaths.has(path) || seenPaths.has(path)) continue;
+      seenPaths.add(path);
+      const filename = path.split("/").pop() ?? "image";
+      const stem = filename.replace(/\.[^.]+$/, "");
+      const key = `product-${product.slug}-${stem}`;
+      if (explicitKeys.has(key)) continue;
+      const isMain = i === 0;
+      out.push({
+        key,
+        label: `★ ${product.short} · ${isMain ? "主图" : `图 ${i}`} (${filename})`,
+        group: "products",
+        path,
+        width: 1000,
+        height: 1000,
+      });
+    }
+  }
+  return out;
+}
+
+// Apply auto-derived product slots in place so any consumer reading
+// SLOTS (asset library, findSlot, getAssetUrlMap) sees them too.
+SLOTS.push(...deriveProductSlots());
+
 export function findSlot(key: string): ImageSlot | undefined {
   return SLOTS.find((s) => s.key === key);
 }

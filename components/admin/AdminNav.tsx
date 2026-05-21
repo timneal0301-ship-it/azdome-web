@@ -10,11 +10,18 @@ import {
   Home,
   ImageIcon,
   Menu,
+  Package,
   X,
 } from "lucide-react";
 
 const ITEMS = [
   { href: "/admin", label: "首页", icon: Home, match: (p: string) => p === "/admin" },
+  {
+    href: "/admin/products",
+    label: "产品管理",
+    icon: Package,
+    match: (p: string) => p.startsWith("/admin/products"),
+  },
   {
     href: "/admin/images",
     label: "图片资源",

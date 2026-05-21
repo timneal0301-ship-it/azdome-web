@@ -48,9 +48,9 @@ const QUICK_ACTIONS: Array<{
     tone: "emerald",
   },
   {
-    href: "/admin/content/catalog.products",
-    label: "改产品目录",
-    hint: "10 个 SKU 的描述 / 价格 / 变体",
+    href: "/admin/products",
+    label: "产品管理",
+    hint: "10+ SKU · 主图 / 画廊 / A+ 详情 一站式",
     icon: Package,
     tone: "pink",
   },
