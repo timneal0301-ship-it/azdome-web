@@ -165,77 +165,80 @@ export default function HeroCarousel({ slides: rawSlides, intervalMs = 6500 }: P
         />
       </AnimatePresence>
 
-      {/* Controls overlay */}
-      <div className="pointer-events-none absolute inset-0 z-20">
-        <div className="mx-auto flex h-full max-w-7xl items-end justify-between px-6 pb-14 lg:px-10 lg:pb-20">
-          {/* Dot indicators + play/pause */}
-          <div className="pointer-events-auto flex items-center gap-2">
-            {slides.map((s, i) => {
-              const active = i === index;
-              return (
-                <button
-                  key={s.id}
-                  onClick={() => go(i)}
-                  aria-label={`Slide ${i + 1}`}
-                  className={[
-                    "h-1 rounded-full transition-all duration-500",
-                    isDark
-                      ? "bg-white/30 hover:bg-white/60"
-                      : "bg-slate-400/40 hover:bg-slate-600",
-                    active ? "w-12 !bg-white" : "w-6",
-                    !isDark && active ? "!bg-slate-900" : "",
-                  ].join(" ")}
-                />
-              );
-            })}
-            <button
-              type="button"
-              onClick={() => setPaused((p) => !p)}
-              aria-label={paused ? "Play" : "Pause"}
-              className={[
-                "ml-2 inline-flex h-7 w-7 items-center justify-center rounded-full backdrop-blur-md transition-colors duration-300",
-                isDark
-                  ? "bg-white/10 text-white hover:bg-white/20"
-                  : "bg-slate-900/10 text-slate-900 hover:bg-slate-900/20",
-              ].join(" ")}
-            >
-              {paused ? (
-                <Play className="h-3 w-3 fill-current" />
-              ) : (
-                <Pause className="h-3 w-3 fill-current" />
-              )}
-            </button>
-          </div>
+      {/* Controls overlay — hidden entirely when only one slide so the
+          hero reads as a static banner. */}
+      {slides.length > 1 && (
+        <div className="pointer-events-none absolute inset-0 z-20">
+          <div className="mx-auto flex h-full max-w-7xl items-end justify-between px-6 pb-14 lg:px-10 lg:pb-20">
+            {/* Dot indicators + play/pause */}
+            <div className="pointer-events-auto flex items-center gap-2">
+              {slides.map((s, i) => {
+                const active = i === index;
+                return (
+                  <button
+                    key={s.id}
+                    onClick={() => go(i)}
+                    aria-label={`Slide ${i + 1}`}
+                    className={[
+                      "h-1 rounded-full transition-all duration-500",
+                      isDark
+                        ? "bg-white/30 hover:bg-white/60"
+                        : "bg-slate-400/40 hover:bg-slate-600",
+                      active ? "w-12 !bg-white" : "w-6",
+                      !isDark && active ? "!bg-slate-900" : "",
+                    ].join(" ")}
+                  />
+                );
+              })}
+              <button
+                type="button"
+                onClick={() => setPaused((p) => !p)}
+                aria-label={paused ? "Play" : "Pause"}
+                className={[
+                  "ml-2 inline-flex h-7 w-7 items-center justify-center rounded-full backdrop-blur-md transition-colors duration-300",
+                  isDark
+                    ? "bg-white/10 text-white hover:bg-white/20"
+                    : "bg-slate-900/10 text-slate-900 hover:bg-slate-900/20",
+                ].join(" ")}
+              >
+                {paused ? (
+                  <Play className="h-3 w-3 fill-current" />
+                ) : (
+                  <Pause className="h-3 w-3 fill-current" />
+                )}
+              </button>
+            </div>
 
-          {/* Prev / next */}
-          <div className="pointer-events-auto hidden items-center gap-2 md:flex">
-            <button
-              onClick={() => go(index - 1)}
-              aria-label="Previous slide"
-              className={[
-                "inline-flex h-11 w-11 items-center justify-center rounded-full backdrop-blur-md transition-colors duration-300",
-                isDark
-                  ? "bg-white/10 text-white hover:bg-white/20"
-                  : "bg-slate-900/10 text-slate-900 hover:bg-slate-900/20",
-              ].join(" ")}
-            >
-              <ChevronLeft className="h-5 w-5" />
-            </button>
-            <button
-              onClick={() => go(index + 1)}
-              aria-label="Next slide"
-              className={[
-                "inline-flex h-11 w-11 items-center justify-center rounded-full backdrop-blur-md transition-colors duration-300",
-                isDark
-                  ? "bg-white/10 text-white hover:bg-white/20"
-                  : "bg-slate-900/10 text-slate-900 hover:bg-slate-900/20",
-              ].join(" ")}
-            >
-              <ChevronRight className="h-5 w-5" />
-            </button>
+            {/* Prev / next */}
+            <div className="pointer-events-auto hidden items-center gap-2 md:flex">
+              <button
+                onClick={() => go(index - 1)}
+                aria-label="Previous slide"
+                className={[
+                  "inline-flex h-11 w-11 items-center justify-center rounded-full backdrop-blur-md transition-colors duration-300",
+                  isDark
+                    ? "bg-white/10 text-white hover:bg-white/20"
+                    : "bg-slate-900/10 text-slate-900 hover:bg-slate-900/20",
+                ].join(" ")}
+              >
+                <ChevronLeft className="h-5 w-5" />
+              </button>
+              <button
+                onClick={() => go(index + 1)}
+                aria-label="Next slide"
+                className={[
+                  "inline-flex h-11 w-11 items-center justify-center rounded-full backdrop-blur-md transition-colors duration-300",
+                  isDark
+                    ? "bg-white/10 text-white hover:bg-white/20"
+                    : "bg-slate-900/10 text-slate-900 hover:bg-slate-900/20",
+                ].join(" ")}
+              >
+                <ChevronRight className="h-5 w-5" />
+              </button>
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* Scroll hint (desktop) + swipe hint (mobile, first visit only) */}
       <ScrollHint isDark={isDark} />

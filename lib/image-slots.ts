@@ -63,6 +63,26 @@ export const SLOTS: ImageSlot[] = [
   { key: "banner-3-mobile", label: "★ Hero Slide 3 · 手机版(竖版 750×1334)", group: "banners", path: "images/banners/hero-3-mobile.jpg", width: 750, height: 1334 },
   { key: "banner-4-mobile", label: "★ Hero Slide 4 · 手机版(竖版 750×1334)", group: "banners", path: "images/banners/hero-4-mobile.jpg", width: 750, height: 1334 },
 
+  // ★★ Second Hero band (home.hero2) ─── desktop + mobile ────────────
+  { key: "hero2-1", label: "★★ Hero 中部 Slide 1 · 桌面 2878×1002", group: "banners", path: "images/banners/hero2-1.jpg", width: 2878, height: 1002 },
+  { key: "hero2-2", label: "★★ Hero 中部 Slide 2 · 桌面 2878×1002", group: "banners", path: "images/banners/hero2-2.jpg", width: 2878, height: 1002 },
+  { key: "hero2-3", label: "★★ Hero 中部 Slide 3 · 桌面 2878×1002", group: "banners", path: "images/banners/hero2-3.jpg", width: 2878, height: 1002 },
+  { key: "hero2-4", label: "★★ Hero 中部 Slide 4 · 桌面 2878×1002", group: "banners", path: "images/banners/hero2-4.jpg", width: 2878, height: 1002 },
+  { key: "hero2-1-mobile", label: "★★ Hero 中部 Slide 1 · 手机版", group: "banners", path: "images/banners/hero2-1-mobile.jpg", width: 750, height: 1334 },
+  { key: "hero2-2-mobile", label: "★★ Hero 中部 Slide 2 · 手机版", group: "banners", path: "images/banners/hero2-2-mobile.jpg", width: 750, height: 1334 },
+  { key: "hero2-3-mobile", label: "★★ Hero 中部 Slide 3 · 手机版", group: "banners", path: "images/banners/hero2-3-mobile.jpg", width: 750, height: 1334 },
+  { key: "hero2-4-mobile", label: "★★ Hero 中部 Slide 4 · 手机版", group: "banners", path: "images/banners/hero2-4-mobile.jpg", width: 750, height: 1334 },
+
+  // ★★★ Third Hero band (home.hero3) ─── desktop + mobile ───────────
+  { key: "hero3-1", label: "★★★ Hero 底部 Slide 1 · 桌面 2878×1002", group: "banners", path: "images/banners/hero3-1.jpg", width: 2878, height: 1002 },
+  { key: "hero3-2", label: "★★★ Hero 底部 Slide 2 · 桌面 2878×1002", group: "banners", path: "images/banners/hero3-2.jpg", width: 2878, height: 1002 },
+  { key: "hero3-3", label: "★★★ Hero 底部 Slide 3 · 桌面 2878×1002", group: "banners", path: "images/banners/hero3-3.jpg", width: 2878, height: 1002 },
+  { key: "hero3-4", label: "★★★ Hero 底部 Slide 4 · 桌面 2878×1002", group: "banners", path: "images/banners/hero3-4.jpg", width: 2878, height: 1002 },
+  { key: "hero3-1-mobile", label: "★★★ Hero 底部 Slide 1 · 手机版", group: "banners", path: "images/banners/hero3-1-mobile.jpg", width: 750, height: 1334 },
+  { key: "hero3-2-mobile", label: "★★★ Hero 底部 Slide 2 · 手机版", group: "banners", path: "images/banners/hero3-2-mobile.jpg", width: 750, height: 1334 },
+  { key: "hero3-3-mobile", label: "★★★ Hero 底部 Slide 3 · 手机版", group: "banners", path: "images/banners/hero3-3-mobile.jpg", width: 750, height: 1334 },
+  { key: "hero3-4-mobile", label: "★★★ Hero 底部 Slide 4 · 手机版", group: "banners", path: "images/banners/hero3-4-mobile.jpg", width: 750, height: 1334 },
+
   // Mini bento banners
   { key: "mini-m550-pro",     label: "Mini · M550 Pro",       group: "miniBanners", path: "images/banners/mini-m550-pro.jpg",     width: 1200, height: 900 },
   { key: "mini-m550-max",     label: "Mini · M550 Max",       group: "miniBanners", path: "images/banners/mini-m550-max.jpg",     width: 900,  height: 600 },
