@@ -53,14 +53,16 @@ function isToggleMap(v: unknown): v is Record<string, boolean> {
 const MODULE_LABELS: Record<string, string> = {
   // Home
   flashSale: "Flash Sale 倒计时条",
-  hero: "Hero 轮播",
+  hero: "Hero 轮播 · 顶部",
   promise: "售后承诺三栏",
   banners: "Bento Banner",
   press: "Press Logos",
   featured: "Featured Products",
+  hero2: "Hero 轮播 · 中部(可选)",
   priceCompare: "价格对比矩阵",
   video: "Video CTA",
   scenarios: "应用场景",
+  hero3: "Hero 轮播 · 底部(可选)",
   tech: "Tech Feature",
   pressStrip: "媒体引语轮播",
   testimonials: "客户故事",

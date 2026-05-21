@@ -73,12 +73,34 @@ export const HERO_SLIDES: Slide[] = [
 
 export const HOME_HERO: ContentSection<Slide[]> = {
   key: "home.hero",
-  label: "首页 Hero 轮播(4 张大 banner)",
+  label: "首页 Hero 轮播 · 顶部(4 张大 banner)",
   description:
-    "每张 slide 含 eyebrow / titleA / titleB / subtitle / image / 主副 CTA。tone='dark' 时叠加深色渐变。",
+    "首页最顶部的主 Hero。每张 slide 含 eyebrow / titleA / titleB / subtitle / image / 主副 CTA。tone='dark' 时叠加深色渐变。",
   page: "home",
   previewHref: "/",
   defaults: HERO_SLIDES,
+};
+
+// ─── Additional Hero bands (admin can enable in HOME_LAYOUT) ────────
+
+export const HOME_HERO_2: ContentSection<Slide[]> = {
+  key: "home.hero2",
+  label: "首页 Hero 轮播 · 中部(可选)",
+  description:
+    "首页中部的可选 Hero 横幅(显示在 Featured Products 和 价格对比 之间)。默认空数组,在 /admin/content/layout.home 开关 hero2 后再添加 slides。",
+  page: "home",
+  previewHref: "/",
+  defaults: [] as Slide[],
+};
+
+export const HOME_HERO_3: ContentSection<Slide[]> = {
+  key: "home.hero3",
+  label: "首页 Hero 轮播 · 底部(可选)",
+  description:
+    "首页底部的可选 Hero 横幅(显示在 应用场景 和 Tech Feature 之间)。同样默认空,搭配 layout.home 的 hero3 开关使用。",
+  page: "home",
+  previewHref: "/",
+  defaults: [] as Slide[],
 };
 
 // ─── Mini bento banners ────────────────────────────────────────────

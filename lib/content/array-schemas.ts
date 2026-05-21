@@ -586,6 +586,10 @@ const LEGAL_DOCS_SCHEMA: ItemSchema = {
 
 export const ARRAY_SCHEMAS: Record<string, ItemSchema> = {
   "home.hero": HOME_HERO_SCHEMA,
+  // Mid-page and lower-page Hero bands share the same form schema —
+  // they're just three positions where admin can render a hero carousel.
+  "home.hero2": HOME_HERO_SCHEMA,
+  "home.hero3": HOME_HERO_SCHEMA,
   "home.banners": HOME_BANNERS_SCHEMA,
   "home.promise": HOME_PROMISE_SCHEMA,
   "home.pressStrip": HOME_PRESS_STRIP_SCHEMA,
