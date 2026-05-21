@@ -145,7 +145,12 @@ export default function HeroCarousel({ slides: rawSlides, intervalMs = 6500 }: P
       onTouchStart={onTouchStart}
       onTouchEnd={onTouchEnd}
       className={[
-        "relative min-h-[88vh] w-full touch-pan-y overflow-hidden",
+        // Mobile: portrait 9:16 hero (matches mobileImage's 750×1334 crop).
+        // Tablet+ : cinematic 2878:1002 — the full uploaded banner shows
+        // without center-cropping. min-h-[500px] keeps a sensible floor on
+        // narrow laptops where the aspect math would otherwise yield a too-
+        // short hero.
+        "relative aspect-[9/16] w-full touch-pan-y overflow-hidden md:aspect-[2878/1002] md:min-h-[500px]",
         isDark ? "bg-slate-950 text-white" : "bg-slate-50 text-slate-900",
       ].join(" ")}
     >
@@ -353,7 +358,7 @@ function SlideLayer({
         />
       )}
       <GradientOverlay slide={slide} active={applyOverlay} />
-      <div className="relative z-10 mx-auto flex min-h-[88vh] max-w-5xl items-center justify-center px-6 pt-32 lg:px-10">
+      <div className="relative z-10 mx-auto flex h-full max-w-5xl items-center justify-center px-6 pt-24 md:pt-28 lg:px-10">
         <SlideCopy slide={slide} isDark={isDark} variant="centered" />
       </div>
     </motion.div>
