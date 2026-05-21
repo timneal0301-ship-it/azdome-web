@@ -17,7 +17,7 @@ export const HOME_LAYOUT_DEFAULTS: LayoutConfig = {
   banners: true,        // ProductBanners (bento grid)
   press: true,          // PressLogos
   featured: true,       // FeaturedProducts
-  hero2: false,         // Optional mid-page Hero band (between Featured and PriceCompare)
+  hero2: true,          // Mid-page Hero band (between Featured and PriceCompare)
   priceCompare: true,   // PriceCompare matrix
   video: true,          // VideoModal (the watch-video CTA target)
   scenarios: true,      // ScenarioGrid

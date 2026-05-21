@@ -83,14 +83,31 @@ export const HOME_HERO: ContentSection<Slide[]> = {
 
 // ─── Additional Hero bands (admin can enable in HOME_LAYOUT) ────────
 
+// Default starter slide for the mid-page Hero band. Single-slide so the
+// carousel controls auto-hide and it reads as a clean static banner.
+const HERO_2_DEFAULT: Slide[] = [
+  {
+    id: "hero2-default",
+    eyebrow: "Built for every driver",
+    titleA: "Standing watch,",
+    titleB: "around the clock.",
+    subtitle:
+      "From the daily commute to overnight parking, AZDOME dash cams keep recording so you don't have to think about it.",
+    image: "/images/banners/hero2-1.jpg",
+    primary: { label: "Explore the lineup", href: "/collections/dash-cams" },
+    secondary: { label: "How parking mode works", href: "/scenarios/parking" },
+    tone: "raw",
+  },
+];
+
 export const HOME_HERO_2: ContentSection<Slide[]> = {
   key: "home.hero2",
-  label: "首页 Hero 轮播 · 中部(可选)",
+  label: "首页 Hero 轮播 · 中部",
   description:
-    "首页中部的可选 Hero 横幅(显示在 Featured Products 和 价格对比 之间)。默认空数组,在 /admin/content/layout.home 开关 hero2 后再添加 slides。",
+    "首页中部 Hero 横幅(显示在 Featured Products 和 价格对比之间)。默认 1 张静态横幅,可在表单里加更多 slide 形成轮播。",
   page: "home",
   previewHref: "/",
-  defaults: [] as Slide[],
+  defaults: HERO_2_DEFAULT,
 };
 
 export const HOME_HERO_3: ContentSection<Slide[]> = {

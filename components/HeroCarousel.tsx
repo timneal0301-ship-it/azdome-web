@@ -5,7 +5,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import {
-  ChevronDown,
   ChevronLeft,
   ChevronRight,
   MoveHorizontal,
@@ -242,8 +241,7 @@ export default function HeroCarousel({ slides: rawSlides, intervalMs = 6500 }: P
         </div>
       )}
 
-      {/* Scroll hint (desktop) + swipe hint (mobile, first visit only) */}
-      <ScrollHint isDark={isDark} />
+      {/* Swipe hint (mobile, multi-slide only, first visit only) */}
       {!swipeHintSeen && slides.length > 1 && (
         <SwipeHint isDark={isDark} />
       )}
@@ -675,30 +673,6 @@ function ProgressBar({
           isDark ? "bg-white/60" : "bg-slate-900/60",
         ].join(" ")}
       />
-    </div>
-  );
-}
-
-function ScrollHint({ isDark }: { isDark: boolean }) {
-  return (
-    <div className="pointer-events-none absolute inset-x-0 bottom-6 z-10 hidden justify-center md:flex">
-      <motion.div
-        initial={{ opacity: 0, y: -4 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 1.2, duration: 0.6 }}
-        className={[
-          "inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] backdrop-blur-sm",
-          isDark ? "bg-white/10 text-white/70" : "bg-slate-900/5 text-slate-500",
-        ].join(" ")}
-      >
-        Scroll
-        <motion.span
-          animate={{ y: [0, 3, 0] }}
-          transition={{ repeat: Infinity, duration: 1.6, ease: "easeInOut" }}
-        >
-          <ChevronDown className="h-3 w-3" />
-        </motion.span>
-      </motion.div>
     </div>
   );
 }
