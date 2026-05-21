@@ -13,7 +13,17 @@ import {
   Play,
 } from "lucide-react";
 
-import { useAssetUrl } from "./AssetUrlsProvider";
+import { useAssetUrl, useAssetUrls } from "./AssetUrlsProvider";
+
+/** Given a desktop image path like "/images/banners/hero-1.jpg", returns
+ * the conventional mobile-variant path "/images/banners/hero-1-mobile.jpg"
+ * so we can auto-pick up admin uploads to the *-mobile slot without
+ * forcing the admin to also set slide.mobileImage. Pure path
+ * transformation — does not check existence. */
+function deriveMobilePath(desktopPath: string): string {
+  if (!desktopPath || !desktopPath.startsWith("/")) return "";
+  return desktopPath.replace(/\.(jpg|jpeg|png|webp)$/i, "-mobile.$1");
+}
 
 export type SlideLayout = "centered" | "split-left" | "split-right" | "video";
 
@@ -238,11 +248,27 @@ function SlideLayer({
   isDark: boolean;
   layout: SlideLayout;
 }) {
-  const imageSrc = useAssetUrl(slide.image);
-  // Falls back to the desktop image when admin hasn't uploaded a mobile
-  // variant — so adding mobileImage is purely additive.
-  const mobileImageSrc = useAssetUrl(slide.mobileImage || slide.image);
-  const videoSrc = useAssetUrl(slide.videoSrc || "");
+  // Resolve all candidate image URLs in one provider read.
+  const derivedMobilePath = deriveMobilePath(slide.image);
+  const [imageSrc, derivedMobileResolved, explicitMobileResolved, videoSrc] =
+    useAssetUrls([
+      slide.image,
+      derivedMobilePath,
+      slide.mobileImage || "",
+      slide.videoSrc || "",
+    ]);
+  // Three-step fallback for the mobile crop:
+  //   1. slide.mobileImage explicitly set in /admin/content → use it.
+  //   2. admin uploaded to the conventional *-mobile slot (eg
+  //      banner-1-mobile) → derivedMobileResolved differs from the path,
+  //      meaning the AssetUrlMap has an override for it.
+  //   3. nothing uploaded → reuse the desktop image so there's no broken
+  //      image on mobile.
+  const mobileImageSrc = slide.mobileImage
+    ? explicitMobileResolved
+    : derivedMobilePath && derivedMobileResolved !== derivedMobilePath
+    ? derivedMobileResolved
+    : imageSrc;
 
   // Common framer-motion enter/exit.
   const animProps = {
