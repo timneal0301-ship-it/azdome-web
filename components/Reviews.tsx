@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
+import Image from "@/components/ui/HQImage";
 import { motion } from "framer-motion";
 import { CheckCircle2, Star, ThumbsUp } from "lucide-react";
 

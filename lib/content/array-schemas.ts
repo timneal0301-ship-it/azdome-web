@@ -182,9 +182,9 @@ const HOME_HERO_SCHEMA: ItemSchema = {
       kind: "select",
       label: "色调",
       options: [
+        { value: "raw", label: "原图 raw(白字,不加蒙版)" },
         { value: "dark", label: "深色 dark(白字 + 深色蒙版)" },
         { value: "light", label: "浅色 light(深字,不加蒙版)" },
-        { value: "raw", label: "原图 raw(白字,不加蒙版)" },
       ],
     },
     accentColor: {

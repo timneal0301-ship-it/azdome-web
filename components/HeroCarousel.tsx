@@ -128,7 +128,9 @@ export default function HeroCarousel({ slides: rawSlides, intervalMs = 6500 }: P
   };
 
   const slide = slides[index];
-  const tone = slide.tone || "dark";
+  // Default to "raw" (no overlay, white text) so admin uploads show in
+  // their original color without an unexpected dark tint.
+  const tone = slide.tone || "raw";
   // "dark" and "raw" both use white-on-image text styling; only "light"
   // flips to dark text on a clean background.
   const isDark = tone !== "light";

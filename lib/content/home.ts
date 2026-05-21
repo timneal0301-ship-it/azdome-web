@@ -31,7 +31,7 @@ export const HERO_SLIDES: Slide[] = [
     image: "/images/banners/hero-1.jpg",
     primary: { label: "Shop M550 Pro", href: "/products/m550-pro" },
     secondary: { label: "Watch Video", href: "#watch-video" },
-    tone: "dark",
+    tone: "raw",
   },
   {
     id: "pg17-pro",
@@ -43,7 +43,7 @@ export const HERO_SLIDES: Slide[] = [
     image: "/images/banners/hero-2.jpg",
     primary: { label: "Discover PG17 Pro", href: "/products/pg17-pro" },
     secondary: { label: "Compare models", href: "/collections/dash-cams" },
-    tone: "dark",
+    tone: "raw",
   },
   {
     id: "m550-max",
@@ -55,7 +55,7 @@ export const HERO_SLIDES: Slide[] = [
     image: "/images/banners/hero-3.jpg",
     primary: { label: "Shop M550 Max", href: "/products/m550-max" },
     secondary: { label: "For rideshare drivers", href: "/scenarios/rideshare" },
-    tone: "dark",
+    tone: "raw",
   },
   {
     id: "promo",
@@ -67,7 +67,7 @@ export const HERO_SLIDES: Slide[] = [
     image: "/images/banners/hero-4.jpg",
     primary: { label: "Get the offer", href: "/account/signup" },
     secondary: { label: "Shop dash cams", href: "/collections/dash-cams" },
-    tone: "dark",
+    tone: "raw",
   },
 ];
 

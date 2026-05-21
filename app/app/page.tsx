@@ -1,4 +1,4 @@
-import Image from "next/image";
+import Image from "@/components/ui/HQImage";
 import Link from "next/link";
 import {
   Apple,
