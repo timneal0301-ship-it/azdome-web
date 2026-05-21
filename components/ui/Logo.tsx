@@ -45,6 +45,12 @@ export default function Logo({
   //      via a brightness/invert CSS filter so it reads on dark backgrounds.
   //   3. light-bg context + primary upload — as-is.
   //   4. nothing uploaded — fall through to the inline SVG wordmark.
+  // In inverse mode the logo sits over a hero photo where the underlying
+  // pixels can be anything from a dark night sky to a bright product shot.
+  // A soft drop-shadow gives the white wordmark enough contrast in every
+  // case without visibly altering the look on dark / mid-tone images.
+  const inverseShadow = "drop-shadow(0 1px 10px rgba(0,0,0,0.55))";
+
   if (inverse && inverseUploaded) {
     return (
       // eslint-disable-next-line @next/next/no-img-element
@@ -52,7 +58,12 @@ export default function Logo({
         src={inverseResolved}
         alt="AZDOME"
         height={size}
-        style={{ height: size, width: "auto", display: "inline-block" }}
+        style={{
+          height: size,
+          width: "auto",
+          display: "inline-block",
+          filter: inverseShadow,
+        }}
         className={className}
       />
     );
@@ -68,7 +79,8 @@ export default function Logo({
           height: size,
           width: "auto",
           display: "inline-block",
-          filter: "brightness(0) invert(1)",
+          // Tint the dark primary white, then add the readability shadow.
+          filter: `brightness(0) invert(1) ${inverseShadow}`,
         }}
         className={className}
       />
@@ -99,6 +111,7 @@ export default function Logo({
       className={className}
       role="img"
       aria-label="AZDOME"
+      style={inverse ? { filter: inverseShadow } : undefined}
     >
       <text
         x="0"

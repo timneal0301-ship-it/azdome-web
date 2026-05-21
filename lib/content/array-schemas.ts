@@ -117,6 +117,7 @@ const HOME_HERO_SCHEMA: ItemSchema = {
     "subtitle",
     "image",
     "mobileImage",
+    "imageQuality",
     "videoSrc",
     "tone",
     "accentColor",
@@ -164,6 +165,13 @@ const HOME_HERO_SCHEMA: ItemSchema = {
       hint: "竖版裁切,推荐 750×1334(9:16)。留空则手机端复用桌面图。",
       optional: true,
     },
+    imageQuality: {
+      kind: "number",
+      label: "图片压缩质量 50–100",
+      placeholder: "100",
+      hint: "默认 100 = 视觉无损。原图 2878×1002 这种高分别动它。如要省流量降到 80–90,过低会糊。",
+      optional: true,
+    },
     videoSrc: {
       kind: "text",
       label: "背景视频路径(仅 video 布局)",
@@ -176,6 +184,7 @@ const HOME_HERO_SCHEMA: ItemSchema = {
       options: [
         { value: "dark", label: "深色 dark(白字 + 深色蒙版)" },
         { value: "light", label: "浅色 light(深字,不加蒙版)" },
+        { value: "raw", label: "原图 raw(白字,不加蒙版)" },
       ],
     },
     accentColor: {

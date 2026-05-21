@@ -51,8 +51,14 @@ export type Slide = {
   videoSrc?: string;
   primary?: { label: string; href: string };
   secondary?: { label: string; href: string };
-  /** Tone controls text colors & whether a dark gradient overlay is shown. */
-  tone?: "dark" | "light";
+  /** Tone controls text colors & whether a dark gradient overlay is shown.
+   * - "dark": white text + dark gradient overlay (most common, helps text
+   *   readability on busy images).
+   * - "light": dark text, no overlay (for clean / minimalist images with
+   *   a bright background).
+   * - "raw": white text, NO overlay — image stays fully untreated. Use when
+   *   the photo already has a clear darker zone where text will land. */
+  tone?: "dark" | "light" | "raw";
   /** Eyebrow dot color (any CSS color). Defaults to blue-400. */
   accentColor?: string;
   /** Dark gradient overlay opacity 0–100. Higher = more readable text on
@@ -60,6 +66,10 @@ export type Slide = {
   gradientStrength?: number;
   /** Direction of the dark overlay (only applied when tone === "dark"). */
   gradientDirection?: "bottom" | "left" | "radial";
+  /** Next/Image quality 1–100. Defaults to 100 (visually lossless).
+   * Lower it (75–85) only if you need to save bandwidth on a specific
+   * slide where source resolution is already 2x what's needed. */
+  imageQuality?: number;
   /** Small chips shown below the subtitle (eg "★ 12K+ reviews"). */
   badges?: string[];
   /** Optional price tag rendered next to the primary CTA. */
@@ -119,7 +129,12 @@ export default function HeroCarousel({ slides: rawSlides, intervalMs = 6500 }: P
 
   const slide = slides[index];
   const tone = slide.tone || "dark";
-  const isDark = tone === "dark";
+  // "dark" and "raw" both use white-on-image text styling; only "light"
+  // flips to dark text on a clean background.
+  const isDark = tone !== "light";
+  // The overlay is added only for "dark" tone. "raw" and "light" both
+  // leave the image untouched.
+  const applyOverlay = tone === "dark";
   const layout: SlideLayout = slide.layout || "centered";
 
   return (
@@ -140,6 +155,7 @@ export default function HeroCarousel({ slides: rawSlides, intervalMs = 6500 }: P
           slide={slide}
           direction={direction}
           isDark={isDark}
+          applyOverlay={applyOverlay}
           layout={layout}
         />
       </AnimatePresence>
@@ -241,11 +257,13 @@ function SlideLayer({
   slide,
   direction,
   isDark,
+  applyOverlay,
   layout,
 }: {
   slide: Slide;
   direction: 1 | -1;
   isDark: boolean;
+  applyOverlay: boolean;
   layout: SlideLayout;
 }) {
   // Resolve all candidate image URLs in one provider read.
@@ -295,8 +313,9 @@ function SlideLayer({
               desktopSrc={imageSrc}
               mobileSrc={mobileImageSrc}
               sizes="(min-width: 1024px) 50vw, 100vw"
+              quality={slide.imageQuality}
             />
-            <GradientOverlay slide={slide} isDark={isDark} containerized />
+            <GradientOverlay slide={slide} active={applyOverlay} containerized />
           </div>
           {/* Text half */}
           <div
@@ -330,9 +349,10 @@ function SlideLayer({
           desktopSrc={imageSrc}
           mobileSrc={mobileImageSrc}
           sizes="100vw"
+          quality={slide.imageQuality}
         />
       )}
-      <GradientOverlay slide={slide} isDark={isDark} />
+      <GradientOverlay slide={slide} active={applyOverlay} />
       <div className="relative z-10 mx-auto flex min-h-[88vh] max-w-5xl items-center justify-center px-6 pt-32 lg:px-10">
         <SlideCopy slide={slide} isDark={isDark} variant="centered" />
       </div>
@@ -347,11 +367,17 @@ function ResponsiveHeroImage({
   desktopSrc,
   mobileSrc,
   sizes,
+  quality = 100,
 }: {
   desktopSrc: string;
   mobileSrc: string;
   sizes: string;
+  /** Next/Image quality 1–100. Default 100 = visually lossless. */
+  quality?: number;
 }) {
+  // Clamp to a sane range so an admin can't accidentally set quality=0
+  // and break the hero.
+  const q = Math.min(100, Math.max(50, quality));
   // When the two URLs are identical (no mobile override) just render one
   // image so the browser doesn't double-fetch.
   if (mobileSrc === desktopSrc) {
@@ -361,6 +387,7 @@ function ResponsiveHeroImage({
         alt=""
         fill
         sizes={sizes}
+        quality={q}
         priority
         className="object-cover"
       />
@@ -373,6 +400,7 @@ function ResponsiveHeroImage({
         alt=""
         fill
         sizes="100vw"
+        quality={q}
         priority
         className="object-cover md:hidden"
       />
@@ -381,6 +409,7 @@ function ResponsiveHeroImage({
         alt=""
         fill
         sizes={sizes}
+        quality={q}
         priority
         className="hidden object-cover md:block"
       />
@@ -388,18 +417,19 @@ function ResponsiveHeroImage({
   );
 }
 
-// Gradient overlay (only for dark tone). Direction + strength configurable.
+// Gradient overlay (only when active === true). Direction + strength
+// are slide-configurable.
 function GradientOverlay({
   slide,
-  isDark,
+  active,
   containerized,
 }: {
   slide: Slide;
-  isDark: boolean;
+  active: boolean;
   /** When true, the radial vignette is scoped to the image half (split layouts). */
   containerized?: boolean;
 }) {
-  if (!isDark) return null;
+  if (!active) return null;
   const strength = Math.min(100, Math.max(0, slide.gradientStrength ?? 70)) / 100;
   const dir = slide.gradientDirection || "bottom";
   // Map direction to a CSS gradient.
@@ -680,7 +710,7 @@ function SwipeHint({ isDark }: { isDark: boolean }) {
         ].join(" ")}
       >
         <MoveHorizontal className="h-3.5 w-3.5" />
-        左右滑动
+        Swipe
       </motion.div>
     </motion.div>
   );
