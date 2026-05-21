@@ -6,6 +6,7 @@ import AnnouncementBar from "./AnnouncementBar";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 import CartDrawer from "./CartDrawer";
+import TranslationProgressBanner from "./TranslationProgressBanner";
 
 export default function PublicChrome({
   children,
@@ -19,6 +20,7 @@ export default function PublicChrome({
   return (
     <>
       <AnnouncementBar />
+      <TranslationProgressBanner />
       <Navbar />
       {children}
       <Footer />

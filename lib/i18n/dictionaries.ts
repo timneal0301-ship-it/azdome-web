@@ -140,7 +140,15 @@ const en = {
 };
 
 export type Dict = typeof en;
-export type Locale = "en" | "zh" | "ja" | "de" | "fr" | "es";
+export type Locale =
+  | "en" | "zh" | "ja" | "de" | "fr" | "es"
+  | "th" | "vi" | "it" | "ru" | "pl" | "ro" | "tr" | "pt" | "ar";
+
+/** Locales with hand-written translations. Other locales fall back to
+ * English content but keep their own meta (flag/name) — admin sees them
+ * in the country picker; the UI shows a "translation in progress"
+ * notice when one is active. */
+export const TRANSLATED_LOCALES: Locale[] = ["en", "zh", "ja", "de", "fr", "es"];
 
 const zh: Dict = {
   meta: { lang: "zh-CN", name: "简体中文", short: "中文", flag: "🇨🇳" },
@@ -812,9 +820,30 @@ const es: Dict = {
   langSwitcher: { label: "Idioma", region: "Región e idioma" },
 };
 
-export const DICTIONARIES: Record<Locale, Dict> = { en, zh, ja, de, fr, es };
+// ── Stub locales ──────────────────────────────────────────────────
+// English content + native meta. Replace the second arg with a real
+// translation file when ready. Until then, language picker shows the
+// right flag/native name; UI text renders in English.
 
-export const LOCALES: Locale[] = ["en", "zh", "ja", "de", "fr", "es"];
+const th: Dict = { ...en, meta: { lang: "th-TH", name: "ภาษาไทย", short: "TH", flag: "🇹🇭" } };
+const vi: Dict = { ...en, meta: { lang: "vi-VN", name: "Tiếng Việt", short: "VI", flag: "🇻🇳" } };
+const it: Dict = { ...en, meta: { lang: "it-IT", name: "italiano", short: "IT", flag: "🇮🇹" } };
+const ru: Dict = { ...en, meta: { lang: "ru-RU", name: "русский язык", short: "RU", flag: "🇷🇺" } };
+const pl: Dict = { ...en, meta: { lang: "pl-PL", name: "Polski", short: "PL", flag: "🇵🇱" } };
+const ro: Dict = { ...en, meta: { lang: "ro-RO", name: "Română", short: "RO", flag: "🇷🇴" } };
+const tr: Dict = { ...en, meta: { lang: "tr-TR", name: "Türkçe", short: "TR", flag: "🇹🇷" } };
+const pt: Dict = { ...en, meta: { lang: "pt-BR", name: "Português", short: "PT", flag: "🇧🇷" } };
+const ar: Dict = { ...en, meta: { lang: "ar-SA", name: "اللغة العربية", short: "AR", flag: "🇸🇦" } };
+
+export const DICTIONARIES: Record<Locale, Dict> = {
+  en, zh, ja, de, fr, es,
+  th, vi, it, ru, pl, ro, tr, pt, ar,
+};
+
+export const LOCALES: Locale[] = [
+  "en", "zh", "ja", "de", "fr", "es",
+  "th", "vi", "it", "ru", "pl", "ro", "tr", "pt", "ar",
+];
 
 export function getDict(locale: Locale): Dict {
   return DICTIONARIES[locale] ?? DICTIONARIES.en;
