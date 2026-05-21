@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 
 import ProductPDP from "@/components/ProductPDP";
 import { PRODUCTS } from "@/lib/products";
-import { getProductWithOverlay } from "@/lib/products-server";
+import { getProductForPDP, getProductWithOverlay } from "@/lib/products-server";
 import { getLatestFirmware, getManualEntry } from "@/lib/downloads-server";
 import { getContent } from "@/lib/content-server";
 import {
@@ -34,7 +34,7 @@ export default async function ProductPage({
 }: {
   params: { slug: string };
 }) {
-  const product = await getProductWithOverlay(params.slug);
+  const product = await getProductForPDP(params.slug);
   if (!product) notFound();
   const [
     manual,

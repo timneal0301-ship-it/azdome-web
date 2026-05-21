@@ -13,6 +13,7 @@ import { db } from "@/lib/db";
 import { getAssetUrlMap } from "@/lib/asset-urls";
 import { getAllProducts } from "@/lib/products-server";
 import { PRODUCTS } from "@/lib/products";
+import { PRODUCT_SLOT_COUNT, productSlotPath } from "@/lib/image-slots";
 
 export const dynamic = "force-dynamic";
 
@@ -26,17 +27,22 @@ export default async function ProductsAdminPage() {
 
   const resolve = (path: string) => assetMap[path] ?? path;
 
-  // Per-product upload status: count of gallery images that have a Blob
-  // override registered (i.e. uploaded via admin).
+  // Per-product upload status against the standard 6-slot main-image
+  // array. Slot-1 (when uploaded) doubles as the card thumbnail —
+  // matches the auto-promote behavior in getProductForPDP.
   const productStats = products.map((p) => {
-    const galleryPaths = [p.image, ...p.gallery.map((g) => g.src)];
-    const unique = Array.from(new Set(galleryPaths));
-    const uploaded = unique.filter((path) => assetMap[path] !== undefined).length;
+    let uploaded = 0;
+    for (let i = 1; i <= PRODUCT_SLOT_COUNT; i++) {
+      const path = `/${productSlotPath(p.slug, i)}`;
+      if (assetMap[path] !== undefined) uploaded++;
+    }
+    const slot1 = `/${productSlotPath(p.slug, 1)}`;
+    const thumbnail = assetMap[slot1] !== undefined ? assetMap[slot1] : resolve(p.image);
     return {
       product: p,
-      thumbnail: resolve(p.image),
+      thumbnail,
       uploaded,
-      total: unique.length,
+      total: PRODUCT_SLOT_COUNT,
     };
   });
 
@@ -51,15 +57,15 @@ export default async function ProductsAdminPage() {
             产品管理
           </h1>
           <p className="mt-2 max-w-2xl text-sm text-slate-500">
-            10+ SKU 集中管理 · 点单品卡片进入图片上传 + A+ 详情页编辑。
-            添加新产品请去{" "}
+            10+ SKU 集中管理 · 每个型号统一 6 张主图 · 点单品卡片进入图片上传 + A+ 详情页编辑。
+            新增 / 改产品型号请去{" "}
             <Link
               href="/admin/content/catalog.products"
               className="font-semibold text-blue-600 hover:text-blue-700"
             >
               产品目录
             </Link>{" "}
-            表单。
+            表单(slug 是 URL,改了会断链;name / tagline / price 可随时改)。
           </p>
         </div>
         <Link

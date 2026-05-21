@@ -144,33 +144,74 @@ export const SLOTS: ImageSlot[] = [
 ];
 
 // ── Auto-derived product image slots ────────────────────────────────
-// New SKUs added to PRODUCTS automatically get image slots for their
-// main image + each gallery item, so the asset library + product editor
-// pages can upload without us hand-registering each new path.
+// Every SKU in PRODUCTS gets a uniform 6-slot main-image array at the
+// convention path `/images/products/<slug>/<N>.jpg` (N = 1..6). Admin
+// uploads to slot-1 also auto-promote to the product's cover image —
+// see getProductForPDP() in lib/products-server.ts.
+//
+// Plus: any legacy gallery path (i.e. paths in PRODUCTS that don't match
+// either an explicit SLOTS entry or the new 6-slot convention) gets a
+// "legacy" slot so existing PDP gallery items can still be re-uploaded.
 
 import { PRODUCTS } from "./products";
+
+/** Number of standard main-image slots auto-registered per SKU. */
+export const PRODUCT_SLOT_COUNT = 6;
+
+/** Convention path for the Nth main image of a product (1-indexed). */
+export function productSlotPath(slug: string, n: number): string {
+  return `images/products/${slug}/${n}.jpg`;
+}
+
+/** Convention key for the Nth main-image slot of a product. */
+export function productSlotKey(slug: string, n: number): string {
+  return `product-${slug}-${n}`;
+}
 
 function deriveProductSlots(): ImageSlot[] {
   const explicitPaths = new Set(SLOTS.map((s) => s.path));
   const explicitKeys = new Set(SLOTS.map((s) => s.key));
   const out: ImageSlot[] = [];
   const seenPaths = new Set<string>();
+  const seenKeys = new Set<string>();
+
   for (const product of PRODUCTS) {
-    const paths = [product.image, ...product.gallery.map((g) => g.src)];
-    for (let i = 0; i < paths.length; i++) {
-      const raw = paths[i];
-      if (!raw || !raw.startsWith("/")) continue;
-      const path = raw.slice(1); // strip leading slash
+    // (A) Standard 6-slot main-image array. Same shape for every SKU
+    //     so admin gets a predictable 2×3 grid in /admin/products/[slug].
+    for (let i = 1; i <= PRODUCT_SLOT_COUNT; i++) {
+      const path = productSlotPath(product.slug, i);
+      const key = productSlotKey(product.slug, i);
       if (explicitPaths.has(path) || seenPaths.has(path)) continue;
+      if (explicitKeys.has(key) || seenKeys.has(key)) continue;
       seenPaths.add(path);
-      const filename = path.split("/").pop() ?? "image";
-      const stem = filename.replace(/\.[^.]+$/, "");
-      const key = `product-${product.slug}-${stem}`;
-      if (explicitKeys.has(key)) continue;
-      const isMain = i === 0;
+      seenKeys.add(key);
       out.push({
         key,
-        label: `★ ${product.short} · ${isMain ? "主图" : `图 ${i}`} (${filename})`,
+        label: `★ ${product.short} · 主图 ${i}/${PRODUCT_SLOT_COUNT}`,
+        group: "products",
+        path,
+        width: 1000,
+        height: 1000,
+      });
+    }
+
+    // (B) Legacy paths — anything in product.gallery that isn't already
+    //     covered by an explicit SLOTS entry or the standard 6 above.
+    const legacyPaths = [product.image, ...product.gallery.map((g) => g.src)];
+    for (let i = 0; i < legacyPaths.length; i++) {
+      const raw = legacyPaths[i];
+      if (!raw || !raw.startsWith("/")) continue;
+      const path = raw.slice(1);
+      if (explicitPaths.has(path) || seenPaths.has(path)) continue;
+      const filename = path.split("/").pop() ?? "image";
+      const stem = filename.replace(/\.[^.]+$/, "");
+      const key = `product-${product.slug}-legacy-${stem}`;
+      if (explicitKeys.has(key) || seenKeys.has(key)) continue;
+      seenPaths.add(path);
+      seenKeys.add(key);
+      out.push({
+        key,
+        label: `· ${product.short} · 旧路径 (${filename})`,
         group: "products",
         path,
         width: 1000,

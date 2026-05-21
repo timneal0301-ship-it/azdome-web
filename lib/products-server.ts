@@ -10,8 +10,13 @@
 
 import "server-only";
 
+import { getAssetUrlMap } from "./asset-urls";
 import { getContent } from "./content-server";
 import { PRODUCT_CATALOG } from "./content/products";
+import {
+  PRODUCT_SLOT_COUNT,
+  productSlotPath,
+} from "./image-slots";
 import { type ProductDetail } from "./products";
 
 export async function getAllProducts(): Promise<ProductDetail[]> {
@@ -28,6 +33,46 @@ export async function getProductWithOverlay(
 ): Promise<ProductDetail | undefined> {
   const products = await getAllProducts();
   return products.find((p) => p.slug === slug);
+}
+
+/**
+ * PDP-facing read: merges any uploaded standard slot images
+ * (`/images/products/<slug>/<N>.jpg`, N = 1..6) into the gallery, and
+ * promotes slot-1 to the cover image if it's been uploaded. Admin can
+ * always override `product.image` via catalog.products if they want a
+ * non-slot-1 cover.
+ */
+export async function getProductForPDP(
+  slug: string,
+): Promise<ProductDetail | undefined> {
+  const product = await getProductWithOverlay(slug);
+  if (!product) return undefined;
+  const assetMap = await getAssetUrlMap();
+
+  // Collect uploaded standard slot images in order 1..6.
+  const slotImages: ProductDetail["gallery"] = [];
+  for (let i = 1; i <= PRODUCT_SLOT_COUNT; i++) {
+    const path = `/${productSlotPath(slug, i)}`;
+    if (assetMap[path] !== undefined) {
+      slotImages.push({ src: path, alt: `${product.short} · 图 ${i}` });
+    }
+  }
+
+  // Promote slot-1 to cover image when uploaded.
+  const slot1Path = `/${productSlotPath(slug, 1)}`;
+  const image = assetMap[slot1Path] !== undefined ? slot1Path : product.image;
+
+  // Gallery = uploaded slot images first, then any legacy/admin-curated
+  // entries that aren't already represented. Dedupe by src.
+  const seen = new Set<string>();
+  const gallery: ProductDetail["gallery"] = [];
+  for (const item of [...slotImages, ...product.gallery]) {
+    if (seen.has(item.src)) continue;
+    seen.add(item.src);
+    gallery.push(item);
+  }
+
+  return { ...product, image, gallery };
 }
 
 /** Used by grids (Collection / Featured / Related) — drops hidden SKUs. */
