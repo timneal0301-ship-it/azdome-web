@@ -3,10 +3,12 @@ import type { Slide } from "@/components/HeroCarousel";
 import type { ProductBanner } from "@/components/ProductBanners";
 import {
   DEFAULT_PROMISES,
+  getDefaultPromises,
   type Promise as PromiseItem,
 } from "@/components/PromiseThreeCol.data";
 import {
   DEFAULT_COMPARE,
+  getDefaultCompare,
   type CompareContent,
 } from "@/components/PriceCompare.data";
 import {
@@ -192,7 +194,7 @@ export const HOME_PROMISE: ContentSection<PromiseItem[]> = {
   description: "信任信号:3 个标准承诺。iconName 从 PROMISE_ICONS 选。",
   page: "home",
   previewHref: "/",
-  defaults: DEFAULT_PROMISES,
+  defaults: getDefaultPromises,
 };
 
 export const HOME_PRICE_COMPARE: ContentSection<CompareContent> = {
@@ -202,7 +204,7 @@ export const HOME_PRICE_COMPARE: ContentSection<CompareContent> = {
     "对比表。brands[] 是列(highlight: true 列显示蓝色高亮和 Best value 徽章),rows[].values 长度要与 brands[] 一致。✓ / ✗ / — 会渲染为图标,其他字符串原样显示。",
   page: "home",
   previewHref: "/",
-  defaults: DEFAULT_COMPARE,
+  defaults: getDefaultCompare,
 };
 
 export const HOME_PRESS_STRIP: ContentSection<PressQuoteItem[]> = {
