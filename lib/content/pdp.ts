@@ -1,11 +1,12 @@
 import type { ContentSection } from "./types";
-import { DEFAULT_SPECS } from "@/components/SpecsTable.data";
+import { DEFAULT_SPECS, getDefaultSpecs } from "@/components/SpecsTable.data";
 import { DEFAULT_REVIEWS } from "@/components/Reviews.data";
 import { DEFAULT_FAQS, getDefaultFaqs } from "@/components/FaqAccordion.data";
 import { DEFAULT_IMMERSIVE, getDefaultImmersive } from "@/components/ImmersiveFeature.data";
 import {
   DEFAULT_FEATURES,
   FEATURE_SPLIT_ICONS,
+  getDefaultFeatures,
 } from "@/components/FeatureSplit.data";
 import {
   DEFAULT_BOX_ITEMS,
@@ -14,6 +15,7 @@ import {
 } from "@/components/WhatsInBox.data";
 import {
   DEFAULT_USE_CASE_TABS,
+  getDefaultUseCaseTabs,
   USE_CASE_ICONS,
 } from "@/components/UseCaseTabs.data";
 
@@ -24,7 +26,7 @@ export const PDP_SPECS: ContentSection<typeof DEFAULT_SPECS> = {
     "产品详情页中段的规格列表。M550 Pro 的真实硬件参数,其他型号默认共享同一份。",
   page: "pdp",
   previewHref: "/products/m550-pro",
-  defaults: DEFAULT_SPECS,
+  defaults: getDefaultSpecs,
 };
 
 export const PDP_REVIEWS: ContentSection<typeof DEFAULT_REVIEWS> = {
@@ -62,7 +64,7 @@ export const PDP_FEATURE_SPLIT: ContentSection<typeof DEFAULT_FEATURES> = {
   description: `三段 image + 文案。 iconName 可选值: ${FEATURE_SPLIT_ICONS.join(", ")}`,
   page: "pdp",
   previewHref: "/products/m550-pro",
-  defaults: DEFAULT_FEATURES,
+  defaults: getDefaultFeatures,
 };
 
 export const PDP_WHATS_IN_BOX: ContentSection<typeof DEFAULT_BOX_ITEMS> = {
@@ -80,5 +82,5 @@ export const PDP_USE_CASES: ContentSection<typeof DEFAULT_USE_CASE_TABS> = {
   description: `Family / Rideshare / Parking tab。 iconName 可选值: ${USE_CASE_ICONS.join(", ")}`,
   page: "pdp",
   previewHref: "/products/m550-pro",
-  defaults: DEFAULT_USE_CASE_TABS,
+  defaults: getDefaultUseCaseTabs,
 };
