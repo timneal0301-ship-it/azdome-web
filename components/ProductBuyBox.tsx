@@ -83,11 +83,11 @@ export default function ProductBuyBox({
   const activeSrc = resolvedSrcs[activeImage] ?? resolvedSrcs[0];
 
   return (
-    <section className="bg-white">
+    <section className="bg-transparent">
       <div className="mx-auto max-w-7xl px-6 pb-12 pt-4 md:pt-6 lg:px-10 lg:pb-20">
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-10 lg:gap-14">
           <div className="lg:col-span-6">
-            <div className="relative aspect-square w-full overflow-hidden rounded-2xl bg-slate-50">
+            <div className="relative aspect-square w-full overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-100">
               <motion.div
                 key={activeImage}
                 initial={{ opacity: 0, scale: 1.01 }}
@@ -117,7 +117,7 @@ export default function ProductBuyBox({
                         onClick={() => setActiveImage(i)}
                         aria-label={`Show image ${i + 1}`}
                         className={[
-                          "relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-xl bg-slate-50 transition-all duration-300 md:h-24 md:w-24",
+                          "relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-slate-100 transition-all duration-300 md:h-24 md:w-24",
                           isActive
                             ? "ring-2 ring-blue-600 ring-offset-2 ring-offset-white"
                             : "ring-1 ring-slate-100 hover:ring-slate-300",

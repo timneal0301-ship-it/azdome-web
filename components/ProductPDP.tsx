@@ -64,7 +64,12 @@ export default function ProductPDP({
   return (
     <main>
       <ScrollProgress />
-      <div ref={buyBoxRef}>
+      {/* Top zone gets a soft slate-50 background so the area between
+          the translucent navbar and the BuyBox doesn't read as a stark
+          white slab when the user scrolls to the very top. The image
+          card inside BuyBox is flipped to white so it still pops
+          against the new surrounding tone. */}
+      <div ref={buyBoxRef} className="bg-slate-50">
         <div className="mx-auto max-w-7xl px-6 pt-28 md:pt-32 lg:px-10">
           <Breadcrumbs
             items={[
