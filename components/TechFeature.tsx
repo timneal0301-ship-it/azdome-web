@@ -1,51 +1,22 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Image from "@/components/ui/HQImage";
 import { AnimatePresence, motion } from "framer-motion";
 import { Moon, Plus, Wifi, Zap } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
 import { useLocale } from "./LocaleProvider";
+import {
+  getDefaultTechFeatures,
+  type TechFeatureItem,
+} from "./TechFeature.data";
 
-type Feature = {
-  id: string;
-  icon: LucideIcon;
-  title: string;
-  summary: string;
-  detail: string;
-  image: string;
+const ICONS: Record<TechFeatureItem["iconName"], LucideIcon> = {
+  Moon,
+  Wifi,
+  Zap,
 };
-
-const FEATURES: Feature[] = [
-  {
-    id: "night-vision",
-    icon: Moon,
-    title: "Starlight Night Vision",
-    summary: "See clearly in near-zero light.",
-    detail:
-      "Sony Starvis 2 sensor paired with an f/1.55 aperture captures plates and road signs in conditions where the human eye sees only black — no infrared washout, just true color.",
-    image: "/images/features/night-vision.jpg",
-  },
-  {
-    id: "wifi-5g",
-    icon: Wifi,
-    title: "Built-in 5GHz Wi-Fi",
-    summary: "Transfer 4K footage in seconds.",
-    detail:
-      "Pair with the AZDOME app over dual-band 5GHz Wi-Fi for instant 4K downloads, live preview, and OTA firmware — no SD card removal required.",
-    image: "/images/features/wifi.jpg",
-  },
-  {
-    id: "ai-adas",
-    icon: Zap,
-    title: "AI Driver Assist (ADAS)",
-    summary: "An intelligent co-pilot, on every drive.",
-    detail:
-      "On-device AI detects lane drift, forward collisions, and pedestrians in real time — alerting you before incidents happen, without sending data to the cloud.",
-    image: "/images/features/adas.jpg",
-  },
-];
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -57,9 +28,10 @@ const fadeUp = {
 };
 
 export default function TechFeature() {
-  const [activeId, setActiveId] = useState(FEATURES[0].id);
-  const { t } = useLocale();
-  const active = FEATURES.find((f) => f.id === activeId) ?? FEATURES[0];
+  const { t, locale } = useLocale();
+  const features = useMemo(() => getDefaultTechFeatures(locale), [locale]);
+  const [activeId, setActiveId] = useState(features[0].id);
+  const active = features.find((f) => f.id === activeId) ?? features[0];
 
   return (
     <section className="bg-slate-50 py-24 md:py-32">
@@ -114,7 +86,7 @@ export default function TechFeature() {
                   fill
                   sizes="(min-width: 1024px) 50vw, 100vw"
                   className="object-cover"
-                  priority={active.id === FEATURES[0].id}
+                  priority={active.id === features[0].id}
                 />
                 <div
                   aria-hidden
@@ -122,7 +94,10 @@ export default function TechFeature() {
                 />
                 <div className="absolute bottom-6 left-6 right-6 flex items-center gap-3 rounded-xl bg-white/85 p-4 shadow-sm backdrop-blur-md md:bottom-8 md:left-8 md:right-auto md:max-w-sm md:p-5">
                   <span className="inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-blue-600 text-white">
-                    <active.icon className="h-5 w-5" />
+                    {(() => {
+                      const Icon = ICONS[active.iconName];
+                      return <Icon className="h-5 w-5" />;
+                    })()}
                   </span>
                   <div>
                     <p className="text-sm font-semibold tracking-tight text-slate-900">
@@ -138,8 +113,9 @@ export default function TechFeature() {
           {/* Accordion */}
           <div className="flex flex-col justify-center">
             <ul className="space-y-3">
-              {FEATURES.map((feature) => {
+              {features.map((feature) => {
                 const isOpen = feature.id === activeId;
+                const Icon = ICONS[feature.iconName];
                 return (
                   <li
                     key={feature.id}
@@ -162,7 +138,7 @@ export default function TechFeature() {
                             : "bg-slate-100 text-slate-600",
                         ].join(" ")}
                       >
-                        <feature.icon className="h-5 w-5" />
+                        <Icon className="h-5 w-5" />
                       </span>
                       <div className="flex-1">
                         <h3
