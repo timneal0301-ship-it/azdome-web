@@ -69,7 +69,7 @@ export default async function HomePage() {
     // read as a distinct band rather than fused with the previous block.
     hero2:
       slides2.length > 0 ? (
-        <div className="mt-3 md:mt-5">
+        <div className="mt-1.5 md:mt-2">
           <HeroCarousel slides={slides2} />
         </div>
       ) : null,
@@ -78,7 +78,7 @@ export default async function HomePage() {
     scenarios: <ScenarioGrid />,
     hero3:
       slides3.length > 0 ? (
-        <div className="mt-3 md:mt-5">
+        <div className="mt-1.5 md:mt-2">
           <HeroCarousel slides={slides3} />
         </div>
       ) : null,
