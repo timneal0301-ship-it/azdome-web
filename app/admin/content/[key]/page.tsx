@@ -7,6 +7,7 @@ import {
   getContentDetailed,
   getHistory,
   getSection,
+  resolveDefaults,
 } from "@/lib/content-server";
 
 export const dynamic = "force-dynamic";
@@ -35,8 +36,9 @@ export default async function ContentSectionEditPage({
     getHistory(section.key),
   ]);
 
+  const canonicalDefaults = resolveDefaults(section, "en");
   const codeOnly =
-    containsNonSerializable(value) || containsNonSerializable(section.defaults);
+    containsNonSerializable(value) || containsNonSerializable(canonicalDefaults);
 
   return (
     <main className="mx-auto max-w-7xl px-4 pb-24 pt-10 sm:px-6 lg:px-10">
@@ -57,7 +59,7 @@ export default async function ContentSectionEditPage({
             description={section.description}
             previewHref={section.previewHref}
             currentValue={value}
-            defaultValue={section.defaults}
+            defaultValue={canonicalDefaults}
             isOverridden={isOverridden}
             hasPrev={hasPrev}
             history={history.map((h) => ({ ts: h.ts }))}

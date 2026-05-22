@@ -8,6 +8,7 @@ import {
   useMemo,
   useState,
 } from "react";
+import { useRouter } from "next/navigation";
 
 import {
   DICTIONARIES,
@@ -45,12 +46,22 @@ export function useLocale() {
 }
 
 const STORAGE_KEY = "azdome.country.v1";
+const COOKIE_KEY = "azdome-country";
+
+/** Write/read a 1-year cookie so server components can resolve the
+ *  locale at request time (cookies() in next/headers). */
+function writeCookie(value: string) {
+  if (typeof document === "undefined") return;
+  const oneYear = 60 * 60 * 24 * 365;
+  document.cookie = `${COOKIE_KEY}=${value}; path=/; max-age=${oneYear}; SameSite=Lax`;
+}
 
 export default function LocaleProvider({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const router = useRouter();
   // Default to US (English). Switch to stored preference on mount.
   const [country, setCountryState] = useState<string>(DEFAULT_COUNTRY_CODE);
 
@@ -59,21 +70,31 @@ export default function LocaleProvider({
       const stored = localStorage.getItem(STORAGE_KEY);
       if (stored && COUNTRIES[stored]) {
         setCountryState(stored);
+        // Ensure the cookie matches the persisted preference even if it
+        // was cleared (e.g. private window, OS cookie cleanup).
+        writeCookie(stored);
       }
     } catch {
       /* private mode / storage disabled */
     }
   }, []);
 
-  const setCountry = useCallback((code: string) => {
-    if (!COUNTRIES[code]) return;
-    setCountryState(code);
-    try {
-      localStorage.setItem(STORAGE_KEY, code);
-    } catch {
-      /* private mode / quota */
-    }
-  }, []);
+  const setCountry = useCallback(
+    (code: string) => {
+      if (!COUNTRIES[code]) return;
+      setCountryState(code);
+      try {
+        localStorage.setItem(STORAGE_KEY, code);
+      } catch {
+        /* private mode / quota */
+      }
+      writeCookie(code);
+      // Re-fetch server components so locale-aware content (defaults
+      // functions in lib/content/*) picks up the new cookie value.
+      router.refresh();
+    },
+    [router],
+  );
 
   const value = useMemo<LocaleContextValue>(() => {
     const entry = COUNTRIES[country] ?? COUNTRIES[DEFAULT_COUNTRY_CODE];

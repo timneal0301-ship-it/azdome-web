@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import {
   ArrowRight,
@@ -8,98 +10,95 @@ import {
   HelpCircle,
   Search,
   ShieldCheck,
-  Smartphone,
   Truck,
 } from "lucide-react";
 
 import FaqAccordion from "@/components/FaqAccordion";
 import SupportContactCards from "@/components/SupportContactCards";
+import { useLocale } from "@/components/LocaleProvider";
 
-const CATEGORIES = [
-  {
-    icon: Book,
-    title: "Installation Guides",
-    detail: "Step-by-step setup for every model, including parking-mode hardwire.",
-    href: "/support/install",
-  },
-  {
-    icon: Download,
-    title: "Firmware Downloads",
-    detail: "Latest .bin releases for every model — manual + OTA.",
-    href: "/support/firmware",
-  },
-  {
-    icon: BookOpen,
-    title: "User Manuals",
-    detail: "Branded PDF manuals in up to 6 languages per model.",
-    href: "/support/manuals",
-  },
-  {
-    icon: HelpCircle,
-    title: "Troubleshooting",
-    detail: "Common issues and 5-minute fixes for cameras and the app.",
-    href: "/support/troubleshoot",
-  },
-  {
-    icon: Truck,
-    title: "Order & Shipping",
-    detail: "Track an order, returns, exchanges, lost packages.",
-    href: "/account/orders",
-  },
-  {
-    icon: ShieldCheck,
-    title: "Warranty Claims",
-    detail: "File a claim in under 5 minutes. RMA + prepaid return label.",
-    href: "/support/contact",
-  },
+// Service status table — `service` is a brand label (not translated);
+// `state` keys map to t.support.operational so they translate.
+const STATUS_ROWS = [
+  { service: "azdome.com" },
+  { service: "AZDOME App backend" },
+  { service: "Order processing" },
+  { service: "Firmware delivery (OTA)" },
 ];
-
-const POPULAR = [
-  { title: "How do I set up parking mode?", href: "/support/install" },
-  { title: "Why is my SD card showing as full after one trip?", href: "/support/troubleshoot" },
-  { title: "How do I share clips with my insurance company?", href: "/support/contact" },
-  { title: "When will my order ship?", href: "/account/orders" },
-  { title: "How do I update firmware over Wi-Fi?", href: "/support/firmware" },
-  { title: "Camera not recognized by the app — what now?", href: "/support/troubleshoot" },
-];
-
-const STATUS = [
-  { service: "azdome.com", state: "Operational", color: "bg-emerald-500" },
-  { service: "AZDOME App backend",  state: "Operational", color: "bg-emerald-500" },
-  { service: "Order processing", state: "Operational", color: "bg-emerald-500" },
-  { service: "Firmware delivery (OTA)", state: "Operational", color: "bg-emerald-500" },
-];
-
-export const metadata = {
-  title: "Support — AZDOME",
-  description: "Installation guides, firmware, troubleshooting, and contact options.",
-};
 
 export default function SupportPage() {
+  const { t } = useLocale();
+
+  const CATEGORIES = [
+    {
+      icon: Book,
+      title: t.support.install,
+      detail: "Step-by-step setup for every model, including parking-mode hardwire.",
+      href: "/support/install",
+    },
+    {
+      icon: Download,
+      title: t.support.firmware,
+      detail: "Latest .bin releases for every model — manual + OTA.",
+      href: "/support/firmware",
+    },
+    {
+      icon: BookOpen,
+      title: t.support.manuals,
+      detail: "Branded PDF manuals in up to 6 languages per model.",
+      href: "/support/manuals",
+    },
+    {
+      icon: HelpCircle,
+      title: t.support.troubleshoot,
+      detail: "Common issues and 5-minute fixes for cameras and the app.",
+      href: "/support/troubleshoot",
+    },
+    {
+      icon: Truck,
+      title: "Order & Shipping",
+      detail: "Track an order, returns, exchanges, lost packages.",
+      href: "/account/orders",
+    },
+    {
+      icon: ShieldCheck,
+      title: t.support.contact,
+      detail: "File a claim in under 5 minutes. RMA + prepaid return label.",
+      href: "/support/contact",
+    },
+  ];
+
+  const POPULAR = [
+    { title: "How do I set up parking mode?", href: "/support/install" },
+    { title: "Why is my SD card showing as full after one trip?", href: "/support/troubleshoot" },
+    { title: "How do I share clips with my insurance company?", href: "/support/contact" },
+    { title: "When will my order ship?", href: "/account/orders" },
+    { title: "How do I update firmware over Wi-Fi?", href: "/support/firmware" },
+    { title: "Camera not recognized by the app — what now?", href: "/support/troubleshoot" },
+  ];
   return (
     <main className="bg-white">
       {/* Hero + search */}
       <section className="bg-slate-50">
         <div className="mx-auto max-w-3xl px-6 pb-16 pt-32 text-center md:pt-40 lg:px-10">
           <p className="mb-4 text-xs font-medium uppercase tracking-[0.18em] text-blue-600">
-            Support center
+            {t.support.pageTitle}
           </p>
           <h1 className="text-balance text-4xl font-bold tracking-tight text-slate-900 md:text-6xl">
-            How can we help?
+            {t.support.pageTitle}
           </h1>
           <p className="mx-auto mt-5 max-w-xl text-base leading-relaxed text-slate-500 md:text-lg">
-            Find answers, download firmware, or talk to a real person who
-            actually knows the product.
+            {t.support.pageSub}
           </p>
           <div className="mx-auto mt-10 flex w-full max-w-xl items-center gap-2 rounded-full bg-white p-2 shadow-sm ring-1 ring-slate-100">
             <Search className="ml-3 h-5 w-5 flex-shrink-0 text-slate-400" />
             <input
               type="search"
-              placeholder="Search articles, e.g. 'parking mode'"
+              placeholder={t.support.searchPlaceholder}
               className="flex-1 bg-transparent px-2 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none"
             />
             <button className="rounded-full bg-blue-600 px-5 py-2 text-sm font-semibold tracking-tight text-white transition-all duration-300 hover:bg-blue-700">
-              Search
+              {t.nav.searchLabel}
             </button>
           </div>
         </div>
@@ -123,7 +122,7 @@ export default function SupportPage() {
                 </h3>
                 <p className="mt-1 flex-1 text-sm text-slate-500">{c.detail}</p>
                 <span className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-blue-600">
-                  Browse
+                  {t.megaMenu.explore.replace(" →", "")}
                   <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-0.5" />
                 </span>
               </Link>
@@ -171,26 +170,20 @@ export default function SupportPage() {
               </span>
               <div>
                 <p className="text-sm font-semibold tracking-tight text-emerald-900">
-                  All systems operational
-                </p>
-                <p className="text-xs text-emerald-800/70">
-                  Last incident: none in the past 30 days.
+                  {t.support.systemStatus} — {t.support.operational}
                 </p>
               </div>
             </div>
-            <Link href="#" className="hidden text-sm font-semibold text-emerald-900 hover:underline sm:inline">
-              View status →
-            </Link>
           </div>
           <ul className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-4">
-            {STATUS.map((s) => (
+            {STATUS_ROWS.map((s) => (
               <li key={s.service} className="flex items-center gap-3 rounded-xl bg-slate-50 px-4 py-3">
-                <span className={`h-2 w-2 rounded-full ${s.color}`} />
+                <span className="h-2 w-2 rounded-full bg-emerald-500" />
                 <div>
                   <p className="text-xs font-semibold tracking-tight text-slate-900">
                     {s.service}
                   </p>
-                  <p className="text-[11px] text-slate-500">{s.state}</p>
+                  <p className="text-[11px] text-slate-500">{t.support.operational}</p>
                 </div>
               </li>
             ))}
@@ -199,7 +192,7 @@ export default function SupportPage() {
       </section>
 
       {/* FAQ */}
-      <FaqAccordion title="Common questions" eyebrow="Quick answers" />
+      <FaqAccordion />
 
       {/* Contact */}
       <section className="bg-slate-50 py-20 md:py-28">

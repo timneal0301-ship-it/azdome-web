@@ -1,14 +1,15 @@
 import type { ContentSection } from "./types";
 import { DEFAULT_SPECS } from "@/components/SpecsTable.data";
 import { DEFAULT_REVIEWS } from "@/components/Reviews.data";
-import { DEFAULT_FAQS } from "@/components/FaqAccordion.data";
-import { DEFAULT_IMMERSIVE } from "@/components/ImmersiveFeature.data";
+import { DEFAULT_FAQS, getDefaultFaqs } from "@/components/FaqAccordion.data";
+import { DEFAULT_IMMERSIVE, getDefaultImmersive } from "@/components/ImmersiveFeature.data";
 import {
   DEFAULT_FEATURES,
   FEATURE_SPLIT_ICONS,
 } from "@/components/FeatureSplit.data";
 import {
   DEFAULT_BOX_ITEMS,
+  getDefaultBoxItems,
   WHATS_IN_BOX_ICONS,
 } from "@/components/WhatsInBox.data";
 import {
@@ -42,7 +43,7 @@ export const PDP_FAQ: ContentSection<typeof DEFAULT_FAQS> = {
   description: "PDP 的常见问题手风琴。`q` 是问题,`a` 是答案。",
   page: "pdp",
   previewHref: "/products/m550-pro",
-  defaults: DEFAULT_FAQS,
+  defaults: getDefaultFaqs,
 };
 
 export const PDP_IMMERSIVE: ContentSection<typeof DEFAULT_IMMERSIVE> = {
@@ -52,7 +53,7 @@ export const PDP_IMMERSIVE: ContentSection<typeof DEFAULT_IMMERSIVE> = {
     "夜景背景上的大标题区域。titleA 后会跟一个蓝色渐变 titleB,底部 4 项 stat 指标。",
   page: "pdp",
   previewHref: "/products/m550-pro",
-  defaults: DEFAULT_IMMERSIVE,
+  defaults: getDefaultImmersive,
 };
 
 export const PDP_FEATURE_SPLIT: ContentSection<typeof DEFAULT_FEATURES> = {
@@ -70,7 +71,7 @@ export const PDP_WHATS_IN_BOX: ContentSection<typeof DEFAULT_BOX_ITEMS> = {
   description: `What's-in-the-Box 6 条目。 iconName 可选值: ${WHATS_IN_BOX_ICONS.join(", ")}`,
   page: "pdp",
   previewHref: "/products/m550-pro",
-  defaults: DEFAULT_BOX_ITEMS,
+  defaults: getDefaultBoxItems,
 };
 
 export const PDP_USE_CASES: ContentSection<typeof DEFAULT_USE_CASE_TABS> = {

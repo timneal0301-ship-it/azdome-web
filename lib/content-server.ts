@@ -6,6 +6,22 @@ import "server-only";
 
 import { db } from "./db";
 import type { AnyContentSection, ContentSection } from "./content/types";
+import { getCurrentLocale } from "./i18n/server";
+import type { Locale } from "./i18n/dictionaries";
+
+/** Resolve a ContentSection's `defaults` field: it may be either a
+ *  static seed (legacy: same T for all locales) or a function returning
+ *  the locale-specific T. Public so admin pages can resolve to "en"
+ *  for the canonical editor view. */
+export function resolveDefaults<T>(
+  section: ContentSection<T>,
+  locale: Locale,
+): T {
+  if (typeof section.defaults === "function") {
+    return (section.defaults as (l: Locale) => T)(locale);
+  }
+  return section.defaults as T;
+}
 
 function dbKey(key: string) {
   return `content:${key}`;
@@ -26,10 +42,13 @@ export type HistoryEntry<T = unknown> = { ts: number; value: T };
 
 export async function getContent<T>(section: ContentSection<T>): Promise<T> {
   const override = await db.get<T>(dbKey(section.key));
-  return (override ?? section.defaults) as T;
+  if (override !== undefined) return override;
+  return resolveDefaults(section, getCurrentLocale());
 }
 
-/** Same as getContent but tells you whether the value is an override. */
+/** Same as getContent but tells you whether the value is an override.
+ *  Admin tools use this — they ignore locale and always show the
+ *  English seed so admin edits aren't locale-shifted. */
 export async function getContentDetailed<T>(section: ContentSection<T>): Promise<{
   value: T;
   isOverridden: boolean;
@@ -40,7 +59,7 @@ export async function getContentDetailed<T>(section: ContentSection<T>): Promise
     db.get<T>(prevKey(section.key)),
   ]);
   return {
-    value: (override ?? section.defaults) as T,
+    value: (override ?? resolveDefaults(section, "en")) as T,
     isOverridden: override !== undefined,
     hasPrev: prev !== undefined,
   };
