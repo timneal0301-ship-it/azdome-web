@@ -19,7 +19,7 @@ export default function Footer() {
         { label: t.footer.allDashCams, href: "/collections/dash-cams" },
         { label: t.footer.m550Pro, href: "/products/m550-pro" },
         { label: t.footer.accessories, href: "/collections/accessories" },
-        { label: "Where to Buy", href: "/where-to-buy" },
+        { label: t.nav.whereToBuy, href: "/where-to-buy" },
         { label: t.footer.refurbished, href: "/collections/refurbished" },
         { label: t.footer.giftCards, href: "/gift-cards" },
       ],

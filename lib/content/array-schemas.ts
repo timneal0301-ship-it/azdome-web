@@ -119,6 +119,7 @@ const HOME_HERO_SCHEMA: ItemSchema = {
     "mobileImage",
     "imageQuality",
     "videoSrc",
+    "imageHref",
     "tone",
     "accentColor",
     "gradientStrength",
@@ -176,6 +177,13 @@ const HOME_HERO_SCHEMA: ItemSchema = {
       kind: "text",
       label: "背景视频路径(仅 video 布局)",
       placeholder: "/videos/hero.mp4",
+      optional: true,
+    },
+    imageHref: {
+      kind: "url",
+      label: "整图点击跳转链接",
+      placeholder: "/products/m550-pro",
+      hint: "填了之后,点击整张 Hero 图都会跳到这个链接。primary/secondary 按钮的跳转独立保留。",
       optional: true,
     },
     tone: {

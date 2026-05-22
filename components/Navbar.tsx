@@ -27,7 +27,7 @@ type NavLink = {
 const NAV_LINKS: NavLink[] = [
   { key: "dashCams", href: "/collections/dash-cams", hasMega: true },
   { key: "accessories", href: "/collections/accessories" },
-  { key: "whereToBuy", href: "/where-to-buy", label: "Where to Buy" },
+  { key: "whereToBuy", href: "/where-to-buy" },
   { key: "app", href: "/app" },
   { key: "support", href: "/support" },
   { key: "about", href: "/about" },

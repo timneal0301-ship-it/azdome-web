@@ -65,11 +65,23 @@ export default async function HomePage() {
     banners: <ProductBanners banners={banners} />,
     press: <PressLogos />,
     featured: <FeaturedProducts />,
-    hero2: slides2.length > 0 ? <HeroCarousel slides={slides2} /> : null,
+    // hero2 / hero3 sit between other sections — small mt gap so they
+    // read as a distinct band rather than fused with the previous block.
+    hero2:
+      slides2.length > 0 ? (
+        <div className="mt-3 md:mt-5">
+          <HeroCarousel slides={slides2} />
+        </div>
+      ) : null,
     priceCompare: <PriceCompare content={compare} />,
     video: <VideoModal />,
     scenarios: <ScenarioGrid />,
-    hero3: slides3.length > 0 ? <HeroCarousel slides={slides3} /> : null,
+    hero3:
+      slides3.length > 0 ? (
+        <div className="mt-3 md:mt-5">
+          <HeroCarousel slides={slides3} />
+        </div>
+      ) : null,
     tech: <TechFeature />,
     pressStrip: <PressQuotesStrip quotes={pressStrip} />,
     testimonials: <Testimonials />,

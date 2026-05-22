@@ -48,6 +48,10 @@ export type Slide = {
   mobileImage?: string;
   /** Background video — used only when layout === "video". MP4 / WebM. */
   videoSrc?: string;
+  /** If set, clicking the slide background image navigates here. The CTA
+   *  buttons (primary / secondary) keep their own hrefs so the image is
+   *  effectively a third, wider tap target — admin-editable. */
+  imageHref?: string;
   primary?: { label: string; href: string };
   secondary?: { label: string; href: string };
   /** Tone controls text colors & whether a dark gradient overlay is shown.
@@ -340,28 +344,54 @@ function SlideLayer({
   }
 
   // centered + video share the same overlay structure.
+  const bg =
+    layout === "video" && slide.videoSrc ? (
+      <video
+        src={videoSrc}
+        autoPlay
+        muted
+        loop
+        playsInline
+        className="absolute inset-0 h-full w-full object-cover"
+        poster={imageSrc}
+      />
+    ) : (
+      <ResponsiveHeroImage
+        desktopSrc={imageSrc}
+        mobileSrc={mobileImageSrc}
+        sizes="100vw"
+        quality={slide.imageQuality}
+      />
+    );
+
   return (
     <motion.div {...animProps}>
-      {layout === "video" && slide.videoSrc ? (
-        <video
-          src={videoSrc}
-          autoPlay
-          muted
-          loop
-          playsInline
-          className="absolute inset-0 h-full w-full object-cover"
-          poster={imageSrc}
-        />
+      {/* Background image / video — wrapped in <Link> when admin set
+          slide.imageHref so the whole slide acts as a tap target. The
+          centered SlideCopy above sits on top with relative z-10 so its
+          primary/secondary CTA buttons stay independently clickable. */}
+      {slide.imageHref ? (
+        <Link
+          href={slide.imageHref}
+          aria-label={slide.titleA}
+          className="absolute inset-0 block"
+        >
+          {bg}
+        </Link>
       ) : (
-        <ResponsiveHeroImage
-          desktopSrc={imageSrc}
-          mobileSrc={mobileImageSrc}
-          sizes="100vw"
-          quality={slide.imageQuality}
-        />
+        bg
       )}
       <GradientOverlay slide={slide} active={applyOverlay} />
-      <div className="relative z-10 mx-auto flex h-full max-w-5xl items-center justify-center px-6 pt-24 md:pt-28 lg:px-10">
+      <div
+        className={[
+          "relative z-10 mx-auto flex h-full max-w-5xl items-center justify-center px-6 pt-24 md:pt-28 lg:px-10",
+          // When the slide has imageHref, the wrapping Link captures
+          // clicks across the whole hero — set pointer-events-none here
+          // so taps on text/empty space fall through, then re-enable on
+          // the CTA buttons individually so they keep their own hrefs.
+          slide.imageHref ? "pointer-events-none" : "",
+        ].join(" ")}
+      >
         <SlideCopy slide={slide} isDark={isDark} variant="centered" />
       </div>
     </motion.div>
@@ -583,7 +613,7 @@ function SlideCopy({
           {slide.primary && (
             <Link
               href={slide.primary.href}
-              className="group inline-flex items-center gap-1.5 rounded-full bg-blue-600 px-7 py-3.5 text-sm font-semibold tracking-tight text-white shadow-sm transition-all duration-300 hover:bg-blue-700 hover:shadow-md"
+              className="pointer-events-auto group inline-flex items-center gap-1.5 rounded-full bg-blue-600 px-7 py-3.5 text-sm font-semibold tracking-tight text-white shadow-sm transition-all duration-300 hover:bg-blue-700 hover:shadow-md"
             >
               {slide.primary.label}
               <ChevronRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" />
@@ -593,7 +623,7 @@ function SlideCopy({
             <Link
               href={slide.secondary.href}
               className={[
-                "inline-flex items-center gap-2 rounded-full px-7 py-3.5 text-sm font-semibold tracking-tight backdrop-blur-sm transition-all duration-300",
+                "pointer-events-auto inline-flex items-center gap-2 rounded-full px-7 py-3.5 text-sm font-semibold tracking-tight backdrop-blur-sm transition-all duration-300",
                 isDark
                   ? "border border-white/30 bg-white/5 text-white hover:border-white/60 hover:bg-white/10"
                   : "border border-slate-300 bg-white/60 text-slate-900 hover:bg-white",
