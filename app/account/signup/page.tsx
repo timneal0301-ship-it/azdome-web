@@ -6,8 +6,9 @@ import { UserPlus } from "lucide-react";
 
 import { signupAction } from "../actions";
 import SocialAuthButtons from "@/components/SocialAuthButtons";
+import { useLocale } from "@/components/LocaleProvider";
 
-function SubmitButton() {
+function SubmitButton({ idle, loading }: { idle: string; loading: string }) {
   const { pending } = useFormStatus();
   return (
     <button
@@ -15,7 +16,7 @@ function SubmitButton() {
       disabled={pending}
       className="mt-5 w-full rounded-full bg-blue-600 px-6 py-3 text-sm font-semibold tracking-tight text-white transition-all duration-300 hover:bg-blue-700 disabled:bg-slate-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2"
     >
-      {pending ? "Creating…" : "Create account"}
+      {pending ? loading : idle}
     </button>
   );
 }
@@ -26,6 +27,7 @@ export default function SignupPage({
   searchParams: { next?: string };
 }) {
   const [state, formAction] = useFormState(signupAction, { error: null });
+  const { t } = useLocale();
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-slate-50 px-6 pt-24">
@@ -37,11 +39,9 @@ export default function SignupPage({
           <UserPlus className="h-5 w-5" />
         </span>
         <h1 className="mt-5 text-2xl font-bold tracking-tight text-slate-900">
-          Create your account
+          {t.account.signUpTitle}
         </h1>
-        <p className="mt-1 text-sm text-slate-500">
-          Free, 30 seconds. Get $20 off your first order.
-        </p>
+        <p className="mt-1 text-sm text-slate-500">{t.account.signUpSub}</p>
 
         <SocialAuthButtons callbackUrl={searchParams.next ?? "/account"} />
 
@@ -49,7 +49,7 @@ export default function SignupPage({
           <input
             name="name"
             required
-            placeholder="Full name"
+            placeholder={t.modals.reviewName}
             autoComplete="name"
             className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-600/15"
           />
@@ -57,7 +57,7 @@ export default function SignupPage({
             name="email"
             type="email"
             required
-            placeholder="Email"
+            placeholder={t.account.email}
             autoComplete="email"
             className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-600/15"
           />
@@ -66,7 +66,7 @@ export default function SignupPage({
             type="password"
             required
             minLength={8}
-            placeholder="Password (min 8 chars)"
+            placeholder={t.account.password}
             autoComplete="new-password"
             className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-600/15"
           />
@@ -78,29 +78,17 @@ export default function SignupPage({
           <p className="mt-3 text-sm text-red-600">{state.error}</p>
         )}
 
-        <SubmitButton />
-
-        <p className="mt-4 text-center text-[11px] text-slate-400">
-          By creating an account you agree to our{" "}
-          <Link href="/legal/terms" className="underline hover:text-slate-700">
-            Terms
-          </Link>{" "}
-          and{" "}
-          <Link href="/legal/privacy" className="underline hover:text-slate-700">
-            Privacy Policy
-          </Link>
-          .
-        </p>
+        <SubmitButton idle={t.account.signUp} loading={t.account.signingUp} />
 
         <p className="mt-5 text-center text-xs text-slate-500">
-          Already have an account?{" "}
+          {t.account.haveAccount}{" "}
           <Link
             href={`/account/login${
               searchParams.next ? `?next=${encodeURIComponent(searchParams.next)}` : ""
             }`}
             className="font-semibold text-blue-600 hover:text-blue-700"
           >
-            Sign in
+            {t.account.signIn}
           </Link>
         </p>
       </form>

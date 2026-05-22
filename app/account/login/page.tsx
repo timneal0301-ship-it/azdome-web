@@ -6,8 +6,9 @@ import { LogIn } from "lucide-react";
 
 import { loginAction } from "../actions";
 import SocialAuthButtons from "@/components/SocialAuthButtons";
+import { useLocale } from "@/components/LocaleProvider";
 
-function SubmitButton() {
+function SubmitButton({ idle, loading }: { idle: string; loading: string }) {
   const { pending } = useFormStatus();
   return (
     <button
@@ -15,7 +16,7 @@ function SubmitButton() {
       disabled={pending}
       className="mt-5 w-full rounded-full bg-blue-600 px-6 py-3 text-sm font-semibold tracking-tight text-white transition-all duration-300 hover:bg-blue-700 disabled:bg-slate-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2"
     >
-      {pending ? "Signing in…" : "Sign in"}
+      {pending ? loading : idle}
     </button>
   );
 }
@@ -26,6 +27,7 @@ export default function LoginPage({
   searchParams: { next?: string };
 }) {
   const [state, formAction] = useFormState(loginAction, { error: null });
+  const { t } = useLocale();
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-slate-50 px-6 pt-24">
@@ -37,11 +39,9 @@ export default function LoginPage({
           <LogIn className="h-5 w-5" />
         </span>
         <h1 className="mt-5 text-2xl font-bold tracking-tight text-slate-900">
-          Sign in to AZDOME
+          {t.account.signInTitle}
         </h1>
-        <p className="mt-1 text-sm text-slate-500">
-          See your orders, manage warranty registration, and track firmware.
-        </p>
+        <p className="mt-1 text-sm text-slate-500">{t.account.signInSub}</p>
 
         <SocialAuthButtons callbackUrl={searchParams.next ?? "/account"} />
 
@@ -50,7 +50,7 @@ export default function LoginPage({
             name="email"
             type="email"
             required
-            placeholder="Email"
+            placeholder={t.account.email}
             autoComplete="email"
             className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-600/15"
           />
@@ -58,7 +58,7 @@ export default function LoginPage({
             name="password"
             type="password"
             required
-            placeholder="Password"
+            placeholder={t.account.password}
             autoComplete="current-password"
             className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-600/15"
           />
@@ -70,17 +70,17 @@ export default function LoginPage({
           <p className="mt-3 text-sm text-red-600">{state.error}</p>
         )}
 
-        <SubmitButton />
+        <SubmitButton idle={t.account.signIn} loading={t.account.signingIn} />
 
         <p className="mt-6 text-center text-xs text-slate-500">
-          Don&apos;t have an account?{" "}
+          {t.account.noAccount}{" "}
           <Link
             href={`/account/signup${
               searchParams.next ? `?next=${encodeURIComponent(searchParams.next)}` : ""
             }`}
             className="font-semibold text-blue-600 hover:text-blue-700"
           >
-            Sign up
+            {t.account.signUp}
           </Link>
         </p>
       </form>

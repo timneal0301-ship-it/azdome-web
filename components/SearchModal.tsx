@@ -7,6 +7,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, Search, X } from "lucide-react";
 
 import { PRODUCTS, COLLECTIONS } from "@/lib/products";
+import { useLocale } from "./LocaleProvider";
 
 const POPULAR = ["4K", "Dual channel", "Hardwire kit", "Parking mode", "SD card"];
 
@@ -17,6 +18,7 @@ export default function SearchModal({
   isOpen: boolean;
   onClose: () => void;
 }) {
+  const { t } = useLocale();
   const [query, setQuery] = useState("");
 
   useEffect(() => {
@@ -86,7 +88,7 @@ export default function SearchModal({
                   type="search"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
-                  placeholder="Search products, articles, support…"
+                  placeholder={t.modals.searchPlaceholder}
                   className="flex-1 bg-transparent text-base text-slate-900 placeholder:text-slate-400 focus:outline-none"
                 />
                 <button

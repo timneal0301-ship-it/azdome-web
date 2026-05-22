@@ -4,6 +4,7 @@ import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Plus } from "lucide-react";
 
+import { useLocale } from "./LocaleProvider";
 import { DEFAULT_FAQS, type FAQ } from "./FaqAccordion.data";
 
 const fadeUp = {
@@ -17,13 +18,16 @@ const fadeUp = {
 
 export default function FaqAccordion({
   faqs: rawFaqs = DEFAULT_FAQS,
-  title = "Questions, answered.",
-  eyebrow = "FAQ",
+  title,
+  eyebrow,
 }: {
   faqs?: FAQ[];
   title?: string;
   eyebrow?: string;
 }) {
+  const { t } = useLocale();
+  const resolvedTitle = title ?? t.pdpChrome.faqTitle;
+  const resolvedEyebrow = eyebrow ?? t.pdpChrome.faqEyebrow;
   const faqs = rawFaqs.filter((f) => !f.hidden);
   const [openIndex, setOpenIndex] = useState<number | null>(0);
   if (faqs.length === 0) return null;
@@ -42,13 +46,13 @@ export default function FaqAccordion({
             variants={fadeUp}
             className="mb-4 text-xs font-medium uppercase tracking-[0.18em] text-blue-600"
           >
-            {eyebrow}
+            {resolvedEyebrow}
           </motion.p>
           <motion.h2
             variants={fadeUp}
             className="text-balance text-3xl font-bold tracking-tight text-slate-900 md:text-4xl"
           >
-            {title}
+            {resolvedTitle}
           </motion.h2>
         </motion.div>
 

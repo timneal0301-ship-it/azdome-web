@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Send, X } from "lucide-react";
 
+import { useLocale } from "./LocaleProvider";
+
 type Msg = { from: "agent" | "user"; text: string };
 
 const SCRIPTED: string[] = [
@@ -18,6 +20,7 @@ export default function LiveChat({
   isOpen: boolean;
   onClose: () => void;
 }) {
+  const { t } = useLocale();
   const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState("");
   const listRef = useRef<HTMLDivElement>(null);
@@ -88,7 +91,7 @@ export default function LiveChat({
             </div>
             <button
               onClick={onClose}
-              aria-label="Close chat"
+              aria-label={t.modals.close}
               className="inline-flex h-8 w-8 items-center justify-center rounded-full text-slate-300 transition-all duration-300 hover:bg-white/10 hover:text-white"
             >
               <X className="h-4 w-4" />
@@ -124,12 +127,12 @@ export default function LiveChat({
             <input
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Type a message…"
+              placeholder={t.modals.chatInput}
               className="flex-1 rounded-full bg-slate-100 px-4 py-2 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-600/15"
             />
             <button
               type="submit"
-              aria-label="Send"
+              aria-label={t.modals.chatSend}
               className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-blue-600 text-white transition-all duration-300 hover:bg-blue-700"
             >
               <Send className="h-4 w-4" />

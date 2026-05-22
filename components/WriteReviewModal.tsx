@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { CheckCircle2, Star, X } from "lucide-react";
 
+import { useLocale } from "./LocaleProvider";
+
 export default function WriteReviewModal({
   isOpen,
   onClose,
@@ -11,6 +13,7 @@ export default function WriteReviewModal({
   isOpen: boolean;
   onClose: () => void;
 }) {
+  const { t } = useLocale();
   const [rating, setRating] = useState(5);
   const [hover, setHover] = useState<number | null>(null);
   const [submitted, setSubmitted] = useState(false);
@@ -55,7 +58,7 @@ export default function WriteReviewModal({
           >
             <button
               onClick={onClose}
-              aria-label="Close"
+              aria-label={t.modals.close}
               className="absolute right-4 top-4 inline-flex h-9 w-9 items-center justify-center rounded-full text-slate-400 transition-all duration-300 hover:bg-slate-100 hover:text-slate-900"
             >
               <X className="h-5 w-5" />
@@ -67,17 +70,13 @@ export default function WriteReviewModal({
                   <CheckCircle2 className="h-7 w-7" />
                 </span>
                 <h2 className="mt-5 text-2xl font-bold tracking-tight text-slate-900">
-                  Thanks for sharing.
+                  {t.modals.reviewThanks}
                 </h2>
-                <p className="mt-2 text-sm text-slate-500">
-                  Your review will appear after a quick moderation pass — usually
-                  within 24 hours.
-                </p>
                 <button
                   onClick={onClose}
                   className="mt-6 rounded-full bg-slate-900 px-6 py-2.5 text-sm font-semibold text-white transition-all duration-300 hover:bg-slate-800"
                 >
-                  Close
+                  {t.modals.close}
                 </button>
               </div>
             ) : (
@@ -89,16 +88,12 @@ export default function WriteReviewModal({
                 className="px-8 py-10"
               >
                 <h2 className="text-2xl font-bold tracking-tight text-slate-900">
-                  Write a review
+                  {t.modals.reviewWrite}
                 </h2>
-                <p className="mt-1 text-sm text-slate-500">
-                  Only verified buyers can submit. We&apos;ll check your order
-                  history.
-                </p>
 
                 <div className="mt-6">
                   <p className="mb-2 text-xs font-semibold tracking-tight text-slate-600">
-                    Rating
+                    {t.modals.reviewRating}
                   </p>
                   <div className="flex items-center gap-1">
                     {Array.from({ length: 5 }).map((_, i) => {
@@ -129,23 +124,21 @@ export default function WriteReviewModal({
 
                 <label className="mt-5 block">
                   <span className="mb-1.5 block text-xs font-semibold tracking-tight text-slate-600">
-                    Title
+                    {t.modals.reviewTitle}
                   </span>
                   <input
                     required
-                    placeholder="Summed up in a sentence"
                     className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-600/15"
                   />
                 </label>
 
                 <label className="mt-5 block">
                   <span className="mb-1.5 block text-xs font-semibold tracking-tight text-slate-600">
-                    Your review
+                    {t.modals.reviewBody}
                   </span>
                   <textarea
                     required
                     rows={5}
-                    placeholder="What stood out? What surprised you?"
                     className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-600/15"
                   />
                 </label>
@@ -154,7 +147,7 @@ export default function WriteReviewModal({
                   type="submit"
                   className="mt-6 w-full rounded-full bg-blue-600 px-6 py-3 text-sm font-semibold tracking-tight text-white shadow-sm transition-all duration-300 hover:bg-blue-700 hover:shadow-md"
                 >
-                  Submit review
+                  {t.modals.reviewSubmit}
                 </button>
               </form>
             )}

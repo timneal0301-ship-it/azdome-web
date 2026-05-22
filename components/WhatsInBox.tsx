@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
+import { useLocale } from "./LocaleProvider";
 import { DEFAULT_BOX_ITEMS, type BoxItem } from "./WhatsInBox.data";
 
 const ICONS: Record<string, LucideIcon> = {
@@ -45,6 +46,7 @@ export default function WhatsInBox({
   image?: string;
   items?: BoxItem[];
 }) {
+  const { t } = useLocale();
   const items = rawItems.filter((i) => !i.hidden);
   if (items.length === 0) return null;
   return (
@@ -61,13 +63,13 @@ export default function WhatsInBox({
             variants={fadeUp}
             className="mb-4 text-xs font-medium uppercase tracking-[0.18em] text-blue-600"
           >
-            What&apos;s in the box
+            {t.pdpChrome.whatsInBox}
           </motion.p>
           <motion.h2
             variants={fadeUp}
             className="text-balance text-3xl font-bold tracking-tight text-slate-900 md:text-5xl"
           >
-            Everything you need. Out of the box.
+            {t.pdpChrome.whatsInBox}
           </motion.h2>
         </motion.div>
 
@@ -81,7 +83,7 @@ export default function WhatsInBox({
           >
             <Image
               src={image}
-              alt="What's in the box"
+              alt={t.pdpChrome.whatsInBox}
               fill
               sizes="(min-width: 1024px) 50vw, 100vw"
               className="object-cover"
