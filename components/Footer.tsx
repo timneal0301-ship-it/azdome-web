@@ -30,7 +30,7 @@ export default function Footer() {
         { label: t.footer.helpCenter, href: "/support" },
         { label: t.footer.install, href: "/support/install" },
         { label: t.footer.firmware, href: "/support/firmware" },
-        { label: "User Manuals", href: "/support/manuals" },
+        { label: t.support.manuals, href: "/support/manuals" },
         { label: t.footer.contactUs, href: "/support/contact" },
         { label: t.footer.trackOrder, href: "/account/orders" },
       ],
