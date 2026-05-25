@@ -5,13 +5,25 @@ import { ArrowRight, Check } from "lucide-react";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import CertBadges from "@/components/CertBadges";
 import { PRODUCTS } from "@/lib/products";
+import {
+  buildPathAlternates,
+  DEFAULT_LOCALE,
+  isValidLocale,
+} from "@/lib/i18n/url";
 
-export const metadata: Metadata = {
-  title: "How to choose your dash cam",
-  description:
-    "From a single front camera to a 4-channel 360° system — find the right AZDOME for the way you drive.",
-  alternates: { canonical: "/buying-guide" },
-};
+export function generateMetadata({
+  params,
+}: {
+  params: { locale: string };
+}): Metadata {
+  const locale = isValidLocale(params.locale) ? params.locale : DEFAULT_LOCALE;
+  return {
+    title: "How to choose your dash cam",
+    description:
+      "From a single front camera to a 4-channel 360° system — find the right AZDOME for the way you drive.",
+    alternates: buildPathAlternates(locale, "/buying-guide"),
+  };
+}
 
 // One card per channel count. Picks the lowest-priced visible SKU for each
 // tier as the "top pick" so the guide stays current with the catalog.

@@ -1,5 +1,11 @@
 import { Fragment } from "react";
+import type { Metadata } from "next";
 
+import {
+  buildPathAlternates,
+  DEFAULT_LOCALE,
+  isValidLocale,
+} from "@/lib/i18n/url";
 import HeroCarousel from "@/components/HeroCarousel";
 import ProductBanners from "@/components/ProductBanners";
 import FeaturedProducts from "@/components/FeaturedProducts";
@@ -30,6 +36,15 @@ import {
   HOME_LAYOUT_DEFAULTS,
   mergeLayoutWithDefaults,
 } from "@/lib/content/layout";
+
+export function generateMetadata({
+  params,
+}: {
+  params: { locale: string };
+}): Metadata {
+  const locale = isValidLocale(params.locale) ? params.locale : DEFAULT_LOCALE;
+  return { alternates: buildPathAlternates(locale, "/") };
+}
 
 export default async function HomePage() {
   const [

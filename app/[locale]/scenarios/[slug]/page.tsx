@@ -6,15 +6,29 @@ import { ArrowRight } from "lucide-react";
 import ProductCard from "@/components/ProductCard";
 import { SCENARIOS, getScenario } from "@/lib/products";
 import { getProductsBySlug } from "@/lib/products-server";
+import {
+  buildPathAlternates,
+  DEFAULT_LOCALE,
+  isValidLocale,
+} from "@/lib/i18n/url";
 
 export function generateStaticParams() {
   return SCENARIOS.map((s) => ({ slug: s.slug }));
 }
 
-export function generateMetadata({ params }: { params: { slug: string } }) {
+export function generateMetadata({
+  params,
+}: {
+  params: { locale: string; slug: string };
+}) {
   const s = getScenario(params.slug);
   if (!s) return { title: "Scenario not found — AZDOME" };
-  return { title: `${s.title} — AZDOME`, description: s.intro };
+  const locale = isValidLocale(params.locale) ? params.locale : DEFAULT_LOCALE;
+  return {
+    title: `${s.title} — AZDOME`,
+    description: s.intro,
+    alternates: buildPathAlternates(locale, `/scenarios/${s.slug}`),
+  };
 }
 
 export default async function ScenarioPage({ params }: { params: { slug: string } }) {

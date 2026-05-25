@@ -3,15 +3,29 @@ import { notFound } from "next/navigation";
 import { getContent } from "@/lib/content-server";
 import { LEGAL_DOCS } from "@/lib/content/legal";
 import { DOCS, type Doc } from "@/lib/content/legal";
+import {
+  buildPathAlternates,
+  DEFAULT_LOCALE,
+  isValidLocale,
+} from "@/lib/i18n/url";
 
 export function generateStaticParams() {
   return DOCS.map((d) => ({ slug: d.slug }));
 }
 
-export function generateMetadata({ params }: { params: { slug: string } }) {
+export function generateMetadata({
+  params,
+}: {
+  params: { locale: string; slug: string };
+}) {
   const doc = DOCS.find((d) => d.slug === params.slug);
   if (!doc) return { title: "Not found — AZDOME" };
-  return { title: `${doc.title} — AZDOME`, description: doc.intro.slice(0, 160) };
+  const locale = isValidLocale(params.locale) ? params.locale : DEFAULT_LOCALE;
+  return {
+    title: `${doc.title} — AZDOME`,
+    description: doc.intro.slice(0, 160),
+    alternates: buildPathAlternates(locale, `/legal/${doc.slug}`),
+  };
 }
 
 export default async function LegalPage({ params }: { params: { slug: string } }) {

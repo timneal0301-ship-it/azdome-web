@@ -11,6 +11,11 @@ export function generateStaticParams() {
   return LOCALES.map((locale) => ({ locale }));
 }
 
+// Mirror the root layout's force-dynamic so admin uploads in KV (catalog
+// overlay, image overrides, content section edits) surface immediately on
+// the public frontend instead of staying frozen at build-time snapshot.
+export const dynamic = "force-dynamic";
+
 export default function LocaleLayout({
   children,
   params,
