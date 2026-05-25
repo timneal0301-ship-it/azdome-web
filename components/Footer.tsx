@@ -17,6 +17,7 @@ export default function Footer() {
       title: t.footer.colShop,
       links: [
         { label: t.footer.allDashCams, href: "/collections/dash-cams" },
+        { label: t.footer.buyingGuide, href: "/buying-guide" },
         { label: t.footer.m550Pro, href: "/products/m550-pro" },
         { label: t.footer.accessories, href: "/collections/accessories" },
         { label: t.nav.whereToBuy, href: "/where-to-buy" },

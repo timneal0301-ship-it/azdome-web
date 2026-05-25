@@ -6,46 +6,12 @@ import { AnimatePresence, motion } from "framer-motion";
 import { ChevronDown, X } from "lucide-react";
 
 import LanguageSwitcher from "./LanguageSwitcher";
+import { useLocale } from "./LocaleProvider";
 
 type Group = {
   label: string;
   links: { label: string; href: string }[];
 };
-
-const GROUPS: Group[] = [
-  {
-    label: "Dash Cams",
-    links: [
-      { label: "1-Channel", href: "/collections/single-channel" },
-      { label: "2-Channel · Front + Rear", href: "/collections/dual-channel" },
-      { label: "3-Channel · Rideshare", href: "/collections/three-channel" },
-      { label: "4-Channel · 360°", href: "/collections/four-channel" },
-      { label: "All Dash Cams", href: "/collections/dash-cams" },
-      { label: "Buying Guide", href: "/buying-guide" },
-    ],
-  },
-  {
-    label: "By Feature",
-    links: [
-      { label: "With Touchscreen", href: "/collections/with-screen" },
-      { label: "Stealth Mount", href: "/collections/stealth" },
-    ],
-  },
-  {
-    label: "Accessories",
-    links: [
-      { label: "SD Cards", href: "/collections/sd-cards" },
-      { label: "Hardwire Kits", href: "/collections/hardwire" },
-      { label: "Mounts", href: "/collections/mounts" },
-    ],
-  },
-];
-
-const FLAT_LINKS = [
-  { label: "App", href: "/app" },
-  { label: "Support", href: "/support" },
-  { label: "About", href: "/about" },
-];
 
 export default function MobileMenu({
   isOpen,
@@ -54,6 +20,49 @@ export default function MobileMenu({
   isOpen: boolean;
   onClose: () => void;
 }) {
+  const { t } = useLocale();
+
+  // Built per-render so labels follow the active locale. The channel
+  // titles + screen/stealth feature pivots pull from t.megaMenu (already
+  // translated for all 15 locales); category labels reuse t.footer where
+  // it has equivalents. A small set of mobile-only strings stays English
+  // for now (Buying Guide / By Feature / SD Cards / Hardwire Kits /
+  // Mounts) — narrow surface, can be promoted to dict keys later.
+  const GROUPS: Group[] = [
+    {
+      label: t.nav.dashCams,
+      links: [
+        { label: t.megaMenu.singleTitle, href: "/collections/single-channel" },
+        { label: t.megaMenu.dualTitle, href: "/collections/dual-channel" },
+        { label: t.megaMenu.tripleTitle, href: "/collections/three-channel" },
+        { label: t.megaMenu.quadTitle, href: "/collections/four-channel" },
+        { label: t.footer.allDashCams, href: "/collections/dash-cams" },
+        { label: "Buying Guide", href: "/buying-guide" },
+      ],
+    },
+    {
+      label: "By Feature",
+      links: [
+        { label: t.megaMenu.screenTitle, href: "/collections/with-screen" },
+        { label: t.megaMenu.stealthTitle, href: "/collections/stealth" },
+      ],
+    },
+    {
+      label: t.nav.accessories,
+      links: [
+        { label: "SD Cards", href: "/collections/sd-cards" },
+        { label: "Hardwire Kits", href: "/collections/hardwire" },
+        { label: "Mounts", href: "/collections/mounts" },
+      ],
+    },
+  ];
+
+  const FLAT_LINKS = [
+    { label: t.nav.app, href: "/app" },
+    { label: t.nav.support, href: "/support" },
+    { label: t.nav.about, href: "/about" },
+  ];
+
   const [openGroup, setOpenGroup] = useState<string | null>(GROUPS[0].label);
 
   useEffect(() => {

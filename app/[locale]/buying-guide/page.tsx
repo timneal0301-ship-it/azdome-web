@@ -130,6 +130,10 @@ const FAQ: { q: string; a: string }[] = [
     q: "What's the difference between a dash cam with a screen and one without?",
     a: "A screen lets you check footage and change settings without a phone. Stealth models skip the screen for a cleaner install — you control them via the AZDOME app over Wi-Fi.",
   },
+  {
+    q: "What if I order the wrong one?",
+    a: "You have 30 days from delivery to return any AZDOME purchase, for any reason — including \"changed my mind\" or \"didn't fit my car.\" Free return shipping in the contiguous US. See the full returns policy for details.",
+  },
 ];
 
 export default function BuyingGuidePage() {

@@ -11,6 +11,7 @@ import SpecsTable from "@/components/SpecsTable";
 import Reviews from "@/components/Reviews";
 import FaqAccordion from "@/components/FaqAccordion";
 import RelatedProducts from "@/components/RelatedProducts";
+import CertBadges from "@/components/CertBadges";
 import StickyBottomCTA from "@/components/StickyBottomCTA";
 import ScrollProgress from "@/components/ScrollProgress";
 import ImmersiveFeature from "@/components/ImmersiveFeature";
@@ -86,6 +87,14 @@ export default function ProductPDP({
       <VideoModal />
       {show("whatsInBox") && <WhatsInBox items={boxItems} />}
       {show("specs") && <SpecsTable specs={specs} />}
+      {/* Compliance strip sits right after the spec sheet — the spec block
+          is where buyers verify the hardware claim; CE/FCC/RoHS/WEEE/TÜV
+          immediately after reinforces that the spec sheet is independently
+          verifiable. Only relevant for dash-cam SKUs (accessories aren't
+          regulated the same way). */}
+      {show("specs") && product.category === "dash-cam" && (
+        <CertBadges variant="compact" />
+      )}
       {show("compare") && product.category === "dash-cam" && (
         <ProductCompare currentSlug={product.slug} />
       )}
