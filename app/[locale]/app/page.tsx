@@ -2,12 +2,25 @@ import { getContent } from "@/lib/content-server";
 import { APP_COMPATIBILITY, APP_DOWNLOAD, APP_PAGE } from "@/lib/content/app-page";
 import { getAssetUrlMap } from "@/lib/asset-urls";
 import AppPageClient from "@/components/AppPageClient";
+import {
+  buildPathAlternates,
+  DEFAULT_LOCALE,
+  isValidLocale,
+} from "@/lib/i18n/url";
 
-export const metadata = {
-  title: "AZDOME App — AZDOME",
-  description:
-    "Download the free AZDOME app for iOS and Android. Pair your dash cam, browse footage, and update firmware over Wi-Fi.",
-};
+export function generateMetadata({
+  params,
+}: {
+  params: { locale: string };
+}) {
+  const locale = isValidLocale(params.locale) ? params.locale : DEFAULT_LOCALE;
+  return {
+    title: "AZDOME App — AZDOME",
+    description:
+      "Download the free AZDOME app for iOS and Android. Pair your dash cam, browse footage, and update firmware over Wi-Fi.",
+    alternates: buildPathAlternates(locale, "/app"),
+  };
+}
 
 export default async function AppPage() {
   const [content, download, compatibility, assetMap] = await Promise.all([

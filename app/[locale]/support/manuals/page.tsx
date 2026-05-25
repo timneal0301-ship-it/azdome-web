@@ -2,10 +2,25 @@ import { LANGUAGES } from "@/lib/downloads";
 import { getAllManuals } from "@/lib/downloads-server";
 import { PRODUCTS } from "@/lib/products";
 import ManualsPageClient from "@/components/ManualsPageClient";
+import {
+  buildPathAlternates,
+  DEFAULT_LOCALE,
+  isValidLocale,
+} from "@/lib/i18n/url";
 
 export const dynamic = "force-dynamic";
 
-export const metadata = { title: "User Manuals — AZDOME Support" };
+export function generateMetadata({
+  params,
+}: {
+  params: { locale: string };
+}) {
+  const locale = isValidLocale(params.locale) ? params.locale : DEFAULT_LOCALE;
+  return {
+    title: "User Manuals — AZDOME Support",
+    alternates: buildPathAlternates(locale, "/support/manuals"),
+  };
+}
 
 export default async function ManualsPage() {
   const manuals = await getAllManuals();

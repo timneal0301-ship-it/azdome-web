@@ -3,10 +3,25 @@ import { AlertCircle } from "lucide-react";
 
 import FirmwareList from "@/components/FirmwareList";
 import { getAllFirmware } from "@/lib/downloads-server";
+import {
+  buildPathAlternates,
+  DEFAULT_LOCALE,
+  isValidLocale,
+} from "@/lib/i18n/url";
 
 export const dynamic = "force-dynamic";
 
-export const metadata = { title: "Firmware Downloads — AZDOME Support" };
+export function generateMetadata({
+  params,
+}: {
+  params: { locale: string };
+}) {
+  const locale = isValidLocale(params.locale) ? params.locale : DEFAULT_LOCALE;
+  return {
+    title: "Firmware Downloads — AZDOME Support",
+    alternates: buildPathAlternates(locale, "/support/firmware"),
+  };
+}
 
 export default async function FirmwarePage() {
   const data = await getAllFirmware();
