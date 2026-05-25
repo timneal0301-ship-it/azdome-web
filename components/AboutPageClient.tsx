@@ -16,6 +16,7 @@ import {
 import type { LucideIcon } from "lucide-react";
 
 import AnimatedCounter from "@/components/ui/AnimatedCounter";
+import CertBadges from "@/components/CertBadges";
 import { useLocale } from "@/components/LocaleProvider";
 import type { AboutContent } from "@/lib/content/about";
 import type { Locale } from "@/lib/i18n/dictionaries";
@@ -249,6 +250,8 @@ export default function AboutPageClient({ content }: { content: AboutContent }) 
           </div>
         </div>
       </section>
+
+      <CertBadges />
 
       {/* CTA */}
       <section className="bg-white py-20 md:py-28">

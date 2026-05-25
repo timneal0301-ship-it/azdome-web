@@ -302,6 +302,12 @@ export default function Navbar() {
                       >
                         Accessories
                       </Link>
+                      <Link
+                        href="/buying-guide"
+                        className="font-medium text-blue-600 hover:text-blue-700"
+                      >
+                        Buying Guide →
+                      </Link>
                       <span className="text-slate-300">·</span>
                       <Link
                         href="/collections/with-screen"

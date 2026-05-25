@@ -15,6 +15,8 @@ import {
   PDP_USE_CASES,
 } from "@/lib/content/pdp";
 import { PDP_LAYOUT } from "@/lib/content/layout";
+import { getSpecsForSlug } from "@/components/SpecsTable.data";
+import { getCurrentLocale } from "@/lib/i18n/server";
 
 export function generateStaticParams() {
   return PRODUCTS.map((p) => ({ slug: p.slug }));
@@ -87,10 +89,11 @@ export default async function ProductPage({
 }) {
   const product = await getProductForPDP(params.slug);
   if (!product) notFound();
+  const locale = getCurrentLocale();
   const [
     manual,
     firmware,
-    specs,
+    contentSpecs,
     reviews,
     faqs,
     immersive,
@@ -110,6 +113,10 @@ export default async function ProductPage({
     getContent(PDP_USE_CASES),
     getContent(PDP_LAYOUT),
   ]);
+  // M550 Pro keeps its admin-editable spec sheet via the content system;
+  // other SKUs use the slug-specific seed (EN-only for now).
+  const specs =
+    params.slug === "m550-pro" ? contentSpecs : getSpecsForSlug(params.slug, locale);
   return (
     <>
       <script

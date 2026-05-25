@@ -21,6 +21,7 @@ const GROUPS: Group[] = [
       { label: "3-Channel · Rideshare", href: "/collections/three-channel" },
       { label: "4-Channel · 360°", href: "/collections/four-channel" },
       { label: "All Dash Cams", href: "/collections/dash-cams" },
+      { label: "Buying Guide", href: "/buying-guide" },
     ],
   },
   {

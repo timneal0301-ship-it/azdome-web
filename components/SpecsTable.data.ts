@@ -120,3 +120,59 @@ export function getDefaultSpecs(locale: Locale): SpecGroup[] {
 }
 
 export const DEFAULT_SPECS: SpecGroup[] = SPECS_BY_LOCALE.en!;
+
+// ── Per-SKU spec overrides ───────────────────────────────────────────
+//
+// M550 Pro is the seed dataset and stays in SPECS_BY_LOCALE above (fully
+// translated, editable via admin content). The other 5 dash cams ship with
+// English-only spec sheets here; admin editing for non-M550-Pro SKUs is a
+// follow-up. When no slug-specific entry exists, getSpecsForSlug falls back
+// to the localized M550 Pro defaults.
+
+const SPECS_BY_SLUG: Record<string, SpecGroup[]> = {
+  "m550-max": [
+    { title: "Imaging", rows: [["Front resolution", "3840×2160 (True 4K)"], ["Cabin resolution", "1920×1080 (Full HD)"], ["Rear resolution", "1920×1080 (Full HD)"], ["Channels", "3 (front + cabin + rear)"], ["Sensor tech", "Sony STARVIS-grade with WDR"], ["Night vision", "WDR + cabin IR LEDs"]] },
+    { title: "Display & Interface", rows: [["Screen", "3.19-inch IPS"], ["Mobile app", "AZDOME (iOS 14+ / Android 8+)"], ["Wi-Fi", "Dual-band 5GHz / 2.4GHz"], ["GPS", "Built-in"]] },
+    { title: "Storage", rows: [["microSD support", "Up to 256GB (64GB included; 128GB recommended for 3-channel)"], ["Loop recording", "Automatic across all three streams"]] },
+    { title: "Power & Parking", rows: [["Battery", "Super capacitor (heat-resistant)"], ["Operating temp", "−4°F to 158°F (−20°C to 70°C)"], ["Parking modes", "Collision detection · 24h time-lapse"], ["G-sensor", "3-axis"], ["Power input", "12V / 24V (Type-C)"]] },
+    { title: "In the Box & Support", rows: [["Included", "M550 Max main · cabin cam · rear cam · 3M mounts · Type-C cable · 64GB SD · quick-start"], ["Optional", "Hardwire kit for 24h parking"], ["Warranty", "12 months + 24×7 technical support"]] },
+  ],
+  "pg17-pro": [
+    { title: "Imaging", rows: [["Front resolution", "3840×2160 (True 4K)"], ["Rear resolution", "2560×1440 (2.5K)"], ["Front sensor", "Sony STARVIS 2 IMX678"], ["Channels", "2 (front + rear)"], ["Dynamic range", "Dual HDR"], ["Night vision", "STARVIS 2 low-light + WDR"]] },
+    { title: "Display & Interface", rows: [["Screen", "12-inch full touch mirror display"], ["Form factor", "Replaces OEM rearview mirror"], ["Mobile app", "AZDOME (iOS 14+ / Android 8+)"], ["Wi-Fi", "Dual-band 5GHz / 2.4GHz"], ["GPS", "Built-in"]] },
+    { title: "Driver Assist", rows: [["ADAS", "Lane departure · forward collision · pedestrian alerts"], ["G-sensor", "3-axis, auto event lock on impact"], ["Voice", "Available via app"]] },
+    { title: "Storage", rows: [["microSD support", "Up to 512GB (64GB included; 256GB recommended for 4K continuous parking)"], ["Loop recording", "Automatic, oldest clip overwritten"]] },
+    { title: "Power & Parking", rows: [["Battery", "Super capacitor"], ["Operating temp", "−20°C to 70°C"], ["Parking modes", "Collision detection · 24h time-lapse · motion-triggered"], ["Power input", "12V / 24V (Type-C, hardwire recommended)"]] },
+    { title: "In the Box & Support", rows: [["Included", "PG17 Pro mirror display · rear cam · mounting straps · Type-C cable · 64GB SD · quick-start"], ["Optional", "Hardwire kit · 256GB SD upgrade"], ["Warranty", "12 months + 24×7 technical support"]] },
+  ],
+  "s40": [
+    { title: "Imaging", rows: [["Front resolution", "3840×2160 (True 4K)"], ["Side + rear resolution", "1920×1080 × 3 (Full HD each)"], ["Channels", "4 (front · left · right · rear)"], ["Coverage", "360° stitched view"], ["Night vision", "WDR across all four channels"]] },
+    { title: "Display & Interface", rows: [["Screen", "None — phone-controlled"], ["Mobile app", "AZDOME (iOS 14+ / Android 8+)"], ["Wi-Fi", "Dual-band 5GHz / 2.4GHz"], ["GPS", "Built-in"]] },
+    { title: "Storage", rows: [["microSD support", "Up to 512GB (recommended for 4-channel continuous)"], ["Loop recording", "Automatic across all four streams"]] },
+    { title: "Power & Parking", rows: [["Battery", "Super capacitor"], ["Operating temp", "−20°C to 70°C"], ["Parking modes", "Continuous parking · collision detection (all 4 channels)"], ["G-sensor", "3-axis"], ["Power input", "12V / 24V (Type-C)"]] },
+    { title: "In the Box & Support", rows: [["Included", "S40 main unit · 3 side/rear cameras · cabling harness · mounts · Type-C cable · quick-start"], ["Required", "Hardwire kit (sold separately) for continuous parking"], ["Warranty", "12 months + 24×7 technical support"]] },
+  ],
+  "m17-pro": [
+    { title: "Imaging", rows: [["Front resolution", "3840×2160 (True 4K)"], ["Rear resolution", "1920×1080 (Full HD)"], ["Channels", "2 (front + rear)"], ["Form factor", "Stealth — hides behind rearview mirror"], ["Night vision", "Super night vision (low-light optimized)"]] },
+    { title: "Display & Interface", rows: [["Screen", "None — phone-controlled (Wi-Fi 6 pairing)"], ["Mobile app", "AZDOME (iOS 14+ / Android 8+)"], ["Wi-Fi", "Wi-Fi 6"], ["ADAS", "Lane departure · forward collision warnings"]] },
+    { title: "Storage", rows: [["microSD support", "Up to 256GB (64GB high-endurance included)"], ["Loop recording", "Automatic"]] },
+    { title: "Power & Parking", rows: [["Battery", "Super capacitor"], ["Operating temp", "−20°C to 70°C"], ["Parking modes", "Collision detection · 24h time-lapse (with hardwire kit)"], ["G-sensor", "3-axis"], ["Power input", "12V / 24V (Type-C)"]] },
+    { title: "In the Box & Support", rows: [["Included", "M17 Pro main · rear cam · 3M mounts · Type-C cable · 64GB high-endurance SD · quick-start"], ["Optional", "Hardwire kit for 24h parking"], ["Warranty", "12 months + 24×7 technical support"]] },
+  ],
+  "m01-pro": [
+    { title: "Imaging", rows: [["Front resolution", "2880×1620 (3K)"], ["Rear resolution", "1920×1080 (Full HD)"], ["Channels", "2 (front + rear)"], ["Night vision", "Low-light sensor with WDR"]] },
+    { title: "Display & Interface", rows: [["Screen", "3-inch IPS"], ["Mobile app", "AZDOME (iOS 14+ / Android 8+)"], ["Wi-Fi", "2.4GHz"], ["GPS", "Built-in"], ["ADAS", "Lane assist"]] },
+    { title: "Storage", rows: [["microSD support", "Up to 128GB"], ["Loop recording", "Automatic, oldest clip overwritten"]] },
+    { title: "Power & Parking", rows: [["Battery", "Super capacitor"], ["Operating temp", "−10°C to 65°C"], ["Parking modes", "Collision detection (requires hardwire kit)"], ["G-sensor", "3-axis"], ["Power input", "12V / 24V (Type-C)"]] },
+    { title: "In the Box & Support", rows: [["Included", "M01 Pro main · rear cam · 3M mounts · Type-C cable · quick-start"], ["Optional", "Hardwire kit · SD card"], ["Warranty", "12 months + 24×7 technical support"]] },
+  ],
+};
+
+/**
+ * Resolve specs for a product. If a slug-specific override exists, prefer
+ * that (currently EN-only for the 5 non-M550-Pro SKUs); otherwise fall back
+ * to the locale-default specs (M550 Pro, fully translated).
+ */
+export function getSpecsForSlug(slug: string, locale: Locale): SpecGroup[] {
+  return SPECS_BY_SLUG[slug] ?? getDefaultSpecs(locale);
+}

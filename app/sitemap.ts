@@ -12,6 +12,7 @@ const STATIC_PATHS: { path: string; priority: number; freq: MetadataRoute.Sitema
   { path: "/about", priority: 0.7, freq: "monthly" },
   { path: "/app", priority: 0.6, freq: "monthly" },
   { path: "/where-to-buy", priority: 0.8, freq: "weekly" },
+  { path: "/buying-guide", priority: 0.7, freq: "monthly" },
   { path: "/support", priority: 0.6, freq: "weekly" },
   { path: "/support/contact", priority: 0.5, freq: "monthly" },
   { path: "/support/firmware", priority: 0.5, freq: "weekly" },
