@@ -4,7 +4,8 @@ import { useEffect } from "react";
 import Link from "@/components/ui/Link";
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
-import { Minus, Plus, ShieldCheck, ShoppingBag, Trash2, X } from "lucide-react";
+import { Minus, Plus, ShieldCheck, ShoppingBag, Tag, Trash2, X } from "lucide-react";
+import { useState, useTransition } from "react";
 
 import { useCart } from "./CartProvider";
 import { useLocale } from "./LocaleProvider";
@@ -19,7 +20,20 @@ const formatUSD = (value: number) =>
   }).format(value);
 
 export default function CartDrawer() {
-  const { items, isOpen, close, updateQty, remove, subtotal } = useCart();
+  const {
+    items,
+    isOpen,
+    close,
+    updateQty,
+    remove,
+    subtotal,
+    promo,
+    discount,
+    total,
+    promoError,
+    applyPromo,
+    removePromo,
+  } = useCart();
   const { t } = useLocale();
 
   useEffect(() => {
@@ -240,10 +254,33 @@ export default function CartDrawer() {
 
             {items.length > 0 && (
               <div className="border-t border-slate-100 px-6 py-5">
-                <div className="flex items-center justify-between text-sm text-slate-500">
+                <PromoEntry
+                  promo={promo}
+                  discount={discount}
+                  error={promoError}
+                  applyPromo={applyPromo}
+                  removePromo={removePromo}
+                />
+
+                <div className="mt-4 flex items-center justify-between text-sm text-slate-500">
                   <span>{t.cart.subtotal}</span>
-                  <span className="text-base font-semibold tracking-tight text-slate-900">
+                  <span className="tabular-nums text-slate-700">
                     {formatUSD(subtotal)}
+                  </span>
+                </div>
+                {promo && discount > 0 && (
+                  <div className="mt-1 flex items-center justify-between text-sm text-emerald-700">
+                    <span className="inline-flex items-center gap-1">
+                      <Tag className="h-3 w-3" />
+                      {promo.code}
+                    </span>
+                    <span className="tabular-nums">−{formatUSD(discount)}</span>
+                  </div>
+                )}
+                <div className="mt-2 flex items-center justify-between border-t border-slate-100 pt-2 text-sm">
+                  <span className="font-semibold text-slate-900">Total</span>
+                  <span className="text-lg font-bold tabular-nums tracking-tight text-slate-900">
+                    {formatUSD(total)}
                   </span>
                 </div>
                 <p className="mt-1 text-xs text-slate-400">{t.cart.taxNote}</p>
@@ -277,5 +314,86 @@ export default function CartDrawer() {
         </div>
       )}
     </AnimatePresence>
+  );
+}
+
+function PromoEntry({
+  promo,
+  discount,
+  error,
+  applyPromo,
+  removePromo,
+}: {
+  promo: { code: string; type: "percent" | "amount"; value: number } | null;
+  discount: number;
+  error: string | null;
+  applyPromo: (code: string) => Promise<{ ok: boolean; error?: string }>;
+  removePromo: () => void;
+}) {
+  const [input, setInput] = useState("");
+  const [pending, startTransition] = useTransition();
+
+  const onApply = () => {
+    if (!input.trim()) return;
+    startTransition(async () => {
+      const r = await applyPromo(input);
+      if (r.ok) setInput("");
+    });
+  };
+
+  // Applied state — show the code + remove button.
+  if (promo) {
+    return (
+      <div className="flex items-center justify-between gap-2 rounded-xl bg-emerald-50 px-3 py-2 text-xs text-emerald-800 ring-1 ring-emerald-200">
+        <span className="inline-flex items-center gap-1.5">
+          <Tag className="h-3.5 w-3.5" />
+          <span className="font-mono font-bold">{promo.code}</span>
+          <span className="text-emerald-600">
+            ·{" "}
+            {promo.type === "percent"
+              ? `${promo.value}% off`
+              : `$${promo.value.toFixed(2)} off`}
+          </span>
+        </span>
+        <button
+          type="button"
+          onClick={removePromo}
+          className="text-emerald-700 underline-offset-2 transition-colors hover:text-emerald-900 hover:underline"
+        >
+          移除
+        </button>
+      </div>
+    );
+  }
+
+  // Entry state — input + apply button.
+  return (
+    <div>
+      <div className="flex gap-2">
+        <input
+          type="text"
+          value={input}
+          onChange={(e) => setInput(e.target.value.toUpperCase())}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") onApply();
+          }}
+          placeholder="促销码"
+          aria-label="促销码"
+          maxLength={32}
+          className="block w-full rounded-full border border-slate-200 bg-white px-4 py-2 font-mono text-xs uppercase tabular-nums shadow-inner outline-none transition-colors focus:border-blue-500"
+        />
+        <button
+          type="button"
+          onClick={onApply}
+          disabled={pending || !input.trim()}
+          className="inline-flex items-center justify-center rounded-full bg-slate-900 px-4 py-2 text-xs font-semibold tracking-tight text-white transition-colors hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          {pending ? "..." : "应用"}
+        </button>
+      </div>
+      {error && (
+        <p className="mt-1.5 text-xs text-red-600">{error}</p>
+      )}
+    </div>
   );
 }

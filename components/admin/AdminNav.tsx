@@ -11,6 +11,7 @@ import {
   ImageIcon,
   Menu,
   Package,
+  Tag,
   X,
 } from "lucide-react";
 
@@ -33,6 +34,12 @@ const ITEMS = [
     label: "固件 & 手册",
     icon: Download,
     match: (p: string) => p.startsWith("/admin/downloads"),
+  },
+  {
+    href: "/admin/promos",
+    label: "促销码",
+    icon: Tag,
+    match: (p: string) => p.startsWith("/admin/promos"),
   },
   {
     href: "/admin/content",
