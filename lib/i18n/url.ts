@@ -104,3 +104,29 @@ export const RTL_LOCALES: ReadonlySet<Locale> = new Set<Locale>(["ar"]);
 export function isRtlLocale(locale: Locale): boolean {
   return RTL_LOCALES.has(locale);
 }
+
+/**
+ * Build a `Metadata.alternates` block (canonical + languages map) for a
+ * given locale + locale-free path. Mount into generateMetadata so each
+ * page emits its own <link rel="alternate" hreflang="..."> set on top of
+ * the symmetric sitemap signals.
+ *
+ *   buildPathAlternates("en", "/products/m550-pro")
+ *   → { canonical: "/en/products/m550-pro",
+ *       languages: { en: "/en/products/m550-pro", zh: "/zh/...", ..., x-default: "/en/..." } }
+ */
+export function buildPathAlternates(
+  activeLocale: Locale,
+  pathSansLocale: string,
+): { canonical: string; languages: Record<string, string> } {
+  const seg = pathSansLocale === "/" ? "" : pathSansLocale;
+  const languages: Record<string, string> = {};
+  for (const l of LOCALES) {
+    languages[l] = `/${l}${seg}`;
+  }
+  languages["x-default"] = `/${DEFAULT_LOCALE}${seg}`;
+  return {
+    canonical: `/${activeLocale}${seg}`,
+    languages,
+  };
+}

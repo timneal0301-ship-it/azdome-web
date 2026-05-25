@@ -17,26 +17,32 @@ import {
 import { PDP_LAYOUT } from "@/lib/content/layout";
 import { getSpecsForSlug } from "@/components/SpecsTable.data";
 import { getCurrentLocale } from "@/lib/i18n/server";
+import { buildPathAlternates, isValidLocale, DEFAULT_LOCALE } from "@/lib/i18n/url";
 
 export function generateStaticParams() {
   return PRODUCTS.map((p) => ({ slug: p.slug }));
 }
 
-export async function generateMetadata({ params }: { params: { slug: string } }) {
+export async function generateMetadata({
+  params,
+}: {
+  params: { locale: string; slug: string };
+}) {
   const product = await getProductWithOverlay(params.slug);
   if (!product) return { title: "Product not found — AZDOME" };
-  const canonical = `/products/${product.slug}`;
+  const locale = isValidLocale(params.locale) ? params.locale : DEFAULT_LOCALE;
+  const alternates = buildPathAlternates(locale, `/products/${product.slug}`);
   const ogImage = product.image.startsWith("http")
     ? product.image
     : `https://azdome.com${product.image}`;
   return {
     title: `${product.short} — AZDOME`,
     description: product.description,
-    alternates: { canonical },
+    alternates,
     openGraph: {
       title: `${product.name} — AZDOME`,
       description: product.description,
-      url: canonical,
+      url: alternates.canonical,
       type: "website",
       images: [{ url: ogImage, alt: product.short }],
     },

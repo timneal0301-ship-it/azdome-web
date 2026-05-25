@@ -4,17 +4,28 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 import CollectionGrid from "@/components/CollectionGrid";
 import { COLLECTIONS, getCollection } from "@/lib/products";
 import { getProductsBySlug } from "@/lib/products-server";
+import {
+  buildPathAlternates,
+  DEFAULT_LOCALE,
+  isValidLocale,
+} from "@/lib/i18n/url";
 
 export function generateStaticParams() {
   return COLLECTIONS.map((c) => ({ slug: c.slug }));
 }
 
-export function generateMetadata({ params }: { params: { slug: string } }) {
+export function generateMetadata({
+  params,
+}: {
+  params: { locale: string; slug: string };
+}) {
   const collection = getCollection(params.slug);
   if (!collection) return { title: "Collection not found — AZDOME" };
+  const locale = isValidLocale(params.locale) ? params.locale : DEFAULT_LOCALE;
   return {
     title: `${collection.title} — AZDOME`,
     description: collection.description,
+    alternates: buildPathAlternates(locale, `/collections/${collection.slug}`),
   };
 }
 
