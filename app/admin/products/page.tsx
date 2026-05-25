@@ -14,6 +14,7 @@ import { getAssetUrlMap } from "@/lib/asset-urls";
 import { getAllProducts } from "@/lib/products-server";
 import { PRODUCTS } from "@/lib/products";
 import { PRODUCT_SLOT_COUNT, productSlotPath } from "@/lib/image-slots";
+import ProductHiddenToggle from "@/components/admin/ProductHiddenToggle";
 
 export const dynamic = "force-dynamic";
 
@@ -120,12 +121,11 @@ export default async function ProductsAdminPage() {
                   sizes="(min-width: 1280px) 25vw, (min-width: 640px) 50vw, 100vw"
                   className="object-contain p-4 transition-transform duration-500 group-hover:scale-105"
                 />
-                {product.hidden && (
-                  <span className="absolute right-2 top-2 inline-flex items-center gap-1 rounded-full bg-slate-900/80 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-white backdrop-blur-md">
-                    <EyeOff className="h-3 w-3" />
-                    Hidden
-                  </span>
-                )}
+                <ProductHiddenToggle
+                  slug={product.slug}
+                  initialHidden={Boolean(product.hidden)}
+                  label={product.short}
+                />
                 {!isCatalogEntry && (
                   <span className="absolute left-2 top-2 inline-flex items-center rounded-full bg-amber-500 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-white">
                     Override

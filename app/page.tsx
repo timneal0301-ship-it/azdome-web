@@ -13,6 +13,7 @@ import TechFeature from "@/components/TechFeature";
 import Testimonials from "@/components/Testimonials";
 import Newsletter from "@/components/Newsletter";
 import VideoModal from "@/components/VideoModal";
+import CertBadges from "@/components/CertBadges";
 import { getContent } from "@/lib/content-server";
 import {
   HOME_HERO,
@@ -84,6 +85,7 @@ export default async function HomePage() {
       ) : null,
     tech: <TechFeature />,
     pressStrip: <PressQuotesStrip quotes={pressStrip} />,
+    certifications: <CertBadges variant="compact" />,
     testimonials: <Testimonials />,
     newsletter: <Newsletter />,
   };

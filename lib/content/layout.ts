@@ -47,6 +47,7 @@ export const HOME_LAYOUT_DEFAULTS: LayoutConfig = {
   hero3: false,         // Optional lower Hero band (between Scenarios and Tech)
   tech: true,           // TechFeature
   pressStrip: true,     // PressQuotesStrip (rotating quote)
+  certifications: true, // CertBadges (CE/FCC/RoHS/WEEE/TÜV)
   testimonials: true,   // Testimonials
   newsletter: true,     // Newsletter
 };
