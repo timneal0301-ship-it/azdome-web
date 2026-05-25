@@ -2,31 +2,25 @@
 // Edge runtimes (middleware needs the latter). Cookies/redirects live in the
 // places that import these helpers.
 
+import { hmacHex, timingSafeEqualHex } from "./crypto-utils";
+
 export const COOKIE = "azdome.admin.v1";
 const MAX_AGE_SECONDS = 60 * 60 * 24 * 7; // 7 days
 
 function getSecret(): string {
-  return process.env.ADMIN_PASSWORD || "admin";
-}
-
-async function hmac(value: string, secret: string): Promise<string> {
-  const enc = new TextEncoder();
-  const key = await crypto.subtle.importKey(
-    "raw",
-    enc.encode(secret),
-    { name: "HMAC", hash: "SHA-256" },
-    false,
-    ["sign"],
-  );
-  const sig = await crypto.subtle.sign("HMAC", key, enc.encode(value));
-  return Array.from(new Uint8Array(sig))
-    .map((b) => b.toString(16).padStart(2, "0"))
-    .join("");
+  const secret = process.env.ADMIN_PASSWORD;
+  if (secret && secret.length >= 8) return secret;
+  if (process.env.NODE_ENV === "production") {
+    throw new Error(
+      "ADMIN_PASSWORD is required in production and must be at least 8 characters.",
+    );
+  }
+  return "admin";
 }
 
 export async function makeToken(): Promise<string> {
   const ts = String(Date.now());
-  const sig = await hmac(ts, getSecret());
+  const sig = await hmacHex(ts, getSecret());
   return `${ts}.${sig}`;
 }
 
@@ -40,14 +34,8 @@ export async function verifyToken(token: string | undefined): Promise<boolean> {
   // Reject expired tokens (defense in depth — cookie's maxAge also handles this).
   const age = Date.now() - Number(ts);
   if (age < 0 || age > MAX_AGE_SECONDS * 1000) return false;
-  const expected = await hmac(ts, getSecret());
-  // Constant-time-ish comparison.
-  if (expected.length !== sig.length) return false;
-  let diff = 0;
-  for (let i = 0; i < expected.length; i++) {
-    diff |= expected.charCodeAt(i) ^ sig.charCodeAt(i);
-  }
-  return diff === 0;
+  const expected = await hmacHex(ts, getSecret());
+  return timingSafeEqualHex(expected, sig);
 }
 
 export function checkPassword(input: string): boolean {

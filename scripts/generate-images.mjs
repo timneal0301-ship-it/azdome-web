@@ -962,7 +962,20 @@ async function main() {
     [whatsInBox({}), `${root}/whatsinbox.jpg`],
   ];
 
-  await Promise.all(jobs.map(([svg, out]) => writeJpg(svg, out)));
+  // Cap concurrency — sharp + ~60 in-flight SVGs can starve file descriptors
+  // and balloon memory on smaller machines. 6 is a safe default for CI.
+  const CONCURRENCY = 6;
+  let cursor = 0;
+  async function worker() {
+    while (cursor < jobs.length) {
+      const i = cursor++;
+      const [svg, out] = jobs[i];
+      await writeJpg(svg, out);
+    }
+  }
+  await Promise.all(
+    Array.from({ length: Math.min(CONCURRENCY, jobs.length) }, () => worker()),
+  );
   console.log(`\nGenerated ${jobs.length} images.`);
 }
 

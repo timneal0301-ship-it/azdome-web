@@ -58,8 +58,9 @@ export default function LoginPage({
 
         {process.env.NODE_ENV !== "production" && (
           <p className="mt-6 text-xs text-slate-400">
-            开发环境默认密码 <code className="rounded bg-slate-100 px-1.5 py-0.5">admin</code>
-            。生产环境请设置 <code className="rounded bg-slate-100 px-1.5 py-0.5">ADMIN_PASSWORD</code> 环境变量。
+            开发环境若未设置 <code className="rounded bg-slate-100 px-1.5 py-0.5">ADMIN_PASSWORD</code>，
+            默认密码为 <code className="rounded bg-slate-100 px-1.5 py-0.5">admin</code>。
+            生产环境必须设置该环境变量（至少 8 位），否则启动报错。
           </p>
         )}
       </form>

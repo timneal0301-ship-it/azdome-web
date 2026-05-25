@@ -1,6 +1,8 @@
 // Edge-safe auth helpers (cookies, HMAC tokens). Used by middleware as well
 // as Node-side actions. DB-touching helpers live in ./auth-db.
 
+import { hmacHex, timingSafeEqualHex } from "./crypto-utils";
+
 export const USER_COOKIE = "azdome.user.v1";
 const SESSION_MAX_AGE_SECONDS = 60 * 60 * 24 * 30; // 30 days
 
@@ -10,31 +12,19 @@ export type PublicUser = {
 };
 
 function getSecret(): string {
-  return (
-    process.env.AUTH_SECRET ||
-    process.env.ADMIN_PASSWORD ||
-    "azdome-dev-secret"
-  );
-}
-
-async function hmac(value: string, secret: string): Promise<string> {
-  const enc = new TextEncoder();
-  const key = await crypto.subtle.importKey(
-    "raw",
-    enc.encode(secret),
-    { name: "HMAC", hash: "SHA-256" },
-    false,
-    ["sign"],
-  );
-  const sig = await crypto.subtle.sign("HMAC", key, enc.encode(value));
-  return Array.from(new Uint8Array(sig))
-    .map((b) => b.toString(16).padStart(2, "0"))
-    .join("");
+  const secret = process.env.AUTH_SECRET;
+  if (secret && secret.length >= 16) return secret;
+  if (process.env.NODE_ENV === "production") {
+    throw new Error(
+      "AUTH_SECRET is required in production. Generate one with: openssl rand -hex 32",
+    );
+  }
+  return "azdome-dev-secret";
 }
 
 export async function makeSessionToken(email: string): Promise<string> {
   const payload = `${email}|${Date.now()}`;
-  const sig = await hmac(payload, getSecret());
+  const sig = await hmacHex(payload, getSecret());
   return `${payload}|${sig}`;
 }
 
@@ -48,13 +38,8 @@ export async function readSessionEmail(
   const age = Date.now() - Number(tsStr);
   if (!Number.isFinite(age) || age < 0 || age > SESSION_MAX_AGE_SECONDS * 1000)
     return null;
-  const expected = await hmac(`${email}|${tsStr}`, getSecret());
-  if (expected.length !== sig.length) return null;
-  let diff = 0;
-  for (let i = 0; i < expected.length; i++) {
-    diff |= expected.charCodeAt(i) ^ sig.charCodeAt(i);
-  }
-  return diff === 0 ? email : null;
+  const expected = await hmacHex(`${email}|${tsStr}`, getSecret());
+  return timingSafeEqualHex(expected, sig) ? email : null;
 }
 
 export const USER_COOKIE_OPTIONS = {

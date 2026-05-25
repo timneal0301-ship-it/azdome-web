@@ -107,7 +107,10 @@ async function createKvAdapter(): Promise<DbAdapter | null> {
         return v ?? undefined;
       },
       async set<T>(key: string, value: T) {
-        await kv.set(key, value as never);
+        // @vercel/kv's set() narrows its value parameter to a complex union
+        // that TS can't unify with arbitrary T; the client serializes anything
+        // we hand it, so widen through the actual parameter type.
+        await kv.set(key, value as Parameters<typeof kv.set>[1]);
       },
       async delete(key: string) {
         await kv.del(key);

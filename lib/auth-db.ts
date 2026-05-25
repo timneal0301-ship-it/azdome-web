@@ -25,9 +25,12 @@ async function hashPassword(password: string): Promise<string> {
   return `${salt.toString("hex")}:${buf.toString("hex")}`;
 }
 
+// 16-byte salt (32 hex chars) + ":" + 64-byte scrypt hash (128 hex chars).
+const PW_HASH_RE = /^[0-9a-f]{32}:[0-9a-f]{128}$/;
+
 async function verifyPassword(password: string, stored: string): Promise<boolean> {
+  if (!PW_HASH_RE.test(stored)) return false;
   const [saltHex, hashHex] = stored.split(":");
-  if (!saltHex || !hashHex) return false;
   const salt = Buffer.from(saltHex, "hex");
   const expected = Buffer.from(hashHex, "hex");
   const got = (await scryptAsync(password, salt, expected.length)) as Buffer;

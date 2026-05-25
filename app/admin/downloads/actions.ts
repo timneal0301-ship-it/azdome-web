@@ -21,6 +21,11 @@ async function requireAuth() {
 const MAX_BIN_SIZE = 64 * 1024 * 1024; // 64 MB
 const MAX_PDF_SIZE = 16 * 1024 * 1024; // 16 MB
 
+// Defense-in-depth: defang any slug that could escape its directory before it
+// reaches `storage.write`. Real slug validity is checked by getFirmwareEntry /
+// getManualEntry; this just enforces the shape used by storage keys.
+const SLUG_RE = /^[a-z0-9][a-z0-9-]*$/;
+
 export type Result =
   | { ok: true; message: string }
   | { ok: false; error: string };
@@ -37,7 +42,8 @@ export async function uploadFirmware(formData: FormData): Promise<Result> {
   const file = formData.get("file");
 
   if (!productSlug) return { ok: false, error: "缺少 productSlug" };
-  if (!/^v\d+\.\d+\.\d+$/.test(version)) {
+  if (!SLUG_RE.test(productSlug)) return { ok: false, error: "非法 productSlug" };
+  if (!/^v\d{1,4}\.\d{1,4}\.\d{1,4}$/.test(version)) {
     return { ok: false, error: '版本号格式应为 "v1.2.3"' };
   }
   if (!(file instanceof File)) return { ok: false, error: "未提供文件" };
@@ -150,6 +156,7 @@ export async function uploadManual(formData: FormData): Promise<Result> {
   const file = formData.get("file");
 
   if (!productSlug) return { ok: false, error: "缺少 productSlug" };
+  if (!SLUG_RE.test(productSlug)) return { ok: false, error: "非法 productSlug" };
   if (!VALID_LOCALES.includes(lang)) return { ok: false, error: "未知语言" };
   if (!(file instanceof File)) return { ok: false, error: "未提供文件" };
   if (file.size === 0) return { ok: false, error: "文件为空" };
@@ -162,13 +169,24 @@ export async function uploadManual(formData: FormData): Promise<Result> {
   const entry = await getManualEntry(productSlug);
   if (!entry) return { ok: false, error: "未知型号" };
 
+  const bytes = Buffer.from(await file.arrayBuffer());
+  // PDF magic header: "%PDF-" (0x25 0x50 0x44 0x46 0x2D). Defends against
+  // type/extension spoofing — client-set MIME and filename are untrusted.
+  if (
+    bytes.length < 5 ||
+    bytes[0] !== 0x25 ||
+    bytes[1] !== 0x50 ||
+    bytes[2] !== 0x44 ||
+    bytes[3] !== 0x46 ||
+    bytes[4] !== 0x2d
+  ) {
+    return { ok: false, error: "文件不是有效的 PDF" };
+  }
+
   const relativePath = `downloads/manuals/${productSlug}-${lang}.pdf`;
   let url: string;
   try {
-    const result = await storage.write(
-      relativePath,
-      Buffer.from(await file.arrayBuffer()),
-    );
+    const result = await storage.write(relativePath, bytes);
     url = result.url;
   } catch (e) {
     return { ok: false, error: e instanceof Error ? e.message : "写入失败" };

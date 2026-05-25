@@ -30,7 +30,14 @@ export async function loginAction(
   }
   const token = await makeToken();
   cookies().set(COOKIE, token, COOKIE_OPTIONS);
-  redirect(next.startsWith("/admin") ? next : "/admin");
+  redirect(isSafeAdminNext(next) ? next : "/admin");
+}
+
+function isSafeAdminNext(next: string): boolean {
+  // Reject protocol-relative ("//evil.com"), backslash-prefixed, and any path
+  // outside /admin. Allow exactly "/admin" or paths under "/admin/".
+  if (next.startsWith("//") || next.startsWith("/\\")) return false;
+  return next === "/admin" || next.startsWith("/admin/");
 }
 
 export async function logoutAction() {

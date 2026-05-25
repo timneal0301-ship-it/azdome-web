@@ -15,21 +15,37 @@ import {
   type Manual,
 } from "./downloads";
 
-export async function getAllFirmware(): Promise<FirmwareEntry[]> {
+type WithSlug = { productSlug: string };
+
+async function overlayAll<T extends WithSlug>(
+  seeds: readonly T[],
+  prefix: string,
+): Promise<T[]> {
   return Promise.all(
-    FIRMWARE.map(async (seed) => {
-      const override = await db.get<FirmwareEntry>(`firmware:${seed.productSlug}`);
+    seeds.map(async (seed) => {
+      const override = await db.get<T>(`${prefix}:${seed.productSlug}`);
       return override ?? seed;
     }),
   );
 }
 
+async function overlayOne<T extends WithSlug>(
+  seeds: readonly T[],
+  prefix: string,
+  productSlug: string,
+): Promise<T | undefined> {
+  const override = await db.get<T>(`${prefix}:${productSlug}`);
+  return override ?? seeds.find((s) => s.productSlug === productSlug);
+}
+
+export async function getAllFirmware(): Promise<FirmwareEntry[]> {
+  return overlayAll(FIRMWARE, "firmware");
+}
+
 export async function getFirmwareEntry(
   productSlug: string,
 ): Promise<FirmwareEntry | undefined> {
-  const override = await db.get<FirmwareEntry>(`firmware:${productSlug}`);
-  if (override) return override;
-  return FIRMWARE.find((f) => f.productSlug === productSlug);
+  return overlayOne(FIRMWARE, "firmware", productSlug);
 }
 
 export async function getLatestFirmware(
@@ -40,20 +56,13 @@ export async function getLatestFirmware(
 }
 
 export async function getAllManuals(): Promise<Manual[]> {
-  return Promise.all(
-    MANUALS.map(async (seed) => {
-      const override = await db.get<Manual>(`manual:${seed.productSlug}`);
-      return override ?? seed;
-    }),
-  );
+  return overlayAll(MANUALS, "manual");
 }
 
 export async function getManualEntry(
   productSlug: string,
 ): Promise<Manual | undefined> {
-  const override = await db.get<Manual>(`manual:${productSlug}`);
-  if (override) return override;
-  return MANUALS.find((m) => m.productSlug === productSlug);
+  return overlayOne(MANUALS, "manual", productSlug);
 }
 
 export async function saveFirmwareEntry(entry: FirmwareEntry): Promise<void> {

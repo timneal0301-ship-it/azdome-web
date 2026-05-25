@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   CheckCircle2,
   Code,
@@ -208,7 +208,8 @@ export default function ContentEditor({
   };
 
   const onSave = async () => {
-    if (parseError) return;
+    if (parseError || pending !== null) return;
+    if (text === currentJson) return;
     setPending("save");
     setResult(null);
     setResult(await saveContentAction(sectionKey, text));
@@ -216,19 +217,21 @@ export default function ContentEditor({
   };
 
   // Cmd+S / Ctrl+S shortcut. Skips when text is unchanged or invalid.
+  // The handler reads through a ref so we don't have to re-bind the global
+  // keydown listener on every render — and onSave can close over fresh state
+  // without becoming a missing useEffect dependency.
+  const onSaveRef = useRef(onSave);
+  onSaveRef.current = onSave;
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "s") {
         e.preventDefault();
-        if (parseError || pending !== null) return;
-        if (text === currentJson) return;
-        onSave();
+        onSaveRef.current();
       }
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [text, currentJson, parseError, pending]);
+  }, []);
 
   const onReset = async () => {
     if (!confirm("恢复为代码里的默认值,并清掉所有 admin 改动 + 历史?")) return;

@@ -45,9 +45,11 @@ export async function getProductWithOverlay(
 export async function getProductForPDP(
   slug: string,
 ): Promise<ProductDetail | undefined> {
-  const product = await getProductWithOverlay(slug);
+  const [product, assetMap] = await Promise.all([
+    getProductWithOverlay(slug),
+    getAssetUrlMap(),
+  ]);
   if (!product) return undefined;
-  const assetMap = await getAssetUrlMap();
 
   // Collect uploaded standard slot images in order 1..6.
   const slotImages: ProductDetail["gallery"] = [];

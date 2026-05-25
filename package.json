@@ -6,7 +6,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit",
+    "gen:downloads": "node scripts/generate-downloads.mjs",
+    "gen:images": "node scripts/generate-images.mjs",
+    "gen": "npm run gen:downloads && npm run gen:images"
   },
   "dependencies": {
     "@auth/core": "^0.41.2",
@@ -15,7 +19,7 @@
     "framer-motion": "^11.5.4",
     "lucide-react": "^0.453.0",
     "next": "^14.2.15",
-    "next-auth": "^5.0.0-beta.31",
+    "next-auth": "5.0.0-beta.31",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "server-only": "^0.0.1"
@@ -25,6 +29,8 @@
     "@types/react": "^18.3.11",
     "@types/react-dom": "^18.3.0",
     "autoprefixer": "^10.4.20",
+    "eslint": "^8.57.1",
+    "eslint-config-next": "^14.2.35",
     "pdf-lib": "^1.17.1",
     "postcss": "^8.4.47",
     "sharp": "^0.34.5",
