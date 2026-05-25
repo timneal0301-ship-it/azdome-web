@@ -7,7 +7,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Minus, Plus, ShieldCheck, ShoppingBag, Tag, Trash2, X } from "lucide-react";
 import { useState, useTransition } from "react";
 
-import { useCart } from "./CartProvider";
+import { promoErrorKey, useCart, type PromoErrorReason } from "./CartProvider";
 import { useLocale } from "./LocaleProvider";
 import { PRODUCTS } from "@/lib/products";
 
@@ -326,8 +326,10 @@ function PromoEntry({
 }: {
   promo: { code: string; type: "percent" | "amount"; value: number } | null;
   discount: number;
-  error: string | null;
-  applyPromo: (code: string) => Promise<{ ok: boolean; error?: string }>;
+  error: PromoErrorReason | null;
+  applyPromo: (
+    code: string,
+  ) => Promise<{ ok: true } | { ok: false; reason: PromoErrorReason }>;
   removePromo: () => void;
 }) {
   const [input, setInput] = useState("");
@@ -342,6 +344,9 @@ function PromoEntry({
   };
 
   // Applied state — show the code + remove button.
+  const { t } = useLocale();
+  const promoT = t.cart.promo;
+
   if (promo) {
     return (
       <div className="flex items-center justify-between gap-2 rounded-xl bg-emerald-50 px-3 py-2 text-xs text-emerald-800 ring-1 ring-emerald-200">
@@ -360,7 +365,7 @@ function PromoEntry({
           onClick={removePromo}
           className="text-emerald-700 underline-offset-2 transition-colors hover:text-emerald-900 hover:underline"
         >
-          移除
+          {t.cart.remove}
         </button>
       </div>
     );
@@ -377,8 +382,8 @@ function PromoEntry({
           onKeyDown={(e) => {
             if (e.key === "Enter") onApply();
           }}
-          placeholder="促销码"
-          aria-label="促销码"
+          placeholder={promoT.placeholder}
+          aria-label={promoT.placeholder}
           maxLength={32}
           className="block w-full rounded-full border border-slate-200 bg-white px-4 py-2 font-mono text-xs uppercase tabular-nums shadow-inner outline-none transition-colors focus:border-blue-500"
         />
@@ -388,11 +393,11 @@ function PromoEntry({
           disabled={pending || !input.trim()}
           className="inline-flex items-center justify-center rounded-full bg-slate-900 px-4 py-2 text-xs font-semibold tracking-tight text-white transition-colors hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          {pending ? "..." : "应用"}
+          {pending ? "…" : promoT.apply}
         </button>
       </div>
       {error && (
-        <p className="mt-1.5 text-xs text-red-600">{error}</p>
+        <p className="mt-1.5 text-xs text-red-600">{promoT[promoErrorKey(error)]}</p>
       )}
     </div>
   );

@@ -93,6 +93,14 @@ const en = {
     addToCart: "Add to Cart",
     buyNow: "Buy Now",
     remove: "Remove",
+    promo: {
+      placeholder: "Promo code",
+      apply: "Apply",
+      errInvalid: "Invalid promo code",
+      errExpired: "This code has expired",
+      errMin: "Minimum order amount not met",
+      errEmpty: "Please enter a code",
+    },
   },
   buyBox: {
     reviews: "reviews",
@@ -317,6 +325,14 @@ const zh: Dict = {
     addToCart: "加入购物车",
     buyNow: "立即购买",
     remove: "移除",
+    promo: {
+      placeholder: "促销码",
+      apply: "应用",
+      errInvalid: "促销码无效",
+      errExpired: "促销码已过期",
+      errMin: "未达到最低订单金额",
+      errEmpty: "请输入促销码",
+    },
   },
   buyBox: {
     reviews: "条评价",
@@ -519,6 +535,14 @@ const ja: Dict = {
     addToCart: "カートに追加",
     buyNow: "今すぐ購入",
     remove: "削除",
+    promo: {
+      placeholder: "プロモコード",
+      apply: "適用",
+      errInvalid: "無効なコードです",
+      errExpired: "このコードは期限切れです",
+      errMin: "最低注文金額に達していません",
+      errEmpty: "コードを入力してください",
+    },
   },
   buyBox: {
     reviews: "件のレビュー",
@@ -723,6 +747,14 @@ const de: Dict = {
     addToCart: "In den Warenkorb",
     buyNow: "Jetzt kaufen",
     remove: "Entfernen",
+    promo: {
+      placeholder: "Aktionscode",
+      apply: "Anwenden",
+      errInvalid: "Ungültiger Aktionscode",
+      errExpired: "Dieser Code ist abgelaufen",
+      errMin: "Mindestbestellwert nicht erreicht",
+      errEmpty: "Bitte Code eingeben",
+    },
   },
   buyBox: {
     reviews: "Bewertungen",
@@ -928,6 +960,14 @@ const fr: Dict = {
     addToCart: "Ajouter au panier",
     buyNow: "Acheter",
     remove: "Retirer",
+    promo: {
+      placeholder: "Code promo",
+      apply: "Appliquer",
+      errInvalid: "Code promo invalide",
+      errExpired: "Ce code a expiré",
+      errMin: "Montant minimum non atteint",
+      errEmpty: "Veuillez saisir un code",
+    },
   },
   buyBox: {
     reviews: "avis",
@@ -1135,6 +1175,14 @@ const es: Dict = {
     addToCart: "Añadir al carrito",
     buyNow: "Comprar ahora",
     remove: "Eliminar",
+    promo: {
+      placeholder: "Código promo",
+      apply: "Aplicar",
+      errInvalid: "Código no válido",
+      errExpired: "Este código ha caducado",
+      errMin: "No se alcanza el importe mínimo",
+      errEmpty: "Introduce un código",
+    },
   },
   buyBox: {
     reviews: "reseñas",
@@ -1342,6 +1390,14 @@ const it: Dict = {
     addToCart: "Aggiungi al carrello",
     buyNow: "Acquista ora",
     remove: "Rimuovi",
+    promo: {
+      placeholder: "Codice promo",
+      apply: "Applica",
+      errInvalid: "Codice non valido",
+      errExpired: "Questo codice è scaduto",
+      errMin: "Importo minimo non raggiunto",
+      errEmpty: "Inserisci un codice",
+    },
   },
   buyBox: {
     reviews: "recensioni",
@@ -1548,6 +1604,14 @@ const ru: Dict = {
     addToCart: "В корзину",
     buyNow: "Купить сейчас",
     remove: "Удалить",
+    promo: {
+      placeholder: "Промокод",
+      apply: "Применить",
+      errInvalid: "Недействительный промокод",
+      errExpired: "Срок действия истёк",
+      errMin: "Минимальная сумма заказа не достигнута",
+      errEmpty: "Введите код",
+    },
   },
   buyBox: {
     reviews: "отзывов",
@@ -1754,6 +1818,14 @@ const pl: Dict = {
     addToCart: "Do koszyka",
     buyNow: "Kup teraz",
     remove: "Usuń",
+    promo: {
+      placeholder: "Kod promocyjny",
+      apply: "Zastosuj",
+      errInvalid: "Nieprawidłowy kod",
+      errExpired: "Ten kod wygasł",
+      errMin: "Nie osiągnięto minimalnej wartości zamówienia",
+      errEmpty: "Wprowadź kod",
+    },
   },
   buyBox: {
     reviews: "opinii",
@@ -1960,6 +2032,14 @@ const ro: Dict = {
     addToCart: "Adaugă în coș",
     buyNow: "Cumpără acum",
     remove: "Elimină",
+    promo: {
+      placeholder: "Cod promoțional",
+      apply: "Aplică",
+      errInvalid: "Cod invalid",
+      errExpired: "Acest cod a expirat",
+      errMin: "Suma minimă a comenzii nu este îndeplinită",
+      errEmpty: "Introdu un cod",
+    },
   },
   buyBox: {
     reviews: "recenzii",
@@ -2166,6 +2246,14 @@ const tr: Dict = {
     addToCart: "Sepete Ekle",
     buyNow: "Hemen Al",
     remove: "Kaldır",
+    promo: {
+      placeholder: "Promosyon kodu",
+      apply: "Uygula",
+      errInvalid: "Geçersiz kod",
+      errExpired: "Bu kodun süresi doldu",
+      errMin: "Minimum sipariş tutarına ulaşılmadı",
+      errEmpty: "Lütfen bir kod girin",
+    },
   },
   buyBox: {
     reviews: "yorum",
@@ -2372,6 +2460,14 @@ const pt: Dict = {
     addToCart: "Adicionar ao Carrinho",
     buyNow: "Comprar Agora",
     remove: "Remover",
+    promo: {
+      placeholder: "Código promocional",
+      apply: "Aplicar",
+      errInvalid: "Código inválido",
+      errExpired: "Este código expirou",
+      errMin: "Valor mínimo do pedido não atingido",
+      errEmpty: "Digite um código",
+    },
   },
   buyBox: {
     reviews: "avaliações",
@@ -2578,6 +2674,14 @@ const ar: Dict = {
     addToCart: "أضِف إلى السلة",
     buyNow: "اشترِ الآن",
     remove: "إزالة",
+    promo: {
+      placeholder: "كود ترويجي",
+      apply: "تطبيق",
+      errInvalid: "كود غير صالح",
+      errExpired: "انتهت صلاحية الكود",
+      errMin: "لم يتم الوصول إلى الحد الأدنى للطلب",
+      errEmpty: "الرجاء إدخال كود",
+    },
   },
   buyBox: {
     reviews: "مراجعة",
@@ -2784,6 +2888,14 @@ const th: Dict = {
     addToCart: "เพิ่มลงตะกร้า",
     buyNow: "ซื้อตอนนี้",
     remove: "ลบออก",
+    promo: {
+      placeholder: "รหัสโปรโมชั่น",
+      apply: "ใช้",
+      errInvalid: "รหัสไม่ถูกต้อง",
+      errExpired: "รหัสนี้หมดอายุแล้ว",
+      errMin: "ยอดสั่งซื้อต่ำกว่าขั้นต่ำ",
+      errEmpty: "กรุณาใส่รหัส",
+    },
   },
   buyBox: {
     reviews: "รีวิว",
@@ -2990,6 +3102,14 @@ const vi: Dict = {
     addToCart: "Thêm vào giỏ",
     buyNow: "Mua ngay",
     remove: "Xóa",
+    promo: {
+      placeholder: "Mã khuyến mãi",
+      apply: "Áp dụng",
+      errInvalid: "Mã không hợp lệ",
+      errExpired: "Mã đã hết hạn",
+      errMin: "Chưa đạt giá trị tối thiểu",
+      errEmpty: "Nhập mã",
+    },
   },
   buyBox: {
     reviews: "đánh giá",

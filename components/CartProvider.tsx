@@ -31,6 +31,37 @@ export type AppliedPromo = {
   value: number;
 };
 
+/** Typed reason for the most recent promo-apply rejection. UI components
+ *  translate these via t.cart.promo so locale-correct copy lives in the
+ *  dictionary, not in client state. */
+export type PromoErrorReason =
+  | "empty"
+  | "not-found"
+  | "inactive"
+  | "expired"
+  | "min-subtotal"
+  | "zero-subtotal";
+
+/** Map a reason to the matching dict key under t.cart.promo. `not-found`
+ *  and `inactive` collapse to the same generic message — we don't reveal
+ *  to the user whether a code exists but is disabled. */
+export function promoErrorKey(
+  reason: PromoErrorReason,
+): "errEmpty" | "errInvalid" | "errExpired" | "errMin" {
+  switch (reason) {
+    case "empty":
+    case "zero-subtotal":
+      return "errEmpty";
+    case "not-found":
+    case "inactive":
+      return "errInvalid";
+    case "expired":
+      return "errExpired";
+    case "min-subtotal":
+      return "errMin";
+  }
+}
+
 type CartContextValue = {
   items: CartItem[];
   count: number;
@@ -40,7 +71,7 @@ type CartContextValue = {
   discount: number;
   /** Subtotal minus discount, never negative. */
   total: number;
-  promoError: string | null;
+  promoError: PromoErrorReason | null;
   isOpen: boolean;
   open: () => void;
   close: () => void;
@@ -48,7 +79,9 @@ type CartContextValue = {
   remove: (id: string) => void;
   updateQty: (id: string, qty: number) => void;
   clear: () => void;
-  applyPromo: (code: string) => Promise<{ ok: boolean; error?: string }>;
+  applyPromo: (
+    code: string,
+  ) => Promise<{ ok: true } | { ok: false; reason: PromoErrorReason }>;
   removePromo: () => void;
 };
 
@@ -70,7 +103,7 @@ export default function CartProvider({
 }) {
   const [items, setItems] = useState<CartItem[]>([]);
   const [promo, setPromo] = useState<AppliedPromo | null>(null);
-  const [promoError, setPromoError] = useState<string | null>(null);
+  const [promoError, setPromoError] = useState<PromoErrorReason | null>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [hydrated, setHydrated] = useState(false);
 
@@ -157,25 +190,23 @@ export default function CartProvider({
 
   // Server-validated promo apply. The server re-checks min subtotal,
   // expiry, and active flag against the current cart so a stale client
-  // can't sneak a discount through. Stores only the discount shape (not
-  // expiry / minSubtotal) since those don't affect display once applied.
+  // can't sneak a discount through. We surface a typed reason on
+  // rejection so the UI translates via t.cart.promo.
   const applyPromo = useCallback<CartContextValue["applyPromo"]>(
     async (rawCode) => {
       const code = rawCode.trim();
       if (!code) {
-        setPromoError("请输入促销码");
-        return { ok: false, error: "请输入促销码" };
+        setPromoError("empty");
+        return { ok: false, reason: "empty" };
       }
-      // Snapshot subtotal at call time — server validates against this.
       const currentSubtotal = items.reduce(
         (s, i) => s + i.price * i.quantity,
         0,
       );
       const r = await lookupPromo(code, currentSubtotal);
       if (!r.ok) {
-        const msg = errorFor(r.reason);
-        setPromoError(msg);
-        return { ok: false, error: msg };
+        setPromoError(r.reason);
+        return { ok: false, reason: r.reason };
       }
       setPromo({ code: r.code, type: r.type, value: r.value });
       setPromoError(null);
@@ -231,21 +262,4 @@ export default function CartProvider({
   ]);
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
-}
-
-function errorFor(reason: string): string {
-  switch (reason) {
-    case "not-found":
-      return "促销码无效或不存在";
-    case "inactive":
-      return "促销码已停用";
-    case "expired":
-      return "促销码已过期";
-    case "min-subtotal":
-      return "未达到此促销码的最低订单金额";
-    case "zero-subtotal":
-      return "购物车为空时无法使用促销码";
-    default:
-      return "促销码无法使用";
-  }
 }

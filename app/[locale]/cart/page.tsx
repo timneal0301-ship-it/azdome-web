@@ -5,7 +5,12 @@ import Link from "@/components/ui/Link";
 import Image from "next/image";
 import { Minus, Plus, ShieldCheck, ShoppingBag, Tag, Trash2 } from "lucide-react";
 
-import { useCart } from "@/components/CartProvider";
+import {
+  promoErrorKey,
+  useCart,
+  type PromoErrorReason,
+} from "@/components/CartProvider";
+import { useLocale } from "@/components/LocaleProvider";
 
 const formatUSD = (v: number) =>
   new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(v);
@@ -212,12 +217,16 @@ function CartPromoEntry({
 }: {
   promo: { code: string; type: "percent" | "amount"; value: number } | null;
   discount: number;
-  error: string | null;
-  applyPromo: (code: string) => Promise<{ ok: boolean; error?: string }>;
+  error: PromoErrorReason | null;
+  applyPromo: (
+    code: string,
+  ) => Promise<{ ok: true } | { ok: false; reason: PromoErrorReason }>;
   removePromo: () => void;
 }) {
   const [input, setInput] = useState("");
   const [pending, startTransition] = useTransition();
+  const { t } = useLocale();
+  const promoT = t.cart.promo;
 
   const onApply = () => {
     if (!input.trim()) return;
@@ -248,7 +257,7 @@ function CartPromoEntry({
           onClick={removePromo}
           className="text-emerald-700 underline-offset-2 transition-colors hover:text-emerald-900 hover:underline"
         >
-          移除
+          {t.cart.remove}
         </button>
       </div>
     );
@@ -264,8 +273,8 @@ function CartPromoEntry({
           onKeyDown={(e) => {
             if (e.key === "Enter") onApply();
           }}
-          placeholder="促销码"
-          aria-label="促销码"
+          placeholder={promoT.placeholder}
+          aria-label={promoT.placeholder}
           maxLength={32}
           className="block w-full rounded-full border border-slate-200 bg-white px-4 py-2 font-mono text-xs uppercase tabular-nums shadow-inner outline-none transition-colors focus:border-blue-500"
         />
@@ -275,10 +284,12 @@ function CartPromoEntry({
           disabled={pending || !input.trim()}
           className="inline-flex items-center justify-center rounded-full bg-slate-900 px-4 py-2 text-xs font-semibold tracking-tight text-white transition-colors hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          {pending ? "..." : "应用"}
+          {pending ? "…" : promoT.apply}
         </button>
       </div>
-      {error && <p className="mt-1.5 text-xs text-red-600">{error}</p>}
+      {error && (
+        <p className="mt-1.5 text-xs text-red-600">{promoT[promoErrorKey(error)]}</p>
+      )}
     </div>
   );
 }
