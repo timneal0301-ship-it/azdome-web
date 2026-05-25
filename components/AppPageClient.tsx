@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "@/components/ui/HQImage";
-import Link from "next/link";
+import Link from "@/components/ui/Link";
 import {
   Apple, Download, Folder, Languages, MapPin, Mic, PlayCircle, Play,
   Settings, ShieldCheck, Smartphone, Star, Wifi,

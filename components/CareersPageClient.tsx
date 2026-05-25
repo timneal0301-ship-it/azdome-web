@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import Link from "@/components/ui/Link";
 import {
   ArrowRight, BookOpen, HeartPulse, MapPin, PiggyBank, Plane, Sparkles, Users, Wifi,
 } from "lucide-react";

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-import { getCurrentUser } from "@/app/account/actions";
+import { getCurrentUser } from "@/app/[locale]/account/actions";
 import { auth } from "@/auth";
 
 export const dynamic = "force-dynamic";

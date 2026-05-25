@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import Link from "@/components/ui/Link";
 import { Facebook, Instagram, Youtube } from "lucide-react";
 
 import { useLocale } from "./LocaleProvider";

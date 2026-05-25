@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/ui/Link";
 import { ExternalLink, ImageIcon } from "lucide-react";
 
 import AdminNav from "@/components/admin/AdminNav";

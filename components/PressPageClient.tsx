@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import Link from "@/components/ui/Link";
 import { ArrowUpRight, Download, FileText, Image as ImageIcon, Palette } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 

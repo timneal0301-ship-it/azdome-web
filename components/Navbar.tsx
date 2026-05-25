@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Link from "next/link";
+import Link from "@/components/ui/Link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
@@ -34,11 +34,9 @@ const NAV_LINKS: NavLink[] = [
 ];
 
 // Primary product taxonomy: by camera channel count. Each card maps to an
-// auto-derived collection (see COLLECTIONS in lib/products.ts). Mega-menu
-// labels are intentionally hard-coded in EN here — i18n keys are still in
-// place for the legacy "dual / stealth / screen" trio used by the secondary
-// links row below, but the channel-first card grid is the brand structure
-// going forward and gets translated as part of the channel rollout.
+// auto-derived collection (see COLLECTIONS in lib/products.ts). Labels
+// come from the megaMenu dictionary block — fully localized in all 15
+// locales alongside the existing dual / stealth / screen entries.
 type ChannelKey = "single" | "dual" | "triple" | "quad";
 const CHANNEL_HREFS: Record<ChannelKey, string> = {
   single: "/collections/single-channel",
@@ -53,12 +51,6 @@ const CHANNEL_IMAGES: Record<ChannelKey, string> = {
   dual: "/images/products/m550-pro/1.jpg",
   triple: "/images/products/m550-max/1.jpg",
   quad: "/images/products/s40/1.jpg",
-};
-const CHANNEL_LABELS: Record<ChannelKey, { title: string; sub: string }> = {
-  single: { title: "1-Channel", sub: "Front-only · entry tier" },
-  dual: { title: "2-Channel", sub: "Front + rear · most popular" },
-  triple: { title: "3-Channel", sub: "Front + cabin + rear · rideshare" },
-  quad: { title: "4-Channel & 360°", sub: "Full surround · fleet" },
 };
 const CHANNEL_KEYS: ChannelKey[] = ["single", "dual", "triple", "quad"];
 
@@ -256,11 +248,14 @@ export default function Navbar() {
                 <div className="mx-auto max-w-7xl px-6 pb-8 lg:px-10">
                   <div className="rounded-2xl bg-white/95 p-8 shadow-md ring-1 ring-slate-100 backdrop-blur-xl">
                     <p className="mb-6 text-xs font-medium uppercase tracking-[0.18em] text-slate-400">
-                      Shop by Channel
+                      {t.megaMenu.eyebrow}
                     </p>
                     <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
                       {CHANNEL_KEYS.map((key) => {
-                        const meta = CHANNEL_LABELS[key];
+                        const meta = {
+                          title: t.megaMenu[`${key}Title` as const],
+                          sub: t.megaMenu[`${key}Sub` as const],
+                        };
                         return (
                           <Link
                             key={key}

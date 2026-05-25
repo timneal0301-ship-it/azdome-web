@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import { Inter } from "next/font/google";
 import CartProvider from "@/components/CartProvider";
 import LocaleProvider from "@/components/LocaleProvider";
@@ -6,6 +7,12 @@ import PublicChrome from "@/components/PublicChrome";
 import AuthSessionProvider from "@/components/AuthSessionProvider";
 import { AssetUrlsProvider } from "@/components/AssetUrlsProvider";
 import { getAssetUrlMap } from "@/lib/asset-urls";
+import {
+  DEFAULT_LOCALE,
+  LOCALE_HTML_LANG,
+  isRtlLocale,
+  isValidLocale,
+} from "@/lib/i18n/url";
 import "./globals.css";
 
 // Layout reads admin-uploaded image overrides from KV on every request.
@@ -87,8 +94,18 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   const assetUrls = await getAssetUrlMap();
+  // Middleware sets x-locale on every request that resolves to a locale
+  // segment (and skips it for /admin and /api). On admin/api routes the
+  // header is absent — fall back to DEFAULT_LOCALE for the <html lang>.
+  const headerLocale = headers().get("x-locale");
+  const locale =
+    headerLocale && isValidLocale(headerLocale) ? headerLocale : DEFAULT_LOCALE;
   return (
-    <html lang="en" className={inter.variable}>
+    <html
+      lang={LOCALE_HTML_LANG[locale]}
+      dir={isRtlLocale(locale) ? "rtl" : "ltr"}
+      className={inter.variable}
+    >
       <body className="bg-white font-sans text-slate-900 antialiased">
         <script
           type="application/ld+json"

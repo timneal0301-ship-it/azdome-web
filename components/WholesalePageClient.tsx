@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import Link from "@/components/ui/Link";
 import {
   Boxes, Building2, Briefcase, Headset, Package2, ShieldCheck, Truck, Wrench,
 } from "lucide-react";
