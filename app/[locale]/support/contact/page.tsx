@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
+import Link from "@/components/ui/Link";
 import { CheckCircle2, Mail, MessageCircle, Phone } from "lucide-react";
 
 import { useLocale } from "@/components/LocaleProvider";

@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import Link from "next/link";
+import Link from "@/components/ui/Link";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { ChevronRight, Play } from "lucide-react";
 

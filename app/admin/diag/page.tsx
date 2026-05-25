@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/ui/Link";
 import AutoRefresh from "@/components/admin/AutoRefresh";
 import { ALL_SECTIONS, getContentDetailed } from "@/lib/content-server";
 import { db } from "@/lib/db";

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Link from "next/link";
+import Link from "@/components/ui/Link";
 import { AnimatePresence, motion } from "framer-motion";
 import { LogIn, LogOut, Package, User, UserPlus } from "lucide-react";
 

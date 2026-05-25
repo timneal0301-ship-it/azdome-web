@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import Link from "@/components/ui/Link";
 import Image from "next/image";
 import { Minus, Plus, ShieldCheck, ShoppingBag, Trash2 } from "lucide-react";
 

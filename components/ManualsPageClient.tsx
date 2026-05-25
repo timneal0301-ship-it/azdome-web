@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import Link from "@/components/ui/Link";
 import { BookOpen, Languages } from "lucide-react";
 
 import ManualsList from "@/components/ManualsList";

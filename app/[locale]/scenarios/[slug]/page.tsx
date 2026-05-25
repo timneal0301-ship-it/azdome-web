@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import Image from "@/components/ui/HQImage";
-import Link from "next/link";
+import Link from "@/components/ui/Link";
 import { ArrowRight } from "lucide-react";
 
 import ProductCard from "@/components/ProductCard";

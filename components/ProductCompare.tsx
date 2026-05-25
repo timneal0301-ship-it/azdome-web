@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
+import Link from "@/components/ui/Link";
 import { motion } from "framer-motion";
 import { Check, Minus, X } from "lucide-react";
 

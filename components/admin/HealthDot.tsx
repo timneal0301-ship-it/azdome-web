@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/ui/Link";
 
 import { db } from "@/lib/db";
 import { storage } from "@/lib/storage";

@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import Link from "@/components/ui/Link";
 import { useFormState, useFormStatus } from "react-dom";
 import { UserPlus } from "lucide-react";
 

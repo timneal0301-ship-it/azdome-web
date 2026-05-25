@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import Link from "@/components/ui/Link";
 import Image from "@/components/ui/HQImage";
 import { motion } from "framer-motion";
 import { Star } from "lucide-react";
