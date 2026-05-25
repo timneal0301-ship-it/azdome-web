@@ -33,18 +33,34 @@ const NAV_LINKS: NavLink[] = [
   { key: "about", href: "/about" },
 ];
 
-type MegaKey = "dual" | "stealth" | "screen";
-const MEGA_HREFS: Record<MegaKey, string> = {
+// Primary product taxonomy: by camera channel count. Each card maps to an
+// auto-derived collection (see COLLECTIONS in lib/products.ts). Mega-menu
+// labels are intentionally hard-coded in EN here — i18n keys are still in
+// place for the legacy "dual / stealth / screen" trio used by the secondary
+// links row below, but the channel-first card grid is the brand structure
+// going forward and gets translated as part of the channel rollout.
+type ChannelKey = "single" | "dual" | "triple" | "quad";
+const CHANNEL_HREFS: Record<ChannelKey, string> = {
+  single: "/collections/single-channel",
   dual: "/collections/dual-channel",
-  stealth: "/collections/stealth",
-  screen: "/collections/with-screen",
+  triple: "/collections/three-channel",
+  quad: "/collections/four-channel",
 };
-const MEGA_IMAGES: Record<MegaKey, string> = {
-  dual: "/images/mega/dual-channel.jpg",
-  stealth: "/images/mega/stealth.jpg",
-  screen: "/images/mega/with-screen.jpg",
+const CHANNEL_IMAGES: Record<ChannelKey, string> = {
+  // Reuse representative product covers until brand sources channel-specific
+  // mega imagery. M550 Max stands in for triple-channel; S40 for quad.
+  single: "/images/mega/dual-channel.jpg",
+  dual: "/images/products/m550-pro/1.jpg",
+  triple: "/images/products/m550-max/1.jpg",
+  quad: "/images/products/s40/1.jpg",
 };
-const MEGA_KEYS: MegaKey[] = ["dual", "stealth", "screen"];
+const CHANNEL_LABELS: Record<ChannelKey, { title: string; sub: string }> = {
+  single: { title: "1-Channel", sub: "Front-only · entry tier" },
+  dual: { title: "2-Channel", sub: "Front + rear · most popular" },
+  triple: { title: "3-Channel", sub: "Front + cabin + rear · rideshare" },
+  quad: { title: "4-Channel & 360°", sub: "Full surround · fleet" },
+};
+const CHANNEL_KEYS: ChannelKey[] = ["single", "dual", "triple", "quad"];
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -56,11 +72,6 @@ export default function Navbar() {
   const pathname = usePathname();
   const { count: cartCount, open: openCart } = useCart();
   const { t } = useLocale();
-  const megaLabels: Record<MegaKey, { title: string; sub: string }> = {
-    dual: { title: t.megaMenu.dualTitle, sub: t.megaMenu.dualSub },
-    stealth: { title: t.megaMenu.stealthTitle, sub: t.megaMenu.stealthSub },
-    screen: { title: t.megaMenu.screenTitle, sub: t.megaMenu.screenSub },
-  };
 
   useEffect(() => {
     const onScroll = () => {
@@ -245,23 +256,23 @@ export default function Navbar() {
                 <div className="mx-auto max-w-7xl px-6 pb-8 lg:px-10">
                   <div className="rounded-2xl bg-white/95 p-8 shadow-md ring-1 ring-slate-100 backdrop-blur-xl">
                     <p className="mb-6 text-xs font-medium uppercase tracking-[0.18em] text-slate-400">
-                      {t.megaMenu.eyebrow}
+                      Shop by Channel
                     </p>
-                    <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-                      {MEGA_KEYS.map((key) => {
-                        const meta = megaLabels[key];
+                    <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
+                      {CHANNEL_KEYS.map((key) => {
+                        const meta = CHANNEL_LABELS[key];
                         return (
                           <Link
                             key={key}
-                            href={MEGA_HREFS[key]}
+                            href={CHANNEL_HREFS[key]}
                             className="group block rounded-xl p-3 transition-all duration-300 hover:bg-slate-50"
                           >
                             <div className="relative mb-4 aspect-[4/3] overflow-hidden rounded-xl bg-slate-100">
                               <Image
-                                src={MEGA_IMAGES[key]}
+                                src={CHANNEL_IMAGES[key]}
                                 alt={meta.title}
                                 fill
-                                sizes="(min-width: 768px) 30vw, 90vw"
+                                sizes="(min-width: 768px) 22vw, 45vw"
                                 className="object-cover transition-transform duration-500 group-hover:scale-105"
                               />
                             </div>
@@ -277,6 +288,33 @@ export default function Navbar() {
                           </Link>
                         );
                       })}
+                    </div>
+                    <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-2 border-t border-slate-100 pt-6 text-sm">
+                      <Link
+                        href="/collections/dash-cams"
+                        className="font-medium text-slate-900 hover:text-blue-600"
+                      >
+                        All Dash Cams
+                      </Link>
+                      <Link
+                        href="/collections/accessories"
+                        className="font-medium text-slate-900 hover:text-blue-600"
+                      >
+                        Accessories
+                      </Link>
+                      <span className="text-slate-300">·</span>
+                      <Link
+                        href="/collections/with-screen"
+                        className="text-slate-500 hover:text-blue-600"
+                      >
+                        {t.megaMenu.screenTitle}
+                      </Link>
+                      <Link
+                        href="/collections/stealth"
+                        className="text-slate-500 hover:text-blue-600"
+                      >
+                        {t.megaMenu.stealthTitle}
+                      </Link>
                     </div>
                   </div>
                 </div>

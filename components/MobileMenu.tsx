@@ -16,10 +16,18 @@ const GROUPS: Group[] = [
   {
     label: "Dash Cams",
     links: [
-      { label: "Front + Rear Dual", href: "/collections/dual-channel" },
-      { label: "Stealth Mount", href: "/collections/stealth" },
-      { label: "With Touchscreen", href: "/collections/with-screen" },
+      { label: "1-Channel", href: "/collections/single-channel" },
+      { label: "2-Channel · Front + Rear", href: "/collections/dual-channel" },
+      { label: "3-Channel · Rideshare", href: "/collections/three-channel" },
+      { label: "4-Channel · 360°", href: "/collections/four-channel" },
       { label: "All Dash Cams", href: "/collections/dash-cams" },
+    ],
+  },
+  {
+    label: "By Feature",
+    links: [
+      { label: "With Touchscreen", href: "/collections/with-screen" },
+      { label: "Stealth Mount", href: "/collections/stealth" },
     ],
   },
   {

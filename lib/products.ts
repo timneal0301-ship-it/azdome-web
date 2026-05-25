@@ -5,6 +5,22 @@ export type Variant = {
   priceDelta: number;
 };
 
+/** Resolution tier. 3K = 2880×1620, 2K = 2560×1440, FHD = 1920×1080. */
+export type Resolution = "FHD" | "2K" | "3K" | "4K";
+
+/** Stable feature flags used for filtering, faceting, and structured data. */
+export type ProductFeature =
+  | "ADAS"
+  | "WiFi"
+  | "GPS"
+  | "Parking24h"
+  | "VoiceControl"
+  | "NightVision"
+  | "TouchScreen"
+  | "Mirror"
+  | "Stealth"
+  | "360View";
+
 export type ProductDetail = {
   slug: string;
   name: string;
@@ -20,6 +36,14 @@ export type ProductDetail = {
   variants?: Variant[];
   gallery: { src: string; alt: string; hidden?: boolean }[];
   category: "dash-cam" | "accessory";
+  /** Camera channel count. Omitted for accessories. 1 = single-cam, 4 = 360°. */
+  channels?: 1 | 2 | 3 | 4;
+  /** True when the unit ships with its own display (incl. mirror screens). */
+  hasScreen?: boolean;
+  /** Front-camera native resolution (drives collection filters + JSON-LD). */
+  maxResolution?: Resolution;
+  /** Feature flags — used by collection facets and Product schema. */
+  features?: ProductFeature[];
   /** Set to true to soft-hide the product from collection/featured grids. */
   hidden?: boolean;
 };
@@ -54,6 +78,10 @@ export const PRODUCTS: ProductDetail[] = [
     ],
     gallery: [],
     category: "dash-cam",
+    channels: 2,
+    hasScreen: true,
+    maxResolution: "4K",
+    features: ["WiFi", "GPS", "Parking24h", "VoiceControl", "NightVision", "TouchScreen"],
   },
   {
     slug: "m550-max",
@@ -74,6 +102,10 @@ export const PRODUCTS: ProductDetail[] = [
     ],
     gallery: [],
     category: "dash-cam",
+    channels: 3,
+    hasScreen: true,
+    maxResolution: "4K",
+    features: ["WiFi", "GPS", "Parking24h", "NightVision", "TouchScreen"],
   },
   {
     slug: "pg17-pro",
@@ -94,6 +126,10 @@ export const PRODUCTS: ProductDetail[] = [
     ],
     gallery: [],
     category: "dash-cam",
+    channels: 2,
+    hasScreen: true,
+    maxResolution: "4K",
+    features: ["ADAS", "WiFi", "GPS", "Parking24h", "NightVision", "TouchScreen", "Mirror"],
   },
   {
     slug: "s40",
@@ -108,6 +144,10 @@ export const PRODUCTS: ProductDetail[] = [
       "Four cameras — front, left, right, rear — stitched into a 360° view. The choice for delivery fleets and security-focused owners. WDR night vision and continuous parking mode across all four channels.",
     gallery: [],
     category: "dash-cam",
+    channels: 4,
+    hasScreen: false,
+    maxResolution: "4K",
+    features: ["WiFi", "GPS", "Parking24h", "NightVision", "360View"],
   },
   {
     slug: "m17-pro",
@@ -126,6 +166,10 @@ export const PRODUCTS: ProductDetail[] = [
     ],
     gallery: [],
     category: "dash-cam",
+    channels: 2,
+    hasScreen: false,
+    maxResolution: "4K",
+    features: ["ADAS", "WiFi", "NightVision", "Stealth"],
   },
   {
     slug: "m01-pro",
@@ -140,6 +184,10 @@ export const PRODUCTS: ProductDetail[] = [
       "The most affordable AZDOME you can put on a windshield. 3K front + 1080p rear, 3-inch IPS screen, ADAS lane assist, GPS, WiFi. No compromises on capture quality — just a price built for everyone.",
     gallery: [],
     category: "dash-cam",
+    channels: 2,
+    hasScreen: true,
+    maxResolution: "3K",
+    features: ["ADAS", "WiFi", "GPS", "TouchScreen"],
   },
   {
     slug: "hardwire-kit",
@@ -196,43 +244,75 @@ export type Collection = {
   productSlugs: string[];
 };
 
+// ── Channel-count collections (auto-derived) ─────────────────────────
+//
+// These are the brand's primary product taxonomy: single / dual / triple /
+// quad channel + accessories. Product membership is computed from the
+// `channels` field on each ProductDetail — adding a new SKU and tagging
+// its channel count automatically slots it into the right collection.
+//
+// `single-channel` may render empty today (no 1-channel SKU shipped yet);
+// the collection page handles that with a "products coming soon" state.
+
+const byChannel = (n: 1 | 2 | 3 | 4): string[] =>
+  PRODUCTS.filter((p) => p.channels === n).map((p) => p.slug);
+
+const byCategory = (cat: ProductDetail["category"]): string[] =>
+  PRODUCTS.filter((p) => p.category === cat).map((p) => p.slug);
+
+const byFeature = (f: ProductFeature): string[] =>
+  PRODUCTS.filter((p) => p.features?.includes(f)).map((p) => p.slug);
+
+const byScreen = (hasScreen: boolean): string[] =>
+  PRODUCTS.filter((p) => p.category === "dash-cam" && p.hasScreen === hasScreen).map(
+    (p) => p.slug,
+  );
+
 export const COLLECTIONS: Collection[] = [
+  // ── Primary: by channel count ──────────────────────────────────────
   {
     slug: "dash-cams",
     title: "All Dash Cams",
     description:
-      "From the $34.99 M01 Pro to the $299 S40 360° system — every camera engineered to keep recording when it matters.",
-    productSlugs: ["m550-pro", "m550-max", "pg17-pro", "s40", "m17-pro", "m01-pro"],
+      "From the entry-level M01 Pro to the S40 360° system — every camera engineered to keep recording when it matters.",
+    productSlugs: byCategory("dash-cam"),
+  },
+  {
+    slug: "single-channel",
+    title: "Single-Channel Dash Cams",
+    description:
+      "One forward-facing camera. The simplest, most affordable way to start protecting your drives.",
+    productSlugs: byChannel(1),
   },
   {
     slug: "dual-channel",
-    title: "Front + Rear Dual Channel",
-    description: "Cover both directions. Catch incidents from any angle.",
-    productSlugs: ["m550-pro", "m17-pro", "m01-pro"],
-  },
-  {
-    slug: "stealth",
-    title: "Stealth Mount Dash Cams",
-    description: "Slim, OEM-style profiles that disappear behind your rearview mirror.",
-    productSlugs: ["m17-pro", "pg17-pro"],
-  },
-  {
-    slug: "with-screen",
-    title: "With Built-in Touchscreen",
-    description: "Instant playback. No phone required.",
-    productSlugs: ["m550-pro", "m550-max", "pg17-pro", "m01-pro"],
+    title: "Dual-Channel Dash Cams",
+    description:
+      "Front + rear (or front + cabin). Cover both directions and catch incidents from any angle.",
+    productSlugs: byChannel(2),
   },
   {
     slug: "three-channel",
-    title: "3-Channel & 360°",
-    description: "Front, cabin, rear — and beyond. The choice for rideshare and fleet.",
-    productSlugs: ["m550-max", "s40"],
+    title: "Three-Channel Dash Cams",
+    description:
+      "Front, cabin, and rear in a single setup. The gold standard for rideshare and family fleets.",
+    productSlugs: byChannel(3),
   },
+  {
+    slug: "four-channel",
+    title: "Four-Channel & 360° Dash Cams",
+    description:
+      "Full 360° coverage — front, left, right, rear. Built for delivery fleets and security-conscious owners.",
+    productSlugs: byChannel(4),
+  },
+
+  // ── Accessories ────────────────────────────────────────────────────
   {
     slug: "accessories",
     title: "Accessories",
-    description: "Hardwire kits, SD cards, mounts — everything to complete your setup.",
-    productSlugs: ["hardwire-kit", "sd-card-128", "mount-3m"],
+    description:
+      "Hardwire kits, SD cards, mounts — everything to complete your setup.",
+    productSlugs: byCategory("accessory"),
   },
   {
     slug: "sd-cards",
@@ -243,7 +323,8 @@ export const COLLECTIONS: Collection[] = [
   {
     slug: "hardwire",
     title: "Hardwire Kits",
-    description: "Power your dash cam from your fuse box for 24h parking surveillance.",
+    description:
+      "Power your dash cam from your fuse box for 24h parking surveillance.",
     productSlugs: ["hardwire-kit"],
   },
   {
@@ -251,6 +332,21 @@ export const COLLECTIONS: Collection[] = [
     title: "Mounts & Adhesives",
     description: "Spare 3M brackets and replacement adhesives.",
     productSlugs: ["mount-3m"],
+  },
+
+  // ── Feature-based (secondary navigation) ───────────────────────────
+  {
+    slug: "with-screen",
+    title: "With Built-in Touchscreen",
+    description: "Instant playback. No phone required.",
+    productSlugs: byScreen(true),
+  },
+  {
+    slug: "stealth",
+    title: "Stealth Mount Dash Cams",
+    description:
+      "Slim, OEM-style profiles that disappear behind your rearview mirror.",
+    productSlugs: byFeature("Stealth"),
   },
   {
     slug: "refurbished",

@@ -56,6 +56,31 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
 };
 
+// Organization-level JSON-LD. Renders once on every page (via root layout)
+// so Google's Knowledge Graph picks up brand identity even on deep pages.
+const ORG_JSON_LD = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "@id": "https://azdome.com/#organization",
+  name: "AZDOME",
+  url: "https://azdome.com",
+  logo: "https://azdome.com/images/brand/logo.png",
+  sameAs: [
+    "https://www.amazon.com/stores/AZDOME",
+    "https://www.facebook.com/azdomeofficial",
+    "https://www.instagram.com/azdome_official",
+    "https://www.youtube.com/@azdomeofficial",
+  ],
+  contactPoint: [
+    {
+      "@type": "ContactPoint",
+      contactType: "customer support",
+      email: "support@azdome.com",
+      availableLanguage: ["English", "Chinese"],
+    },
+  ],
+};
+
 export default async function RootLayout({
   children,
 }: {
@@ -65,6 +90,10 @@ export default async function RootLayout({
   return (
     <html lang="en" className={inter.variable}>
       <body className="bg-white font-sans text-slate-900 antialiased">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(ORG_JSON_LD) }}
+        />
         <AuthSessionProvider>
           <AssetUrlsProvider map={assetUrls}>
             <LocaleProvider>
