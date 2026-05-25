@@ -279,28 +279,28 @@ export const COLLECTIONS: Collection[] = [
   },
   {
     slug: "single-channel",
-    title: "Single-Channel Dash Cams",
+    title: "1-Channel Dash Cams",
     description:
       "One forward-facing camera. The simplest, most affordable way to start protecting your drives.",
     productSlugs: byChannel(1),
   },
   {
     slug: "dual-channel",
-    title: "Dual-Channel Dash Cams",
+    title: "2-Channel Dash Cams",
     description:
       "Front + rear (or front + cabin). Cover both directions and catch incidents from any angle.",
     productSlugs: byChannel(2),
   },
   {
     slug: "three-channel",
-    title: "Three-Channel Dash Cams",
+    title: "3-Channel Dash Cams",
     description:
       "Front, cabin, and rear in a single setup. The gold standard for rideshare and family fleets.",
     productSlugs: byChannel(3),
   },
   {
     slug: "four-channel",
-    title: "Four-Channel & 360° Dash Cams",
+    title: "4-Channel & 360° Dash Cams",
     description:
       "Full 360° coverage — front, left, right, rear. Built for delivery fleets and security-conscious owners.",
     productSlugs: byChannel(4),
