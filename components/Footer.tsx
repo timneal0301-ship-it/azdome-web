@@ -51,6 +51,7 @@ export default function Footer() {
     { label: t.footer.privacy, href: "/legal/privacy" },
     { label: t.footer.terms, href: "/legal/terms" },
     { label: t.footer.warranty, href: "/legal/warranty" },
+    { label: t.footer.returns, href: "/legal/returns" },
     { label: t.footer.accessibility, href: "/legal/accessibility" },
     { label: t.footer.cookies, href: "/legal/cookies" },
   ];

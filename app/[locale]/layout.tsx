@@ -1,7 +1,8 @@
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 
 import { LOCALES } from "@/lib/i18n/dictionaries";
-import { isValidLocale } from "@/lib/i18n/url";
+import { isValidLocale, LOCALE_OG } from "@/lib/i18n/url";
 
 // Pre-render the locale tree for every supported locale at build time.
 // Combined with `generateStaticParams` on nested dynamic segments
@@ -15,6 +16,34 @@ export function generateStaticParams() {
 // overlay, image overrides, content section edits) surface immediately on
 // the public frontend instead of staying frozen at build-time snapshot.
 export const dynamic = "force-dynamic";
+
+/**
+ * Locale-scoped Open Graph metadata. Sits between the root layout's
+ * brand-wide OG block (site_name, type, image) and each page's
+ * page-specific OG (title, description, alternates) — Next.js merges
+ * left-to-right with child winning.
+ *
+ * Facebook / LinkedIn read these to render the right language preview
+ * card. alternateLocale signals that the same content exists in every
+ * other locale; the platforms will switch the preview if the viewer's
+ * language matches one of them.
+ */
+export function generateMetadata({
+  params,
+}: {
+  params: { locale: string };
+}): Metadata {
+  if (!isValidLocale(params.locale)) return {};
+  const active = params.locale;
+  return {
+    openGraph: {
+      locale: LOCALE_OG[active],
+      alternateLocale: LOCALES.filter((l) => l !== active).map(
+        (l) => LOCALE_OG[l],
+      ),
+    },
+  };
+}
 
 export default function LocaleLayout({
   children,

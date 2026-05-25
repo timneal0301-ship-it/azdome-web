@@ -98,6 +98,30 @@ export const LOCALE_HTML_LANG: Record<Locale, string> = {
   vi: "vi-VN",
 };
 
+/**
+ * Open Graph locale code (underscore-separated, region-suffixed). OG uses
+ * its own format that differs from BCP-47 hreflang: en_US, not en-US;
+ * always region-qualified. Facebook / Twitter / LinkedIn consume this to
+ * pick the right preview locale.
+ */
+export const LOCALE_OG: Record<Locale, string> = {
+  en: "en_US",
+  zh: "zh_CN",
+  ja: "ja_JP",
+  de: "de_DE",
+  fr: "fr_FR",
+  es: "es_ES",
+  it: "it_IT",
+  ru: "ru_RU",
+  pl: "pl_PL",
+  ro: "ro_RO",
+  tr: "tr_TR",
+  pt: "pt_BR",
+  ar: "ar_SA",
+  th: "th_TH",
+  vi: "vi_VN",
+};
+
 /** RTL locales — need dir="rtl" on <html>. */
 export const RTL_LOCALES: ReadonlySet<Locale> = new Set<Locale>(["ar"]);
 

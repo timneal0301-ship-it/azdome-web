@@ -134,6 +134,7 @@ const en = {
     privacy: "Privacy Policy",
     terms: "Terms of Service",
     warranty: "Warranty",
+    returns: "Returns",
     accessibility: "Accessibility",
     cookies: "Cookie Settings",
     brandLine:
@@ -355,6 +356,7 @@ const zh: Dict = {
     privacy: "隐私政策",
     terms: "服务条款",
     warranty: "保修条款",
+    returns: "退货政策",
     accessibility: "无障碍",
     cookies: "Cookie 设置",
     brandLine: "为每一次出行打造清晰、可靠、安心的高端行车记录仪。",
@@ -555,6 +557,7 @@ const ja: Dict = {
     privacy: "プライバシーポリシー",
     terms: "利用規約",
     warranty: "保証規定",
+    returns: "返品ポリシー",
     accessibility: "アクセシビリティ",
     cookies: "Cookie 設定",
     brandLine:
@@ -758,6 +761,7 @@ const de: Dict = {
     privacy: "Datenschutz",
     terms: "AGB",
     warranty: "Garantie",
+    returns: "Rückgabe",
     accessibility: "Barrierefreiheit",
     cookies: "Cookie-Einstellungen",
     brandLine:
@@ -961,6 +965,7 @@ const fr: Dict = {
     privacy: "Confidentialité",
     terms: "Conditions",
     warranty: "Garantie",
+    returns: "Retours",
     accessibility: "Accessibilité",
     cookies: "Cookies",
     brandLine:
@@ -1166,6 +1171,7 @@ const es: Dict = {
     privacy: "Privacidad",
     terms: "Términos",
     warranty: "Garantía",
+    returns: "Devoluciones",
     accessibility: "Accesibilidad",
     cookies: "Cookies",
     brandLine:
@@ -1370,6 +1376,7 @@ const it: Dict = {
     privacy: "Privacy Policy",
     terms: "Termini di servizio",
     warranty: "Garanzia",
+    returns: "Resi",
     accessibility: "Accessibilità",
     cookies: "Impostazioni cookie",
     brandLine:
@@ -1574,6 +1581,7 @@ const ru: Dict = {
     privacy: "Политика конфиденциальности",
     terms: "Условия использования",
     warranty: "Гарантия",
+    returns: "Возврат",
     accessibility: "Доступность",
     cookies: "Настройки cookie",
     brandLine:
@@ -1778,6 +1786,7 @@ const pl: Dict = {
     privacy: "Polityka prywatności",
     terms: "Regulamin",
     warranty: "Gwarancja",
+    returns: "Zwroty",
     accessibility: "Dostępność",
     cookies: "Ustawienia cookies",
     brandLine:
@@ -1982,6 +1991,7 @@ const ro: Dict = {
     privacy: "Politica de confidențialitate",
     terms: "Termeni și condiții",
     warranty: "Garanție",
+    returns: "Returnări",
     accessibility: "Accesibilitate",
     cookies: "Setări cookie",
     brandLine:
@@ -2186,6 +2196,7 @@ const tr: Dict = {
     privacy: "Gizlilik Politikası",
     terms: "Kullanım Şartları",
     warranty: "Garanti",
+    returns: "İade",
     accessibility: "Erişilebilirlik",
     cookies: "Çerez Ayarları",
     brandLine:
@@ -2390,6 +2401,7 @@ const pt: Dict = {
     privacy: "Política de Privacidade",
     terms: "Termos de Serviço",
     warranty: "Garantia",
+    returns: "Devoluções",
     accessibility: "Acessibilidade",
     cookies: "Cookies",
     brandLine:
@@ -2594,6 +2606,7 @@ const ar: Dict = {
     privacy: "سياسة الخصوصية",
     terms: "شروط الخدمة",
     warranty: "الضمان",
+    returns: "المرتجعات",
     accessibility: "إمكانية الوصول",
     cookies: "إعدادات الكوكيز",
     brandLine:
@@ -2798,6 +2811,7 @@ const th: Dict = {
     privacy: "นโยบายความเป็นส่วนตัว",
     terms: "เงื่อนไขการให้บริการ",
     warranty: "การรับประกัน",
+    returns: "การคืนสินค้า",
     accessibility: "การเข้าถึง",
     cookies: "การตั้งค่าคุกกี้",
     brandLine:
@@ -3002,6 +3016,7 @@ const vi: Dict = {
     privacy: "Chính sách bảo mật",
     terms: "Điều khoản dịch vụ",
     warranty: "Bảo hành",
+    returns: "Trả hàng",
     accessibility: "Khả năng tiếp cận",
     cookies: "Cài đặt cookie",
     brandLine:

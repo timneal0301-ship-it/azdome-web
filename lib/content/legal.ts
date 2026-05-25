@@ -440,6 +440,104 @@ export const DOCS: Doc[] = [
     ],
   },
 
+  // ───────── RETURNS ─────────
+  {
+    slug: "returns",
+    title: "Returns & Refunds Policy",
+    updated: "Last updated April 4, 2026",
+    effective: "Effective April 18, 2026",
+    intro:
+      "Not the camera you expected? You have 30 days from delivery to return any AZDOME purchase. This page explains exactly how the process works — what's covered, what's not, and how fast we refund.",
+    sections: [
+      {
+        id: "window",
+        heading: "1. 30-day return window",
+        paragraphs: [
+          "You may return any AZDOME product purchased directly from azdome.com within 30 days of delivery (as confirmed by carrier tracking) for any reason — including \"changed my mind\" or \"didn't fit my car.\" This is on top of any warranty rights you have under Section 5 below.",
+          "Purchases made through Amazon, Best Buy, or other retailers are subject to that retailer's return policy, not this one. Contact the original seller for those returns.",
+        ],
+      },
+      {
+        id: "condition",
+        heading: "2. Required condition",
+        paragraphs: [
+          "Returned items must be in resellable condition with all original accessories, manuals, cables, mounts, and the original retail packaging. Light wear from a short trial drive is fine — we test every returned unit before processing.",
+        ],
+        list: [
+          { term: "All inclusions", def: "Camera body, rear cam (if applicable), every cable, mount, trim tool, manual, and the original SD card included in the box." },
+          { term: "Packaging", def: "Original retail box. If the outer box is damaged, the return is still accepted — please use a sturdy shipping carton around it." },
+          { term: "No physical damage", def: "Drops, broken lens glass, cracked screens, or evidence of water exposure are not eligible for a standard return (warranty may still apply if the cause was a manufacturing defect)." },
+          { term: "Hardwired installs", def: "If you hardwired the camera and the kit shows install wear, the kit itself is non-returnable but the camera can still come back." },
+        ],
+      },
+      {
+        id: "how-to",
+        heading: "3. How to start a return",
+        paragraphs: [
+          "Returns take about 3 minutes to initiate. You don't need to call.",
+        ],
+        list: [
+          { term: "Step 1 — Find your order", def: "Open your account orders page or your shipment confirmation email. You'll need the order number and the delivery address on file." },
+          { term: "Step 2 — Email or use the form", def: "Email returns@azdome.com with subject \"Return [order number]\" or use the form at azdome.com/support/contact and pick \"Return\" as the topic." },
+          { term: "Step 3 — Get the label", def: "We respond within 1 business day with a Return Merchandise Authorization (RMA) number and a prepaid USPS or UPS return label (US contiguous orders). International returns: we email shipping instructions and reimburse return shipping up to $25." },
+          { term: "Step 4 — Pack and drop off", def: "Tape the RMA label over the original shipping label, drop the package at any USPS or UPS location (or schedule a pickup). Keep the tracking number." },
+        ],
+      },
+      {
+        id: "refund-timing",
+        heading: "4. Refund timing",
+        paragraphs: [
+          "We refund to the original payment method within 5 business days of the return arriving at our warehouse. Card-network settlement typically adds 2–10 business days before the refund posts to your statement — that part is outside our control.",
+        ],
+        list: [
+          { term: "Original shipping", def: "Refunded in full for defective items. For non-defective returns, original shipping is non-refundable (the carrier already moved the package)." },
+          { term: "Return shipping", def: "Free for US contiguous orders (we cover the prepaid label). International returns: refunded up to $25 with a receipt." },
+          { term: "Restocking fee", def: "None for unopened items. None for opened items in resellable condition. We do not charge restocking fees on AZDOME products." },
+        ],
+      },
+      {
+        id: "exclusions",
+        heading: "5. What can't be returned",
+        list: [
+          { term: "Digital gift cards", def: "Non-refundable once issued, but they never expire — they can sit unused indefinitely or be transferred to another person." },
+          { term: "Clearance / final-sale items", def: "Anything marked \"final sale\" or \"clearance\" on the product page is non-returnable unless defective." },
+          { term: "Custom-engraved or personalized items", def: "We don't currently offer these, but the rule reserves space for future bundles." },
+          { term: "Items past 30 days", def: "After the 30-day window, the warranty is the path — see /legal/warranty." },
+          { term: "Retailer purchases", def: "Anything bought from Amazon, Best Buy, Walmart, etc. — contact that retailer." },
+        ],
+      },
+      {
+        id: "exchanges",
+        heading: "6. Exchanges",
+        paragraphs: [
+          "Want to swap models (e.g., 2-channel → 3-channel) instead of refunding? Email exchanges@azdome.com with your order number and the SKU you want. We ship the replacement once the original arrives at our warehouse — or, for faster turnaround, you can place a new order and we refund the original on receipt. Price differences are charged or refunded as needed.",
+        ],
+      },
+      {
+        id: "warranty-overlap",
+        heading: "7. Returns vs. warranty",
+        paragraphs: [
+          "These are different paths and you should pick the one that fits your situation:",
+        ],
+        list: [
+          { term: "Within 30 days, any reason", def: "Use this Returns process — full refund." },
+          { term: "Within warranty period, manufacturing defect", def: "Use the warranty claim process at /legal/warranty — we ship a replacement, no need to send the original first if you have an order number and serial." },
+          { term: "Beyond 30 days, no defect", def: "Out-of-warranty service at flat rate (~$45 for most models). Email service@azdome.com." },
+        ],
+      },
+      {
+        id: "contact",
+        heading: "8. Contact",
+        paragraphs: [
+          "Returns: returns@azdome.com — response within 1 business day.",
+          "Exchanges: exchanges@azdome.com.",
+          "Out-of-warranty service: service@azdome.com.",
+          "AZDOME Inc., 700 Mission St., Suite 200, San Francisco, CA 94105, USA.",
+        ],
+      },
+    ],
+  },
+
   // ───────── ACCESSIBILITY ─────────
   {
     slug: "accessibility",
@@ -563,7 +661,7 @@ export const LEGAL_DOCS: ContentSection<Doc[]> = {
   key: "legal.docs",
   label: "Legal · All policies",
   description:
-    "Privacy / Terms / Warranty / Accessibility / Cookies. Edit any of the 5 documents — each is keyed by `slug` and rendered at /legal/<slug>.",
+    "Privacy / Terms / Warranty / Returns / Accessibility / Cookies. Edit any document — each is keyed by `slug` and rendered at /legal/<slug>.",
   page: "legal",
   previewHref: "/legal/privacy",
   defaults: DOCS,

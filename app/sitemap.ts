@@ -33,6 +33,7 @@ const STATIC_PATHS: {
   { path: "/legal/privacy", priority: 0.2, freq: "yearly" },
   { path: "/legal/terms", priority: 0.2, freq: "yearly" },
   { path: "/legal/warranty", priority: 0.3, freq: "yearly" },
+  { path: "/legal/returns", priority: 0.4, freq: "yearly" },
 ];
 
 // Build the hreflang alternates map for a path (path without locale prefix).
