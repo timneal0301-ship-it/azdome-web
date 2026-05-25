@@ -32,9 +32,10 @@ export async function generateMetadata({
   if (!product) return { title: "Product not found — AZDOME" };
   const locale = isValidLocale(params.locale) ? params.locale : DEFAULT_LOCALE;
   const alternates = buildPathAlternates(locale, `/products/${product.slug}`);
-  const ogImage = product.image.startsWith("http")
-    ? product.image
-    : `https://azdome.com${product.image}`;
+  // og:image comes from ./opengraph-image.tsx (file-based dynamic OG) —
+  // it renders a branded 1200×630 card per product, which crops cleanly
+  // to social aspect ratios. We deliberately omit openGraph.images here
+  // so the file-based image is the single source of truth.
   return {
     title: `${product.short} — AZDOME`,
     description: product.description,
@@ -44,7 +45,6 @@ export async function generateMetadata({
       description: product.description,
       url: alternates.canonical,
       type: "website",
-      images: [{ url: ogImage, alt: product.short }],
     },
   };
 }

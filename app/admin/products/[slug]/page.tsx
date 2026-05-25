@@ -24,6 +24,7 @@ import {
   productSlotPath,
 } from "@/lib/image-slots";
 import ProductSlotUpload from "@/components/admin/ProductSlotUpload";
+import ProductFieldsEditor from "@/components/admin/ProductFieldsEditor";
 
 export const dynamic = "force-dynamic";
 
@@ -106,36 +107,20 @@ export default async function ProductDetailPage({
           <h1 className="text-balance text-2xl font-bold tracking-tight text-slate-900 md:text-4xl">
             {product.name}
           </h1>
-          {product.tagline && (
-            <p className="mt-2 max-w-2xl text-sm text-slate-500 md:text-base">
-              {product.tagline}
-            </p>
-          )}
 
-          <div className="mt-5 flex flex-wrap items-center gap-3">
-            <span className="text-2xl font-bold tracking-tight tabular-nums text-slate-900">
-              ${product.price.toFixed(2)}
-            </span>
-            {product.comparePrice && product.comparePrice > product.price && (
-              <span className="text-sm tabular-nums text-slate-400 line-through">
-                ${product.comparePrice.toFixed(2)}
-              </span>
-            )}
-            {product.badge && (
-              <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-blue-700">
-                {product.badge}
-              </span>
-            )}
-            {product.hidden && (
-              <span className="inline-flex items-center rounded-full bg-slate-900 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-white">
-                Hidden
-              </span>
-            )}
-            {product.rating !== undefined && (
-              <span className="text-xs text-slate-500">
-                ★ {product.rating} · {product.reviewCount ?? 0} reviews
-              </span>
-            )}
+          <div className="mt-5">
+            <ProductFieldsEditor
+              slug={product.slug}
+              initial={{
+                price: product.price,
+                comparePrice: product.comparePrice,
+                badge: product.badge,
+                tagline: product.tagline,
+              }}
+              hidden={product.hidden}
+              rating={product.rating}
+              reviewCount={product.reviewCount}
+            />
           </div>
 
           <div className="mt-6 flex flex-wrap gap-2">
@@ -150,10 +135,10 @@ export default async function ProductDetailPage({
             </Link>
             <Link
               href={`/admin/content/catalog.products`}
-              className="inline-flex items-center gap-1 rounded-full bg-blue-600 px-4 py-2 text-xs font-semibold tracking-tight text-white transition-colors hover:bg-blue-700"
+              className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-4 py-2 text-xs font-semibold tracking-tight text-slate-700 transition-colors hover:bg-slate-200"
             >
               <PenLine className="h-3.5 w-3.5" />
-              编辑产品字段
+              全字段 JSON 编辑
             </Link>
             <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-3 py-2 text-[11px] font-semibold tracking-tight text-slate-600">
               {isEdited ? (
